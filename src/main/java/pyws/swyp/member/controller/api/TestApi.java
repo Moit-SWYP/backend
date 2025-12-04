@@ -29,7 +29,7 @@ public interface TestApi {
                             name = "SuccessResponse",
                             value = """
                                     {
-                                      "status": "200",
+                                      "code": "200",
                                       "message": "요청이 성공적으로 처리되었습니다.",
                                       "data": {
                                         "message": "서버에서 받은 메시지: string",
