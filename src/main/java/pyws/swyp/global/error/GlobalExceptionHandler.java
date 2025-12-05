@@ -1,6 +1,5 @@
 package pyws.swyp.global.error;
 
-import static pyws.swyp.global.error.ErrorCode.BAD_REQUEST;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,12 +12,12 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 public class GlobalExceptionHandler {
 
     /**
-     * DTO 검증 실패 (@Validated)
+     * 요청 DTO 검증 예외 (@Valid, @Validated)
      */
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ErrorResponse exceptionHandler(MethodArgumentNotValidException exception) {
-        return new ErrorResponse(BAD_REQUEST, exception.getFieldErrors());
+        return new ErrorResponse(ErrorCode.INVALID_INPUT, exception.getFieldErrors());
     }
 
     /**
@@ -26,9 +25,9 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(CustomException.class)
     public ResponseEntity<ErrorResponse> customException(CustomException e) {
-        ErrorCode code = e.getErrorCode();
+        ErrorCode errorCode = e.getErrorCode();
         return ResponseEntity
-                .status(Integer.parseInt(code.getCode()))
-                .body(new ErrorResponse(code));
+                .status(errorCode.getStatus())
+                .body(new ErrorResponse(errorCode));
     }
 }
