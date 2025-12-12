@@ -29,19 +29,19 @@ public class ApiResponseAdvice implements ResponseBodyAdvice<Object> {
 
         String path = httpServletRequest.getRequestURI();
 
-        //Swagger 제외
+        // Swagger 제외
         if (path.startsWith("/swagger") ||
                 path.startsWith("/v3") ||
                 path.startsWith("/error")) {
             return false;
         }
 
-        //String 응답은 공통 응답 포맷 없이 그대로 반환
+        // String 응답은 공통 응답 포맷 없이 그대로 반환
         if (String.class.isAssignableFrom(returnType.getParameterType())) {
             return false;
         }
 
-        //공통 응답 중복 래핑 방지
+        // 공통 응답 중복 래핑 방지
         return !ApiResponse.class.isAssignableFrom(returnType.getParameterType());
     }
 
@@ -55,7 +55,7 @@ public class ApiResponseAdvice implements ResponseBodyAdvice<Object> {
             return ApiResponse.success(null);
         }
 
-        //예외일 경우 그대로 반환
+        // 예외일 경우 그대로 반환
         if (ErrorResponse.class.isAssignableFrom(body.getClass())) {
             return body;
         }

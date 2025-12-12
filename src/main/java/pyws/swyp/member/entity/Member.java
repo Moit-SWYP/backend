@@ -17,13 +17,6 @@ public class Member extends BaseEntity {
     @Column(nullable = false, length = 100)
     private String email;
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false, length = 50)
-    private SocialProvider socialProvider;
-
-    @Column(nullable = false)
-    private String social_id;
-
     @Column(nullable = false, length = 100)
     private String nickname;
 

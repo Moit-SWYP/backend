@@ -12,7 +12,7 @@ public class ApiResponse<T> {
     private T data;
 
     public static <T> ApiResponse<T> success(T data) {
-        return new ApiResponse<T>("200",
+        return new ApiResponse<T>("SUCCESS",
                 "요청이 성공적으로 처리되었습니다.",
                 data);
     }
