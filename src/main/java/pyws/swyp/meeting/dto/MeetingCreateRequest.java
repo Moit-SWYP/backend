@@ -7,7 +7,7 @@ import pyws.swyp.meeting.entity.Meeting;
 import java.time.LocalDateTime;
 
 public record MeetingCreateRequest(
-        @NotBlank
+        @NotBlank(message = "모임명을 입력해주세요")
         String title,
         LocalDateTime date,
         LocalDateTime dateVoteDeadline,
