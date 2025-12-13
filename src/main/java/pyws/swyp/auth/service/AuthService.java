@@ -1,14 +1,15 @@
 package pyws.swyp.auth.service;
 
+import static pyws.swyp.global.error.ErrorCode.SOCIAL_ACCOUNT_ALREADY_EXISTS;
+
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pyws.swyp.auth.dto.AuthResponse;
+import pyws.swyp.auth.dto.JwtResponse;
 import pyws.swyp.auth.dto.LoginRequest;
 import pyws.swyp.auth.dto.SignupRequest;
-import pyws.swyp.global.error.CustomException;
-import pyws.swyp.global.error.ErrorCode;
 import pyws.swyp.member.entity.Member;
 import pyws.swyp.member.entity.SocialAccount;
 import pyws.swyp.member.repository.MemberRepository;
@@ -20,6 +21,7 @@ public class AuthService {
 
     private final MemberRepository memberRepository;
     private final SocialAccountRepository socialAccountRepository;
+    private final JwtService jwtService;
 
     @Transactional(readOnly = true)
     public AuthResponse login(LoginRequest request) {
@@ -36,7 +38,10 @@ public class AuthService {
         }
 
         // 기존 회원 -> JWT 발급
-        return new AuthResponse(false, null);
+        Long memberId = socialAccountOpt.get().getMember().getId();
+        JwtResponse tokens = jwtService.issueTokens(memberId);
+
+        return new AuthResponse(false, tokens);
     }
 
     @Transactional
@@ -49,7 +54,7 @@ public class AuthService {
                 login.socialProvider(),
                 login.socialId()
         ).ifPresent(socialAccount -> {
-            throw new CustomException(ErrorCode.SOCIAL_ACCOUNT_ALREADY_EXISTS);
+            throw SOCIAL_ACCOUNT_ALREADY_EXISTS.toException();
         });
 
         // 회원 생성
@@ -69,6 +74,13 @@ public class AuthService {
                 .build();
         socialAccountRepository.save(socialAccount);
 
-        return new AuthResponse(false, null);
+        // 로그인 처리
+        JwtResponse tokens = jwtService.issueTokens(member.getId());
+
+        return new AuthResponse(false, tokens);
+    }
+
+    public void logout(Long memberId) {
+        jwtService.logout(memberId);
     }
 }
