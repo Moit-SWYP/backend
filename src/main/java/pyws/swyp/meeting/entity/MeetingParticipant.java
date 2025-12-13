@@ -8,8 +8,6 @@ import pyws.swyp.member.entity.Member;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
-@Builder
 public class MeetingParticipant extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -23,4 +21,11 @@ public class MeetingParticipant extends BaseEntity {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 30)
     private Role role;
+
+    @Builder
+    public MeetingParticipant(Meeting meeting, Member member, String role) {
+        this.meeting = meeting;
+        this.member = member;
+        this.role = Role.valueOf(role);
+    }
 }
