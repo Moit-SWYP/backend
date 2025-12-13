@@ -3,7 +3,7 @@ package pyws.swyp.global.error;
 import lombok.Getter;
 
 @Getter
-public abstract class CustomException extends RuntimeException {
+public class CustomException extends RuntimeException {
 
     private final ErrorCode errorCode;
 

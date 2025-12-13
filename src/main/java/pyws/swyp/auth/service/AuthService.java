@@ -7,9 +7,10 @@ import org.springframework.transaction.annotation.Transactional;
 import pyws.swyp.auth.dto.AuthResponse;
 import pyws.swyp.auth.dto.LoginRequest;
 import pyws.swyp.auth.dto.SignupRequest;
+import pyws.swyp.global.error.CustomException;
+import pyws.swyp.global.error.ErrorCode;
 import pyws.swyp.member.entity.Member;
 import pyws.swyp.member.entity.SocialAccount;
-import pyws.swyp.member.exception.SocialAccountAlreadyExists;
 import pyws.swyp.member.repository.MemberRepository;
 import pyws.swyp.member.repository.SocialAccountRepository;
 
@@ -25,58 +26,49 @@ public class AuthService {
 
         Optional<SocialAccount> socialAccountOpt =
                 socialAccountRepository.findBySocialProviderAndSocialId(
-                        request.getSocialProvider(),
-                        request.getSocialId()
+                        request.socialProvider(),
+                        request.socialId()
                 );
 
         // 신규 회원 -> 회원가입 필요
         if (socialAccountOpt.isEmpty()) {
-            return AuthResponse.builder()
-                    .signupRequired(true)
-                    .tokens(null)
-                    .build();
+            return new AuthResponse(true, null);
         }
 
         // 기존 회원 -> JWT 발급
-        return AuthResponse.builder()
-                .signupRequired(false)
-                .tokens(null)  // todo
-                .build();
+        return new AuthResponse(false, null);
     }
 
     @Transactional
     public AuthResponse signup(SignupRequest request) {
 
-        LoginRequest login = request.getLogin();  // 소셜 로그인 정보
+        LoginRequest login = request.login();  // 소셜 로그인 정보
 
         // 동일한 소셜 계정 검증
         socialAccountRepository.findBySocialProviderAndSocialId(
-                login.getSocialProvider(),
-                login.getSocialId()
+                login.socialProvider(),
+                login.socialId()
         ).ifPresent(socialAccount -> {
-            throw new SocialAccountAlreadyExists();
+            throw new CustomException(ErrorCode.SOCIAL_ACCOUNT_ALREADY_EXISTS);
         });
 
         // 회원 생성
         Member member = Member.builder()
-                .email(login.getEmail())
-                .nickname(request.getNickname())
-                .birthDate(request.getBirthday())
-                .gender(request.getGender())
+                .email(login.email())
+                .nickname(request.nickname())
+                .birthDate(request.birthDate())
+                .gender(request.gender())
                 .build();
         memberRepository.save(member);
 
         // 소셜 계정 생성
         SocialAccount socialAccount = SocialAccount.builder()
-                .socialProvider(login.getSocialProvider())
-                .socialId(login.getSocialId())
+                .socialProvider(login.socialProvider())
+                .socialId(login.socialId())
                 .member(member)
                 .build();
         socialAccountRepository.save(socialAccount);
 
-        return AuthResponse.builder()
-                .signupRequired(false)
-                .tokens(null)  // todo
-                .build();
+        return new AuthResponse(false, null);
     }
 }

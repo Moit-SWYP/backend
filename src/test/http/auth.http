@@ -29,7 +29,7 @@ Content-Type: application/json
     "email": "newuser@example.com"
   },
   "nickname": "홍길동",
-  "birthday": "1998-01-03",
+  "birthDate": "1998-01-03",
   "gender": "MALE"
 }
 

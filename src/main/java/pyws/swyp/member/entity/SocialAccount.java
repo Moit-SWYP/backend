@@ -16,8 +16,6 @@ import pyws.swyp.global.entity.BaseEntity;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
-@Builder
 public class SocialAccount extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
@@ -29,4 +27,11 @@ public class SocialAccount extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     private Member member;
+
+    @Builder
+    public SocialAccount(SocialProvider socialProvider, String socialId, Member member) {
+        this.socialProvider = socialProvider;
+        this.socialId = socialId;
+        this.member = member;
+    }
 }
