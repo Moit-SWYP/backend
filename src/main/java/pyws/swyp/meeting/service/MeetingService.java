@@ -30,11 +30,7 @@ public class MeetingService {
         Meeting meeting = request.toMeetingEntity();
         meetingRepository.save(meeting);
 
-        MeetingParticipant meetingParticipant = MeetingParticipant.builder()
-                .meeting(meeting)
-                .member(member)
-                .role("HOST")
-                .build();
+        MeetingParticipant meetingParticipant = MeetingParticipant.host(meeting, member);
         meetingParticipantRepository.save(meetingParticipant);
     }
 }

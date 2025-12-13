@@ -23,9 +23,17 @@ public class MeetingParticipant extends BaseEntity {
     private Role role;
 
     @Builder
-    public MeetingParticipant(Meeting meeting, Member member, String role) {
+    public MeetingParticipant(Meeting meeting, Member member, Role role) {
         this.meeting = meeting;
         this.member = member;
-        this.role = Role.valueOf(role);
+        this.role = role;
+    }
+
+    public static MeetingParticipant host(Meeting meeting, Member member) {
+        return MeetingParticipant.builder()
+                .meeting(meeting)
+                .member(member)
+                .role(Role.HOST)
+                .build();
     }
 }
