@@ -1,8 +1,8 @@
 package pyws.swyp.member.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import pyws.swyp.meeting.entity.Meeting;
+import pyws.swyp.member.entity.Member;
 
-public interface MemberRepository extends JpaRepository<Meeting,Long> {
+public interface MemberRepository extends JpaRepository<Member,Long> {
 
 }
