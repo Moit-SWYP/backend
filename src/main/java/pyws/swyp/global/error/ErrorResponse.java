@@ -10,7 +10,7 @@ import org.springframework.validation.FieldError;
 
 @JsonPropertyOrder({"code", "message", "data"})
 @Getter
-@JsonInclude(JsonInclude.Include.NON_EMPTY)
+@JsonInclude(JsonInclude.Include.NON_EMPTY)  // null이면 응답에 노출되지 않음
 public class ErrorResponse {
 
     private final String code;
@@ -27,7 +27,13 @@ public class ErrorResponse {
     public ErrorResponse(ErrorCode errorCode) {
         this.code = errorCode.getCode();
         this.message = errorCode.getMessage();
-        this.data = null;  //NON_EMPTY 때문에 null이면 JSON에 노출되지 않음
+        this.data = null;
+    }
+
+    public ErrorResponse(String code, String message) {
+        this.code = code;
+        this.message = message;
+        this.data = null;
     }
 }
 

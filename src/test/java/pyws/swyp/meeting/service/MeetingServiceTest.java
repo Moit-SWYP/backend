@@ -17,7 +17,6 @@ import pyws.swyp.meeting.repository.MeetingParticipantRepository;
 import pyws.swyp.meeting.repository.MeetingRepository;
 import pyws.swyp.member.entity.Gender;
 import pyws.swyp.member.entity.Member;
-import pyws.swyp.member.entity.SocialProvider;
 import pyws.swyp.member.repository.MemberRepository;
 
 import java.time.LocalDate;
@@ -57,8 +56,6 @@ public class MeetingServiceTest {
 
         Member member = new Member(
                 "1234@example.com",
-                SocialProvider.KAKAO,
-                "123",
                 "닉네임",
                 LocalDate.of(2000,1,1),
                 Gender.FEMALE
