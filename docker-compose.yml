@@ -12,5 +12,18 @@ services:
     volumes:
       - swyp-mysql-data:/var/lib/mysql
 
+  redis:
+    image: redis:alpine
+    container_name: swyp-redis
+    ports:
+      - "16379:6379"
+    environment:
+      - REDIS_HOST=localhost
+      - REDIS_PASSWORD=swyp1234
+    command:
+      - /bin/sh
+      - -c
+      - redis-server --requirepass "$${REDIS_PASSWORD:?REDIS_PASSWORD variable is not set}"
+
 volumes:
   swyp-mysql-data:
