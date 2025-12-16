@@ -11,6 +11,8 @@ import java.util.Date;
 import javax.crypto.SecretKey;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import pyws.swyp.global.security.AuthPrincipal;
+import pyws.swyp.member.entity.Role;
 
 @Component
 @RequiredArgsConstructor
@@ -25,21 +27,22 @@ public class JwtProvider {
         this.key = io.jsonwebtoken.security.Keys.hmacShaKeyFor(decoded);
     }
 
-    public String createAccessToken(Long memberId) {
-        return createToken(memberId, "access", props.getAccessTokenTtlMs());
+    public String createAccessToken(Long memberId, Role role) {
+        return createToken(memberId, role, "access", props.getAccessTokenTtlMs());
     }
 
-    public String createRefreshToken(Long memberId) {
-        return createToken(memberId, "refresh", props.getRefreshTokenTtlMs());
+    public String createRefreshToken(Long memberId, Role role) {
+        return createToken(memberId, role, "refresh", props.getRefreshTokenTtlMs());
     }
 
-    private String createToken(Long memberId, String type, long ttlMs) {
+    private String createToken(Long memberId, Role role, String type, long ttlMs) {
         Instant now = Instant.now();
         Instant exp = now.plusMillis(ttlMs);
 
         return Jwts.builder()
                 .issuer(props.getIssuer())
                 .subject(String.valueOf(memberId))
+                .claim("role", role.name())
                 .claim("typ", type)
                 .issuedAt(Date.from(now))
                 .expiration(Date.from(exp))
@@ -78,5 +81,20 @@ public class JwtProvider {
 
     public Long getMemberId(String token) {
         return Long.parseLong(parse(token).getPayload().getSubject());
+    }
+
+    public Role getRole(String token) {
+        Claims claims = parse(token).getPayload();
+        String role = claims.get("role", String.class);
+        return Role.valueOf(role);
+    }
+
+    public AuthPrincipal getPrincipal(String token) {
+        Claims claims = parse(token).getPayload();
+
+        Long memberId = Long.parseLong(claims.getSubject());
+        Role role = Role.valueOf(claims.get("role", String.class));
+
+        return new AuthPrincipal(memberId, role);
     }
 }
