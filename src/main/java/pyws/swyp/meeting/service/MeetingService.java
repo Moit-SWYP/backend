@@ -39,9 +39,24 @@ public class MeetingService {
 
     public void deleteMeeting(Long memberId, Long meetingId) {
         Meeting meeting = validActiveMeeting(meetingId);
-        validateMeetingHostPermission(memberId, meetingId);
+
+        MeetingParticipant participant = validateMeetingParticipant(memberId, meetingId);
+        if(participant.getRole() != Role.HOST) {
+            throw ErrorCode.MEETING_ACCESS_DENIED.toException();
+        }
 
         meeting.delete();
+    }
+
+    public void quitMeeting(Long memberId, Long meetingId) {
+        validActiveMeeting(meetingId);
+
+        MeetingParticipant participant = validateMeetingParticipant(memberId, meetingId);
+        if(participant.getRole() != Role.MEMBER) {
+            throw ErrorCode.MEETING_QUIT_DENIED.toException();
+        }
+
+        meetingParticipantRepository.delete(participant);
     }
 
     private Meeting validActiveMeeting(Long meetingId) {
@@ -50,10 +65,9 @@ public class MeetingService {
                 .orElseThrow(ErrorCode.MEETING_NOT_FOUND::toException);
     }
 
-    private void validateMeetingHostPermission(Long memberId, Long meetingId) {
-        meetingParticipantRepository
-                .findRoleByMeetingIdAndMemberId(memberId, meetingId)
-                .filter(role -> role == Role.HOST)
+    private MeetingParticipant validateMeetingParticipant(Long memberId, Long meetingId) {
+        return meetingParticipantRepository
+                .findByMemberIdAndMeetingId(memberId, meetingId)
                 .orElseThrow(ErrorCode.MEETING_ACCESS_DENIED::toException);
     }
 }

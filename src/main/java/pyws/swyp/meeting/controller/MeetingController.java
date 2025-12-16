@@ -24,4 +24,9 @@ public class MeetingController implements MeetingApi {
     public void deleteMeeting(@AuthenticationPrincipal Long memberId, @PathVariable Long id) {
         meetingService.deleteMeeting(memberId, id);
     }
+
+    @DeleteMapping("quit/{id}")
+    public void quitMeeting(@AuthenticationPrincipal Long memberId, @PathVariable Long id) {
+        meetingService.quitMeeting(memberId, id);
+    }
 }
