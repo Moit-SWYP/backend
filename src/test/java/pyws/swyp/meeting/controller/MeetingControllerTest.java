@@ -88,4 +88,13 @@ public class MeetingControllerTest {
         Integer status = mvcResult.getResponse().getStatus();
         assertThat(status).isEqualTo(HttpStatus.BAD_REQUEST.value());
     }
+
+    // Todo: admin 관련 테스트 코드 작성 후 추가 예정.
+    void 모임_삭제_성공() throws Exception {
+
+    }
+
+    void 모임_삭제_실패() throws Exception {
+
+    }
 }
