@@ -14,6 +14,7 @@ import pyws.swyp.auth.dto.JwtResponse;
 import pyws.swyp.auth.dto.LoginRequest;
 import pyws.swyp.auth.dto.ReissueRequest;
 import pyws.swyp.auth.dto.SignupRequest;
+import pyws.swyp.global.security.AuthPrincipal;
 
 @Tag(name = "Auth API", description = "로그인 / 로그아웃 / 회원가입 / 토큰 재발급 API")
 public interface AuthApi {
@@ -147,7 +148,7 @@ public interface AuthApi {
     )
     void logout(
             @Parameter(hidden = true)
-            @AuthenticationPrincipal Long memberId
+            @AuthenticationPrincipal AuthPrincipal principal
     );
 
     @Operation(

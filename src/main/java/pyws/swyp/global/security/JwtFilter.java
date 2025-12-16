@@ -8,10 +8,13 @@ import java.io.IOException;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import pyws.swyp.global.jwt.JwtProvider;
+import pyws.swyp.member.entity.Role;
 
 @Component
 @RequiredArgsConstructor
@@ -33,13 +36,14 @@ public class JwtFilter extends OncePerRequestFilter {
             throw new ServletException("Invalid JWT");
         }
 
-        String accessToken = authorization.replace("Bearer ", "");
+        String accessToken = authorization.substring("Bearer ".length());
 
         Boolean isAccessToken = jwtProvider.validateToken(accessToken, true);
         if (isAccessToken) {
-            Long memberId = jwtProvider.getMemberId(accessToken);
+            AuthPrincipal principal = jwtProvider.getPrincipal(accessToken);
 
-            var auth = new UsernamePasswordAuthenticationToken(memberId, null, List.of());
+            var authority = new SimpleGrantedAuthority("ROLE_" + principal.role().name());
+            var auth = new UsernamePasswordAuthenticationToken(principal, null, List.of(authority));
             SecurityContextHolder.getContext().setAuthentication(auth);
         } else {
             SecurityContextHolder.clearContext();
