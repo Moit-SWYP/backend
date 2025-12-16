@@ -97,4 +97,12 @@ public class MeetingControllerTest {
     void 모임_삭제_실패() throws Exception {
 
     }
+
+    void 모임_탈퇴_성공() throws Exception {
+
+    }
+
+    void 모임_탈퇴_실패() throws Exception {
+
+    }
 }

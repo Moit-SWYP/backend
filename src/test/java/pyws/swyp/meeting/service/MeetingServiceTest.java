@@ -109,7 +109,7 @@ public class MeetingServiceTest {
 
         MeetingParticipant meetingParticipant = mock(MeetingParticipant.class);
         when(meetingParticipant.getRole()).thenReturn(Role.HOST);
-        when(meetingParticipantRepository.findByMeetingIdAndMemberId(memberId, meetingId))
+        when(meetingParticipantRepository.findByMemberIdAndMeetingId(memberId, meetingId))
                 .thenReturn(Optional.of(meetingParticipant));
 
         // when
@@ -117,7 +117,7 @@ public class MeetingServiceTest {
 
         // then
         verify(meetingRepository).findById(meetingId);
-        verify(meetingParticipantRepository).findByMeetingIdAndMemberId(memberId, meetingId);
+        verify(meetingParticipantRepository).findByMemberIdAndMeetingId(memberId, meetingId);
         verify(meeting).delete();
     }
 
@@ -139,7 +139,7 @@ public class MeetingServiceTest {
                 });
 
         verify(meetingRepository).findById(meetingId);
-        verify(meetingParticipantRepository, never()).findByMeetingIdAndMemberId(anyLong(), anyLong());
+        verify(meetingParticipantRepository, never()).findByMemberIdAndMeetingId(anyLong(), anyLong());
     }
 
     @Test
@@ -163,7 +163,7 @@ public class MeetingServiceTest {
                 });
 
         verify(meetingRepository).findById(meetingId);
-        verify(meetingParticipantRepository, never()).findByMeetingIdAndMemberId(anyLong(), anyLong());
+        verify(meetingParticipantRepository, never()).findByMemberIdAndMeetingId(anyLong(), anyLong());
         verify(meeting, never()).delete();
     }
 
@@ -180,7 +180,7 @@ public class MeetingServiceTest {
 
         MeetingParticipant meetingParticipant = mock(MeetingParticipant.class);
         when(meetingParticipant.getRole()).thenReturn(Role.MEMBER);
-        when(meetingParticipantRepository.findByMeetingIdAndMemberId(memberId, meetingId))
+        when(meetingParticipantRepository.findByMemberIdAndMeetingId(memberId, meetingId))
                 .thenReturn(Optional.of(meetingParticipant));
 
         // when & then
@@ -192,8 +192,89 @@ public class MeetingServiceTest {
                 });
 
         verify(meetingRepository).findById(meetingId);
-        verify(meetingParticipantRepository).findByMeetingIdAndMemberId(memberId, meetingId);
+        verify(meetingParticipantRepository).findByMemberIdAndMeetingId(memberId, meetingId);
         verify(meeting, never()).delete();
+    }
+
+    @Test
+    @DisplayName("모임이 존재하고, 탈퇴하려는 사람이 모임 구성원이라면 모임 삭제 성공")
+    void 모임_탈퇴_성공() {
+        // given
+        Long memberId = 1L;
+        Long meetingId = 1L;
+
+        Meeting meeting = mock(Meeting.class);
+        when(meeting.isActive()).thenReturn(true);
+        when(meetingRepository.findById(meetingId)).thenReturn(Optional.of(meeting));
+
+        MeetingParticipant meetingParticipant = mock(MeetingParticipant.class);
+        when(meetingParticipant.getRole()).thenReturn(Role.MEMBER);
+        when(meetingParticipantRepository.findByMemberIdAndMeetingId(memberId, meetingId))
+                .thenReturn(Optional.of(meetingParticipant));
+
+        // when
+        meetingService.quitMeeting(memberId, meetingId);
+
+        // then
+        verify(meetingRepository, times(1)).findById(meetingId);
+        verify(meetingParticipantRepository, times(1)).findByMemberIdAndMeetingId(memberId, meetingId);
+        verify(meetingParticipantRepository, times(1)).delete(meetingParticipant);
+    }
+
+    @Test
+    @DisplayName("모임 구성원이 아니라면 탈퇴 실패")
+    void 모임_탈퇴_실패_구성원_아닌_유저() {
+        // given
+        Long memberId = 1L;
+        Long meetingId = 1L;
+
+        Meeting meeting = mock(Meeting.class);
+        when(meeting.isActive()).thenReturn(true);
+        when(meetingRepository.findById(meetingId)).thenReturn(Optional.of(meeting));
+
+        when(meetingParticipantRepository.findByMemberIdAndMeetingId(memberId, meetingId))
+                .thenReturn(Optional.empty());
+
+        // when & then
+        assertThatThrownBy(() -> meetingService.quitMeeting(memberId, meetingId))
+                .isInstanceOf(CustomException.class)
+                .satisfies(ex -> {
+                   CustomException ce = (CustomException) ex;
+                   assertThat(ce.getErrorCode()).isEqualTo(ErrorCode.MEETING_ACCESS_DENIED);
+                });
+
+        verify(meetingRepository).findById(meetingId);
+        verify(meetingParticipantRepository).findByMemberIdAndMeetingId(memberId, meetingId);
+        verify(meetingParticipantRepository, never()).delete(any());
+    }
+
+    @Test
+    @DisplayName("HOST라면 모임 탈퇴 실패")
+    void 모임_탈퇴_실패_HOST인_유저() {
+        // given
+        Long memberId = 1L;
+        Long meetingId = 1L;
+
+        Meeting meeting = mock(Meeting.class);
+        when(meeting.isActive()).thenReturn(true);
+        when(meetingRepository.findById(meetingId)).thenReturn(Optional.of(meeting));
+
+        MeetingParticipant meetingParticipant = mock(MeetingParticipant.class);
+        when(meetingParticipant.getRole()).thenReturn(Role.HOST);
+        when(meetingParticipantRepository.findByMemberIdAndMeetingId(memberId, meetingId))
+                .thenReturn(Optional.of(meetingParticipant));
+
+        // when & then
+        assertThatThrownBy(() -> meetingService.quitMeeting(memberId, meetingId))
+                .isInstanceOf(CustomException.class)
+                .satisfies(ex -> {
+                   CustomException ce = (CustomException) ex;
+                   assertThat(ce.getErrorCode()).isEqualTo(ErrorCode.MEETING_QUIT_DENIED);
+                });
+
+        verify(meetingRepository).findById(meetingId);
+        verify(meetingParticipantRepository).findByMemberIdAndMeetingId(memberId, meetingId);
+        verify(meetingParticipantRepository, never()).delete(any());
     }
 
 }
