@@ -35,5 +35,11 @@ public class ErrorResponse {
         this.message = message;
         this.data = null;
     }
+
+    public ErrorResponse(ErrorCode errorCode, Map<String, String> data) {
+        this.code = errorCode.getCode();
+        this.message = errorCode.getMessage();
+        this.data = data;
+    }
 }
 
