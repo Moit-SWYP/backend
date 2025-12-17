@@ -11,7 +11,6 @@ import java.util.Date;
 import javax.crypto.SecretKey;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-import pyws.swyp.global.security.AuthPrincipal;
 import pyws.swyp.member.entity.Role;
 
 @Component
@@ -87,14 +86,5 @@ public class JwtProvider {
         Claims claims = parse(token).getPayload();
         String role = claims.get("role", String.class);
         return Role.valueOf(role);
-    }
-
-    public AuthPrincipal getPrincipal(String token) {
-        Claims claims = parse(token).getPayload();
-
-        Long memberId = Long.parseLong(claims.getSubject());
-        Role role = Role.valueOf(claims.get("role", String.class));
-
-        return new AuthPrincipal(memberId, role);
     }
 }

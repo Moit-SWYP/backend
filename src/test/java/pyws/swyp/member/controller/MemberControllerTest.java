@@ -50,9 +50,6 @@ class MemberControllerTest {
     MemberService memberService;
 
     @MockitoBean
-    JwtService jwtService;
-
-    @MockitoBean
     JwtProvider jwtProvider;
 
     ObjectMapper objectMapper = new ObjectMapper();

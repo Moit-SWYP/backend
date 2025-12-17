@@ -40,10 +40,11 @@ public class JwtFilter extends OncePerRequestFilter {
 
         Boolean isAccessToken = jwtProvider.validateToken(accessToken, true);
         if (isAccessToken) {
-            AuthPrincipal principal = jwtProvider.getPrincipal(accessToken);
+            Long memberId = jwtProvider.getMemberId(accessToken);
+            Role role = jwtProvider.getRole(accessToken);
 
-            var authority = new SimpleGrantedAuthority("ROLE_" + principal.role().name());
-            var auth = new UsernamePasswordAuthenticationToken(principal, null, List.of(authority));
+            var authority = new SimpleGrantedAuthority("ROLE_" + role.name());
+            var auth = new UsernamePasswordAuthenticationToken(memberId, null, List.of(authority));
             SecurityContextHolder.getContext().setAuthentication(auth);
         } else {
             SecurityContextHolder.clearContext();

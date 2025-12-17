@@ -15,7 +15,6 @@ import pyws.swyp.auth.dto.ReissueRequest;
 import pyws.swyp.auth.dto.SignupRequest;
 import pyws.swyp.auth.service.AuthService;
 import pyws.swyp.auth.service.JwtService;
-import pyws.swyp.global.security.AuthPrincipal;
 
 @RestController
 @RequiredArgsConstructor
@@ -36,8 +35,8 @@ public class AuthController implements AuthApi {
     }
 
     @PostMapping("/logout")
-    public void logout(@AuthenticationPrincipal AuthPrincipal principal) {
-        authService.logout(principal.memberId());
+    public void logout(@AuthenticationPrincipal Long memberId) {
+        authService.logout(memberId);
     }
 
     @PostMapping("/reissue")

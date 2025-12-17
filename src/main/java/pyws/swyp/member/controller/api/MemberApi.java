@@ -9,7 +9,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
-import pyws.swyp.global.security.AuthPrincipal;
 import pyws.swyp.member.dto.MemberResponse;
 import pyws.swyp.member.dto.MemberWithdrawRequest;
 
@@ -67,7 +66,7 @@ public interface MemberApi {
     )
     MemberResponse getMember(
             @Parameter(hidden = true)
-            @AuthenticationPrincipal AuthPrincipal principal
+            @AuthenticationPrincipal Long memberId
     );
 
     @Operation(
@@ -110,7 +109,7 @@ public interface MemberApi {
     )
     void withdrawMember(
             @Parameter(hidden = true)
-            @AuthenticationPrincipal AuthPrincipal principal,
+            @AuthenticationPrincipal Long memberId,
             @RequestBody @Validated MemberWithdrawRequest request
     );
 }
