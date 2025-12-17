@@ -10,6 +10,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import pyws.swyp.global.error.CustomException;
 import pyws.swyp.global.error.ErrorCode;
 import pyws.swyp.meeting.dto.MeetingCreateRequest;
+import pyws.swyp.meeting.dto.MeetingUpdateRequest;
 import pyws.swyp.meeting.entity.Meeting;
 import pyws.swyp.meeting.entity.MeetingParticipant;
 import pyws.swyp.meeting.entity.Role;
@@ -23,6 +24,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
+import static org.apache.commons.lang3.reflect.FieldUtils.getField;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.*;
@@ -41,6 +43,9 @@ public class MeetingServiceTest {
 
     LocalDateTime now = LocalDateTime.now();
 
+    /*
+    * 모임 생성
+    */
     @Test
     @DisplayName("모임 생성에 성공한다")
     void 모임_생성_성공() {
@@ -95,6 +100,10 @@ public class MeetingServiceTest {
         verify(meetingRepository, never()).save(any());
         verify(meetingParticipantRepository, never()).save(any());
     }
+
+    /*
+    * 모임 삭제
+    */
 
     @Test
     @DisplayName("모임이 존재하고, 삭제하려는 사람이 모임장이라면 모임 삭제 성공")
@@ -196,6 +205,10 @@ public class MeetingServiceTest {
         verify(meeting, never()).delete();
     }
 
+    /*
+    * 모임 탈퇴
+    */
+
     @Test
     @DisplayName("모임이 존재하고, 탈퇴하려는 사람이 모임 구성원이라면 모임 삭제 성공")
     void 모임_탈퇴_성공() {
@@ -275,6 +288,137 @@ public class MeetingServiceTest {
         verify(meetingRepository).findById(meetingId);
         verify(meetingParticipantRepository).findByMemberIdAndMeetingId(memberId, meetingId);
         verify(meetingParticipantRepository, never()).delete(any());
+    }
+
+    /*
+    * 모임 수정
+    */
+
+    @Test
+    @DisplayName("하나의 필드만 들어오더라도 모임 수정 성공")
+    void 모임_수정_성공() {
+        // given
+        Long memberId = 1L;
+        Long meetingId = 1L;
+
+        Meeting meeting = Meeting.builder()
+                .title("모잇 오프라인 모임")
+                .date(null)
+                .dateVoteDeadline(LocalDateTime.of(2025,12,31,13,00))
+                .courseVoteDeadline(null)
+                .build();
+
+        MeetingUpdateRequest request = new MeetingUpdateRequest(
+                null,
+                LocalDateTime.of(2026,1,20,13,00),
+                null,
+                null
+        );
+
+        when(meetingRepository.findById(meetingId)).thenReturn(Optional.of(meeting));
+
+        MeetingParticipant participant = mock(MeetingParticipant.class);
+        when(meetingParticipantRepository.findByMemberIdAndMeetingId(memberId, meetingId))
+                .thenReturn(Optional.of(participant));
+
+        // when
+        meetingService.updateMeeting(memberId, meetingId, request);
+
+        // then
+        verify(meetingRepository).findById(meetingId);
+        verify(meetingParticipantRepository).findByMemberIdAndMeetingId(memberId, meetingId);
+
+        assertThat(meeting.getTitle()).isEqualTo("모잇 오프라인 모임");
+        assertThat(meeting.getDate()).isEqualTo(LocalDateTime.of(2026,1,20,13,00));
+        assertThat(meeting.getDateVoteDeadline()).isEqualTo(LocalDateTime.of(2025,12,31,13,00));
+        assertThat(meeting.getCourseVoteDeadline()).isNull();
+    }
+
+    @Test
+    @DisplayName("구성원이 아닌 유저가 수정 요청 시 실패")
+    void 모임_수정_실패_구성원_아닌_유저() {
+        // given
+        Long memberId = 1L;
+        Long meetingId = 1L;
+
+        Meeting meeting = Meeting.builder()
+                .title("모잇 오프라인 모임")
+                .date(null)
+                .dateVoteDeadline(LocalDateTime.of(2025,12,31,13,00))
+                .courseVoteDeadline(null)
+                .build();
+
+        MeetingUpdateRequest request = new MeetingUpdateRequest(
+                null,
+                LocalDateTime.of(2026,1,20,13,00),
+                null,
+                null
+        );
+
+        when(meetingRepository.findById(meetingId)).thenReturn(Optional.of(meeting));
+        when(meetingParticipantRepository.findByMemberIdAndMeetingId(memberId, meetingId))
+                .thenReturn(Optional.empty());
+
+        // when & then
+        assertThatThrownBy(() -> meetingService.updateMeeting(memberId, meetingId, request))
+                .isInstanceOf(CustomException.class)
+                .satisfies(ex -> {
+                   CustomException ce = (CustomException) ex;
+                   assertThat(ce.getErrorCode()).isEqualTo(ErrorCode.MEETING_ACCESS_DENIED);
+                });
+
+        verify(meetingRepository).findById(meetingId);
+        verify(meetingParticipantRepository).findByMemberIdAndMeetingId(memberId, meetingId);
+
+        assertThat(meeting.getTitle()).isEqualTo("모잇 오프라인 모임");
+        assertThat(meeting.getDate()).isNull();
+        assertThat(meeting.getDateVoteDeadline()).isEqualTo(LocalDateTime.of(2025,12,31,13,00));
+        assertThat(meeting.getCourseVoteDeadline()).isNull();
+    }
+
+    @Test
+    @DisplayName("수정할 제목이 null이 아니고, Blank로 들어오면 수정 실패")
+    void 모임_수정_실패_제목_Blank() {
+        // given
+        Long memberId = 1L;
+        Long meetingId = 1L;
+
+        Meeting meeting = Meeting.builder()
+                .title("모잇 오프라인 모임")
+                .date(null)
+                .dateVoteDeadline(LocalDateTime.of(2025,12,31,13,00))
+                .courseVoteDeadline(null)
+                .build();
+
+        MeetingUpdateRequest request = new MeetingUpdateRequest(
+                " ",
+                LocalDateTime.of(2026,1,20,13,00),
+                null,
+                null
+        );
+
+        when(meetingRepository.findById(meetingId)).thenReturn(Optional.of(meeting));
+
+        MeetingParticipant participant = mock(MeetingParticipant.class);
+        when(meetingParticipantRepository.findByMemberIdAndMeetingId(memberId, meetingId))
+                .thenReturn(Optional.of(participant));
+
+        // when & then
+        assertThatThrownBy(() -> meetingService.updateMeeting(memberId, meetingId, request))
+                .isInstanceOf(CustomException.class)
+                .satisfies(ex -> {
+                   CustomException ce = (CustomException) ex;
+                   assertThat(ce.getErrorCode()).isEqualTo(ErrorCode.MEETING_TITLE_EMPTY);
+                });
+
+        verify(meetingRepository).findById(meetingId);
+        verify(meetingParticipantRepository).findByMemberIdAndMeetingId(memberId, meetingId);
+
+        assertThat(meeting.getTitle()).isEqualTo("모잇 오프라인 모임");
+        assertThat(meeting.getDate()).isNull();
+        assertThat(meeting.getDateVoteDeadline()).isEqualTo(LocalDateTime.of(2025,12,31,13,00));
+        assertThat(meeting.getCourseVoteDeadline()).isNull();
+
     }
 
 }
