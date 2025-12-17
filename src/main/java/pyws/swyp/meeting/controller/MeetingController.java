@@ -17,8 +17,8 @@ public class MeetingController implements MeetingApi {
     private final MeetingService meetingService;
 
     @PostMapping
-    public void createMeeting(@RequestBody @Validated MeetingCreateRequest request) {
-        meetingService.createMeeting(request);
+    public void createMeeting(@AuthenticationPrincipal Long memberId, @RequestBody @Validated MeetingCreateRequest request) {
+        meetingService.createMeeting(memberId, request);
     }
 
     @DeleteMapping("/{id}")

@@ -24,10 +24,8 @@ public class MeetingService {
     // 임시 조치
     private final MemberRepository memberRepository;
 
-    public void createMeeting(MeetingCreateRequest request) {
-        // Todo: security 구현 되는대로 멤버 파싱 적용.
-        // 임시 조치
-        Member member = memberRepository.findById(1L).orElseThrow(
+    public void createMeeting(Long memberId, MeetingCreateRequest request) {
+        Member member = memberRepository.findById(memberId).orElseThrow(
                 () -> new CustomException(ErrorCode.MEMBER_NOT_FOUND)
         );
 

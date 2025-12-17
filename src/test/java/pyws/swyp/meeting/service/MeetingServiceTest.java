@@ -24,7 +24,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
-import static org.apache.commons.lang3.reflect.FieldUtils.getField;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.*;
@@ -50,6 +49,7 @@ public class MeetingServiceTest {
     @DisplayName("모임 생성에 성공한다")
     void 모임_생성_성공() {
         // given
+        Long memberId = 1L;
         MeetingCreateRequest request = mock(MeetingCreateRequest.class);
         Meeting meeting = Meeting.builder()
                 .title("테스트 모임 생성")
@@ -66,10 +66,10 @@ public class MeetingServiceTest {
                 Gender.FEMALE
                 );
         // Todo: 추후 변경된 로직에 맞게 변경 필요.
-        when(memberRepository.findById(1L)).thenReturn(Optional.of(member));
+        when(memberRepository.findById(memberId)).thenReturn(Optional.of(member));
 
         // when
-        meetingService.createMeeting(request);
+        meetingService.createMeeting(memberId, request);
 
         // then
         verify(meetingRepository, times(1)).save(meeting);
@@ -86,11 +86,12 @@ public class MeetingServiceTest {
     @DisplayName("존재하지 않는 유저 ID로 모임 생성 시 실패")
     void 모임_생성_실패_존재하지_않는_유저() {
         // given
+        Long memberId = 10L;
         MeetingCreateRequest request = mock(MeetingCreateRequest.class);
-        when(memberRepository.findById(1L)).thenReturn(Optional.empty());
+        when(memberRepository.findById(memberId)).thenReturn(Optional.empty());
 
         // when & then
-        assertThatThrownBy(() -> meetingService.createMeeting(request))
+        assertThatThrownBy(() -> meetingService.createMeeting(memberId, request))
                 .isInstanceOf(CustomException.class)
                 .satisfies(ex -> {
                     CustomException ce = (CustomException) ex;

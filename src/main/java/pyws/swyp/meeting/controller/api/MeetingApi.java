@@ -28,7 +28,7 @@ public interface MeetingApi {
             responseCode = "200",
             description = "모임 생성 성공"
     )
-    void createMeeting(@RequestBody @Validated MeetingCreateRequest request);
+    void createMeeting(@AuthenticationPrincipal Long memberId, @RequestBody @Validated MeetingCreateRequest request);
 
     @Operation(
             summary = "모임 삭제",
