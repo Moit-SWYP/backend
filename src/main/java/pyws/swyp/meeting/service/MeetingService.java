@@ -6,6 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 import pyws.swyp.global.error.CustomException;
 import pyws.swyp.global.error.ErrorCode;
 import pyws.swyp.meeting.dto.MeetingCreateRequest;
+import pyws.swyp.meeting.dto.MeetingUpdateRequest;
 import pyws.swyp.meeting.entity.Meeting;
 import pyws.swyp.meeting.entity.MeetingParticipant;
 import pyws.swyp.meeting.entity.Role;
@@ -59,6 +60,13 @@ public class MeetingService {
         meetingParticipantRepository.delete(participant);
     }
 
+    public void updateMeeting(Long memberId, Long meetingId, MeetingUpdateRequest request) {
+        Meeting meeting = validActiveMeeting(meetingId);
+        validateMeetingParticipant(memberId, meetingId);
+
+        meeting.update(request);
+    }
+
     private Meeting validActiveMeeting(Long meetingId) {
         return meetingRepository.findById(meetingId)
                 .filter(Meeting::isActive)
@@ -70,4 +78,5 @@ public class MeetingService {
                 .findByMemberIdAndMeetingId(memberId, meetingId)
                 .orElseThrow(ErrorCode.MEETING_ACCESS_DENIED::toException);
     }
+
 }

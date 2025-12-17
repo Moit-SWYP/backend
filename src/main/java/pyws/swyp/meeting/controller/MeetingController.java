@@ -6,6 +6,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import pyws.swyp.meeting.controller.api.MeetingApi;
 import pyws.swyp.meeting.dto.MeetingCreateRequest;
+import pyws.swyp.meeting.dto.MeetingUpdateRequest;
 import pyws.swyp.meeting.service.MeetingService;
 
 @RestController
@@ -28,5 +29,14 @@ public class MeetingController implements MeetingApi {
     @DeleteMapping("quit/{id}")
     public void quitMeeting(@AuthenticationPrincipal Long memberId, @PathVariable Long id) {
         meetingService.quitMeeting(memberId, id);
+    }
+
+    @PatchMapping("/{id}")
+    public void updateMeeting(
+            @AuthenticationPrincipal Long memberId,
+            @PathVariable Long id,
+            @RequestBody MeetingUpdateRequest request
+    ) {
+        meetingService.updateMeeting(memberId, id, request);
     }
 }
