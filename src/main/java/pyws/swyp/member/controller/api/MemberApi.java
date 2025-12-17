@@ -6,12 +6,14 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import pyws.swyp.member.dto.MemberResponse;
 import pyws.swyp.member.dto.MemberWithdrawRequest;
 
+@SecurityRequirement(name = "auth")
 @Tag(name = "Member API", description = "회원 정보 조회 / 회원 탈퇴 API")
 public interface MemberApi {
 

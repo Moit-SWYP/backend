@@ -2,11 +2,13 @@ package pyws.swyp.meeting.controller.api;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestBody;
 import pyws.swyp.meeting.dto.MeetingCreateRequest;
 
+@SecurityRequirement(name = "auth")
 @Tag(name = "Meeting API")
 public interface MeetingApi {
 
