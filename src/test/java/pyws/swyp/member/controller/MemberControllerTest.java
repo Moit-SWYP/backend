@@ -2,6 +2,7 @@ package pyws.swyp.member.controller;
 
 import static java.time.LocalDate.of;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -249,5 +250,21 @@ class MemberControllerTest {
         // then
         Member member = memberRepository.findById(this.memberId).get();
         assertEquals(characterType, member.getCharacterType());
+    }
+
+    @Test
+    @DisplayName("프로필 캐릭터 변경에 실패한다.")
+    void updateCharacter_fail_invalidCharacterType() throws Exception {
+        // given
+        String invalidCharacterType = "NOT_A_PROVIDER";
+
+        // when
+        mockMvc.perform(patch("/api/members/me/character/" + invalidCharacterType)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.code").value(ErrorCode.INVALID_INPUT.getCode()))
+                .andExpect(jsonPath("$.message").value(ErrorCode.INVALID_INPUT.getMessage()))
+                .andExpect(jsonPath("$.data.character")
+                        .value("값의 형식이 올바르지 않습니다. (입력값: " + invalidCharacterType + ")"));
     }
 }
