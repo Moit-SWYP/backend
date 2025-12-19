@@ -1,6 +1,5 @@
 package pyws.swyp.auth.service;
 
-import static pyws.swyp.global.error.ErrorCode.MEMBER_NOT_FOUND;
 import static pyws.swyp.global.error.ErrorCode.SOCIAL_ACCOUNT_ALREADY_EXISTS;
 
 import java.util.Optional;
@@ -66,6 +65,7 @@ public class AuthService {
                 .birthDate(request.birthDate())
                 .gender(request.gender())
                 .role(Role.MEMBER)
+                .characterType(request.characterType())
                 .build();
         memberRepository.save(member);
 

@@ -16,7 +16,6 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
-
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -43,19 +42,28 @@ public class Member {
     @Column(nullable = false, length = 50)
     private Role role;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 50)
+    private CharacterType characterType;
+
     @CreationTimestamp
-    @Column(nullable = false)
+    @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 
     @Builder
-    public Member(String email, String nickname, LocalDate birthDate, Gender gender, Role role) {
+    public Member(String email, String nickname, LocalDate birthDate, Gender gender, Role role, CharacterType characterType) {
         this.email = email;
         this.nickname = nickname;
         this.birthDate = birthDate;
         this.gender = gender;
         this.role = role;
+        this.characterType = characterType;
+    }
+
+    public void updateCharacterType(CharacterType characterType) {
+        this.characterType = characterType;
     }
 }

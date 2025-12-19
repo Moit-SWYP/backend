@@ -3,7 +3,7 @@ GET http://localhost:8080/api/members/me
 Authorization: Bearer {{accessToken}}
 
 ### 회원탈퇴
-DELETE http://localhost:8080/api/members/withdraw
+POST http://localhost:8080/api/members/me/withdraw
 Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 
@@ -12,7 +12,7 @@ Authorization: Bearer {{accessToken}}
 }
 
 ### 회원탈퇴 (기타 사유)
-DELETE http://localhost:8080/api/members/withdraw
+POST http://localhost:8080/api/members/me/withdraw
 Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 
@@ -20,6 +20,10 @@ Authorization: Bearer {{accessToken}}
   "type": "ETC",
   "description": "기타 사유"
 }
+
+### 캐릭터 변경
+PATCH http://localhost:8080/api/members/me/character/STUDYER
+Authorization: Bearer {{accessToken}}
 
 ### 새로운 소셜 계정 연동
 POST http://localhost:8080/api/members/me/social-accounts

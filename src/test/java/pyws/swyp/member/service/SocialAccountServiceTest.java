@@ -14,6 +14,7 @@ import pyws.swyp.auth.service.JwtService;
 import pyws.swyp.global.error.CustomException;
 import pyws.swyp.global.error.ErrorCode;
 import pyws.swyp.member.dto.SocialLinkRequest;
+import pyws.swyp.member.entity.CharacterType;
 import pyws.swyp.member.entity.Gender;
 import pyws.swyp.member.entity.Member;
 import pyws.swyp.member.entity.Role;
@@ -50,6 +51,7 @@ class SocialAccountServiceTest {
                 .birthDate(LocalDate.of(1999, 1, 1))
                 .gender(Gender.MALE)
                 .role(Role.MEMBER)
+                .characterType(CharacterType.ACTIVE)
                 .build());
     }
 

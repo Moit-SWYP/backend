@@ -1,9 +1,11 @@
 package pyws.swyp.member.controller;
 
 import static java.time.LocalDate.of;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -25,6 +27,7 @@ import pyws.swyp.config.TestRedisConfig;
 import pyws.swyp.global.error.ErrorCode;
 import pyws.swyp.member.dto.MemberWithdrawRequest;
 import pyws.swyp.member.dto.SocialLinkRequest;
+import pyws.swyp.member.entity.CharacterType;
 import pyws.swyp.member.entity.Gender;
 import pyws.swyp.member.entity.Member;
 import pyws.swyp.member.entity.Role;
@@ -70,6 +73,7 @@ class MemberControllerTest {
                 .gender(Gender.MALE)
                 .birthDate(of(1999, 1, 1))
                 .role(Role.MEMBER)
+                .characterType(CharacterType.ACTIVE)
                 .build());
 
         SocialProvider kakao = SocialProvider.KAKAO;
@@ -99,7 +103,7 @@ class MemberControllerTest {
     }
 
     @Test
-    @DisplayName("로그인 정보 조회 시 존재하지 않는 회원이면 404와 에러코드를 반환한다")
+    @DisplayName("로그인 정보 조회 시 존재하지 않는 회원이면 404와 에러코드를 반환한다.")
     void getMember_memberNotFound() throws Exception {
         // given
         socialAccountRepository.deleteAll();
@@ -119,8 +123,10 @@ class MemberControllerTest {
         MemberWithdrawRequest request = new MemberWithdrawRequest(WithdrawalType.BUG, null);
 
         // expected
-        mockMvc.perform(delete("/api/members/withdraw").contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(request))).andExpect(status().isOk());
+        mockMvc.perform(post("/api/members/me/withdraw")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isOk());
 
         // then (예시: 탈퇴 테이블이 저장되는 설계라면)
         assertTrue(memberWithdrawalRepository.count() >= 1);
@@ -133,7 +139,8 @@ class MemberControllerTest {
         MemberWithdrawRequest request = new MemberWithdrawRequest(WithdrawalType.ETC, null);
 
         // expected
-        mockMvc.perform(delete("/api/members/withdraw").contentType(MediaType.APPLICATION_JSON)
+        mockMvc.perform(post("/api/members/me/withdraw")
+                        .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.code").value(ErrorCode.INVALID_INPUT.getCode()))
@@ -142,14 +149,15 @@ class MemberControllerTest {
     }
 
     @Test
-    @DisplayName("회원 탈퇴 시 description 500자 초과 시 400과 필드 에러를 반환한다")
+    @DisplayName("회원 탈퇴 시 description 500자 초과 시 400과 필드 에러를 반환한다.")
     void withdrawMember_descriptionTooLong_400() throws Exception {
         // given
         String longDesc = "a".repeat(501);
         MemberWithdrawRequest request = new MemberWithdrawRequest(WithdrawalType.ETC, longDesc);
 
         // expected
-        mockMvc.perform(delete("/api/members/withdraw").contentType(MediaType.APPLICATION_JSON)
+        mockMvc.perform(post("/api/members/me/withdraw")
+                        .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.code").value(ErrorCode.INVALID_INPUT.getCode()))
@@ -158,7 +166,7 @@ class MemberControllerTest {
     }
 
     @Test
-    @DisplayName("소셜 계정 연동에 성공한다")
+    @DisplayName("소셜 계정 연동에 성공한다.")
     void linkSocialAccount_success() throws Exception {
         // given
         SocialProvider naver = SocialProvider.NAVER;
@@ -189,7 +197,7 @@ class MemberControllerTest {
     }
 
     @Test
-    @DisplayName("소셜 계정 연동 시 요청 바디가 유효하지 않으면 400과 에러코드를 반환한다")
+    @DisplayName("소셜 계정 연동 시 요청 바디가 유효하지 않으면 400과 에러코드를 반환한다.")
     void linkSocialAccount_invalidRequest_400() throws Exception {
         // given
         SocialLinkRequest request = new SocialLinkRequest(SocialProvider.NAVER, null);
@@ -204,7 +212,7 @@ class MemberControllerTest {
     }
 
     @Test
-    @DisplayName("소셜 계정 연동 해제에 성공한다")
+    @DisplayName("소셜 계정 연동 해제에 성공한다.")
     void unlinkSocialAccount_success() throws Exception {
         // when
         mockMvc.perform(delete("/api/members/me/social-accounts/" + this.provider.name()))
@@ -215,7 +223,7 @@ class MemberControllerTest {
     }
 
     @Test
-    @DisplayName("소셜 계정 연동 해제 시 provider가 enum에 없으면 400을 반환한다")
+    @DisplayName("소셜 계정 연동 해제 시 provider가 enum에 없으면 400을 반환한다.")
     void unlinkSocialAccount_invalidProvider_400() throws Exception {
         // expected
         String invalidProvider = "NOT_A_PROVIDER";
@@ -225,5 +233,21 @@ class MemberControllerTest {
                 .andExpect(jsonPath("$.message").value(ErrorCode.INVALID_INPUT.getMessage()))
                 .andExpect(jsonPath("$.data.provider")
                         .value("값의 형식이 올바르지 않습니다. (입력값: " + invalidProvider + ")"));
+    }
+
+    @Test
+    @DisplayName("프로필 캐릭터 변경에 성공한다.")
+    void updateCharacter_success() throws Exception {
+        // given
+        CharacterType characterType = CharacterType.CULTURE_LOVER;
+
+        // when
+        mockMvc.perform(patch("/api/members/me/character/" + characterType.name())
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+
+        // then
+        Member member = memberRepository.findById(this.memberId).get();
+        assertEquals(characterType, member.getCharacterType());
     }
 }
