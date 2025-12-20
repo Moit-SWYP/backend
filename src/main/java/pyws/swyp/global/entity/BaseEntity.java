@@ -36,7 +36,7 @@ public class BaseEntity {
     @Column(nullable = false)
     private boolean isActive = true;
 
-    public void updateActive(Boolean active) {
-        this.isActive = active;
+    public void delete() {
+        isActive = false;
     }
 }

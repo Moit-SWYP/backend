@@ -27,7 +27,14 @@ public enum ErrorCode {
     // Member
     MEMBER_NOT_FOUND(NOT_FOUND, "MEM0001", "존재하지 않는 회원입니다."),
     SOCIAL_ACCOUNT_FOUND(NOT_FOUND, "SOC0001", "존재하지 않는 소셜 계정입니다."),
-    SOCIAL_ACCOUNT_ALREADY_EXISTS(CONFLICT, "SOC0002", "이미 가입된 소셜 계정입니다.");
+    SOCIAL_ACCOUNT_ALREADY_EXISTS(CONFLICT, "SOC0002", "이미 가입된 소셜 계정입니다."),
+
+    // Meeting
+    MEETING_NOT_FOUND(NOT_FOUND, "MEET0001", "존재하지 않는 모임입니다."),
+    MEETING_ACCESS_DENIED(HttpStatus.FORBIDDEN, "MEET0002", "해당 모임에 대한 접근 권한이 없습니다."),
+    MEETING_QUIT_DENIED(HttpStatus.FORBIDDEN, "MEET0003", "모임 생성자는 탈퇴할 수 없습니다."),
+    MEETING_TITLE_EMPTY(BAD_REQUEST, "MEET0004", "모임 제목은 필수이며, 빈칸일 수 없습니다."),
+    ;
 
     private final HttpStatus status;
     private final String code;

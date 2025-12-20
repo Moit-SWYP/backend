@@ -2,11 +2,14 @@ package pyws.swyp.meeting.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import pyws.swyp.global.error.CustomException;
 import pyws.swyp.global.error.ErrorCode;
 import pyws.swyp.meeting.dto.MeetingCreateRequest;
+import pyws.swyp.meeting.dto.MeetingUpdateRequest;
 import pyws.swyp.meeting.entity.Meeting;
 import pyws.swyp.meeting.entity.MeetingParticipant;
+import pyws.swyp.meeting.entity.Role;
 import pyws.swyp.meeting.repository.MeetingParticipantRepository;
 import pyws.swyp.meeting.repository.MeetingRepository;
 import pyws.swyp.member.entity.Member;
@@ -14,16 +17,15 @@ import pyws.swyp.member.repository.MemberRepository;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class MeetingService {
     private final MeetingRepository meetingRepository;
     private final MeetingParticipantRepository meetingParticipantRepository;
     // 임시 조치
     private final MemberRepository memberRepository;
 
-    public void createMeeting(MeetingCreateRequest request) {
-        // Todo: security 구현 되는대로 멤버 파싱 적용.
-        // 임시 조치
-        Member member = memberRepository.findById(1L).orElseThrow(
+    public void createMeeting(Long memberId, MeetingCreateRequest request) {
+        Member member = memberRepository.findById(memberId).orElseThrow(
                 () -> new CustomException(ErrorCode.MEMBER_NOT_FOUND)
         );
 
@@ -33,4 +35,46 @@ public class MeetingService {
         MeetingParticipant meetingParticipant = MeetingParticipant.host(meeting, member);
         meetingParticipantRepository.save(meetingParticipant);
     }
+
+    public void deleteMeeting(Long memberId, Long meetingId) {
+        Meeting meeting = validActiveMeeting(meetingId);
+
+        MeetingParticipant participant = validateMeetingParticipant(memberId, meetingId);
+        if(participant.getRole() != Role.HOST) {
+            throw ErrorCode.MEETING_ACCESS_DENIED.toException();
+        }
+
+        meeting.delete();
+    }
+
+    public void quitMeeting(Long memberId, Long meetingId) {
+        validActiveMeeting(meetingId);
+
+        MeetingParticipant participant = validateMeetingParticipant(memberId, meetingId);
+        if(participant.getRole() != Role.MEMBER) {
+            throw ErrorCode.MEETING_QUIT_DENIED.toException();
+        }
+
+        meetingParticipantRepository.delete(participant);
+    }
+
+    public void updateMeeting(Long memberId, Long meetingId, MeetingUpdateRequest request) {
+        Meeting meeting = validActiveMeeting(meetingId);
+        validateMeetingParticipant(memberId, meetingId);
+
+        meeting.update(request);
+    }
+
+    private Meeting validActiveMeeting(Long meetingId) {
+        return meetingRepository.findById(meetingId)
+                .filter(Meeting::isActive)
+                .orElseThrow(ErrorCode.MEETING_NOT_FOUND::toException);
+    }
+
+    private MeetingParticipant validateMeetingParticipant(Long memberId, Long meetingId) {
+        return meetingParticipantRepository
+                .findByMemberIdAndMeetingId(memberId, meetingId)
+                .orElseThrow(ErrorCode.MEETING_ACCESS_DENIED::toException);
+    }
+
 }

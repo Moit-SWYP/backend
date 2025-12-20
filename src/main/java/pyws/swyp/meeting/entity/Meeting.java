@@ -9,6 +9,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import pyws.swyp.global.entity.BaseEntity;
+import pyws.swyp.global.error.ErrorCode;
+import pyws.swyp.meeting.dto.MeetingUpdateRequest;
 
 import java.time.LocalDateTime;
 
@@ -48,5 +50,23 @@ public class Meeting extends BaseEntity {
 
     public void updateStatus(String status) {
         this.status = Status.valueOf(status);
+    }
+
+    public void update(MeetingUpdateRequest request) {
+        if (request.title() != null) {
+            if(request.title().isBlank()) {
+                throw ErrorCode.MEETING_TITLE_EMPTY.toException();
+            }
+            this.title = request.title();
+        }
+        if (request.date() != null) {
+            this.date = request.date();
+        }
+        if (request.dateVoteDeadline() != null) {
+            this.dateVoteDeadline = request.dateVoteDeadline();
+        }
+        if (request.courseVoteDeadline() != null) {
+            this.courseVoteDeadline = request.courseVoteDeadline();
+        }
     }
 }
