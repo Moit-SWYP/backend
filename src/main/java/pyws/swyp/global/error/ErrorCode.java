@@ -26,7 +26,8 @@ public enum ErrorCode {
 
     // Member
     MEMBER_NOT_FOUND(NOT_FOUND, "MEM0001", "존재하지 않는 회원입니다."),
-    SOCIAL_ACCOUNT_ALREADY_EXISTS(CONFLICT, "SOC0001", "이미 가입된 소셜 계정입니다."),
+    SOCIAL_ACCOUNT_FOUND(NOT_FOUND, "SOC0001", "존재하지 않는 소셜 계정입니다."),
+    SOCIAL_ACCOUNT_ALREADY_EXISTS(CONFLICT, "SOC0002", "이미 가입된 소셜 계정입니다."),
 
     // Meeting
     MEETING_NOT_FOUND(NOT_FOUND, "MEET0001", "존재하지 않는 모임입니다."),

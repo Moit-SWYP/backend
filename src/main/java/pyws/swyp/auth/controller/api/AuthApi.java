@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
@@ -15,6 +16,7 @@ import pyws.swyp.auth.dto.LoginRequest;
 import pyws.swyp.auth.dto.ReissueRequest;
 import pyws.swyp.auth.dto.SignupRequest;
 
+@SecurityRequirement(name = "auth")
 @Tag(name = "Auth API", description = "로그인 / 로그아웃 / 회원가입 / 토큰 재발급 API")
 public interface AuthApi {
 
@@ -27,8 +29,27 @@ public interface AuthApi {
                             - 기존 회원: JWT(access, refresh) 포함한 AuthResponse 반환
                             - 신규 회원: signupRequired = true, tokens = null 반환
                             
+                            토큰 정책:
+                            - Access Token: 15분 유효 (API 인증에 사용)
+                            - Refresh Token: 7일 유효 (Access Token 만료 시 재발급에 사용)
+                            
                             앱에서 이미 소셜 계정 인증이 완료된 상태에서 호출됩니다.
-                            """
+                            """,
+            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    content = @io.swagger.v3.oas.annotations.media.Content(
+                            mediaType = "application/json",
+                            examples = @io.swagger.v3.oas.annotations.media.ExampleObject(
+                                    name = "로그인 요청",
+                                    value = """
+                                            {
+                                              "socialProvider": "KAKAO",
+                                              "socialId": "existing-social-id-123",
+                                              "email": "existing@example.com"
+                                            }
+                                            """
+                            )
+                    )
+            )
     )
     @ApiResponse(
             responseCode = "200",

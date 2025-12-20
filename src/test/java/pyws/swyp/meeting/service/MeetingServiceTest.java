@@ -1,5 +1,17 @@
 package pyws.swyp.meeting.service;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -19,14 +31,6 @@ import pyws.swyp.meeting.repository.MeetingRepository;
 import pyws.swyp.member.entity.Gender;
 import pyws.swyp.member.entity.Member;
 import pyws.swyp.member.repository.MemberRepository;
-
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.Optional;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class MeetingServiceTest {
@@ -63,7 +67,8 @@ public class MeetingServiceTest {
                 "1234@example.com",
                 "닉네임",
                 LocalDate.of(2000,1,1),
-                Gender.FEMALE
+                Gender.FEMALE,
+                pyws.swyp.member.entity.Role.MEMBER
                 );
         // Todo: 추후 변경된 로직에 맞게 변경 필요.
         when(memberRepository.findById(memberId)).thenReturn(Optional.of(member));

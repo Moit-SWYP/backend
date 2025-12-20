@@ -1,0 +1,36 @@
+### 로그인 정보 조회
+GET http://localhost:8080/api/members/me
+Authorization: Bearer {{accessToken}}
+
+### 회원탈퇴
+DELETE http://localhost:8080/api/members/withdraw
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+{
+  "type": "SCHEDULE_INCONVENIENT"
+}
+
+### 회원탈퇴 (기타 사유)
+DELETE http://localhost:8080/api/members/withdraw
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+{
+  "type": "ETC",
+  "description": "기타 사유"
+}
+
+### 새로운 소셜 계정 연동
+POST http://localhost:8080/api/members/me/social-accounts
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+{
+  "socialProvider": "NAVER",
+  "socialId": "new-social-id"
+}
+
+### 소셜 계정 연동 해제
+DELETE http://localhost:8080/api/members/me/social-accounts/NAVER
+Authorization: Bearer {{accessToken}}

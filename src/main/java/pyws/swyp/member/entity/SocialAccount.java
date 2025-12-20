@@ -5,18 +5,37 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
+import java.time.LocalDateTime;
 import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import pyws.swyp.global.entity.BaseEntity;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class SocialAccount extends BaseEntity {
+@Table(
+        name = "social_account",
+        uniqueConstraints = {
+                @UniqueConstraint(
+                        name = "uk_social_account_provider_social_id",
+                        columnNames = {"social_provider", "social_id"}
+                )
+        }
+)
+public class SocialAccount {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 50)
@@ -27,6 +46,14 @@ public class SocialAccount extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     private Member member;
+
+    @CreationTimestamp
+    @Column(nullable = false)
+    private LocalDateTime createdAt;
+
+    @UpdateTimestamp
+    @Column
+    private LocalDateTime updatedAt;
 
     @Builder
     public SocialAccount(SocialProvider socialProvider, String socialId, Member member) {
