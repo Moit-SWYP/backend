@@ -21,6 +21,7 @@ import pyws.swyp.global.error.CustomException;
 import pyws.swyp.member.dto.MemberResponse;
 import pyws.swyp.member.dto.MemberWithdrawRequest;
 import pyws.swyp.member.dto.SocialAccountInfo;
+import pyws.swyp.member.entity.CharacterType;
 import pyws.swyp.member.entity.Gender;
 import pyws.swyp.member.entity.Member;
 import pyws.swyp.member.entity.MemberWithdrawal;
@@ -65,6 +66,7 @@ class MemberServiceTest {
                 .birthDate(LocalDate.of(1999, 1, 1))
                 .gender(Gender.MALE)
                 .role(Role.MEMBER)
+                .characterType(CharacterType.ACTIVE)
                 .build());
 
         List<SocialAccount> socialAccounts = List.of(
@@ -143,5 +145,19 @@ class MemberServiceTest {
         // expected
         assertThrows(CustomException.class, () -> memberService.withdraw(9999L, request));
         verify(jwtService, never()).logout(anyLong());
+    }
+
+    @Test
+    @DisplayName("프로필 캐릭터를 변경한다.")
+    void updateCharacter_success() {
+        //given
+        CharacterType characterType = CharacterType.CULTURE_LOVER;
+
+        //when
+        memberService.updateCharacter(savedMember.getId(), characterType);
+
+        //then
+        Member member = memberRepository.findById(this.savedMember.getId()).get();
+        assertEquals(characterType, member.getCharacterType());
     }
 }

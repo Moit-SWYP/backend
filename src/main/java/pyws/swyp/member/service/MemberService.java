@@ -10,6 +10,7 @@ import pyws.swyp.auth.service.JwtService;
 import pyws.swyp.member.dto.MemberResponse;
 import pyws.swyp.member.dto.MemberWithdrawRequest;
 import pyws.swyp.member.dto.SocialAccountInfo;
+import pyws.swyp.member.entity.CharacterType;
 import pyws.swyp.member.entity.Member;
 import pyws.swyp.member.entity.MemberWithdrawal;
 import pyws.swyp.member.entity.SocialAccount;
@@ -42,6 +43,7 @@ public class MemberService {
                 member.getBirthDate(),
                 member.getGender(),
                 member.getRole(),
+                member.getCharacterType(),
                 socialAccounts
         );
     }
@@ -67,5 +69,12 @@ public class MemberService {
 
         // 로그아웃
         jwtService.logout(memberId);
+    }
+
+    @Transactional
+    public void updateCharacter(Long memberId, CharacterType character) {
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(MEMBER_NOT_FOUND::toException);
+        member.updateCharacterType(character);
     }
 }

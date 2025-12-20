@@ -130,12 +130,12 @@ VALUES
     (2, NOW(), 1, NULL, '2025-12-25 19:00:00', 'VOTING', '크리스마스 모임');
 
 -- MEMBER
-INSERT IGNORE INTO member (id, created_at, birth_date, email, gender, nickname)
+INSERT IGNORE INTO member (id, created_at, birth_date, email, gender, nickname, character_type)
 VALUES
-    (1, NOW(), '1999-01-01', 'host@example.com',   'MALE',   '호스트유저'),
-    (2, NOW(), '1998-05-10', 'member1@example.com', 'FEMALE', '참여자1'),
-    (3, NOW(), '1995-02-14', 'member2@example.com', 'MALE',   '참여자2'),
-    (4, NOW(), '1995-02-14', 'existing@example.com', 'MALE',   '기존 회원');
+    (1, NOW(), '1999-01-01', 'host@example.com',   'MALE',   '호스트유저', 'FOODIE'),
+    (2, NOW(), '1998-05-10', 'member1@example.com', 'FEMALE', '참여자1', 'DRINKER'),
+    (3, NOW(), '1995-02-14', 'member2@example.com', 'MALE',   '참여자2', 'HEALER'),
+    (4, NOW(), '1995-02-14', 'existing@example.com', 'MALE',   '기존 회원', 'TRAVELER');
 
 -- SOCIAL_ACCOUNT
 INSERT IGNORE INTO social_account (id, created_at, social_provider, social_id, member_id)
@@ -149,7 +149,7 @@ VALUES
     (2, NOW(), 1, NULL, 'MEMBER', 1, 2),
     (3, NOW(), 1, NULL, 'MEMBER', 1, 3),
     (4, NOW(), 1, NULL, 'HOST',   2, 2),
-    (5, NOW(), 1, NULL, 'MEMBER', 2, 1);
+    (5, NOW(), 1, NULL, 'MEMBER', 2, 4);
 
 -- COURSE
 INSERT IGNORE INTO course (id, created_at, is_active, updated_at, step, meeting_id)

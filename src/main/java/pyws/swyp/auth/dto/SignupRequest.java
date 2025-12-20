@@ -6,6 +6,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Past;
 import jakarta.validation.constraints.Size;
 import java.time.LocalDate;
+import pyws.swyp.member.entity.CharacterType;
 import pyws.swyp.member.entity.Gender;
 
 public record SignupRequest(
@@ -22,6 +23,9 @@ public record SignupRequest(
         LocalDate birthDate,
 
         @NotNull(message = "성별을 선택해 주세요.")
-        Gender gender
+        Gender gender,
+
+        @NotNull(message = "캐릭터를 선택해 주세요.")
+        CharacterType characterType
 ) {
 }

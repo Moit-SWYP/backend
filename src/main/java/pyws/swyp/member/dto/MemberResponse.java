@@ -2,6 +2,7 @@ package pyws.swyp.member.dto;
 
 import java.time.LocalDate;
 import java.util.List;
+import pyws.swyp.member.entity.CharacterType;
 import pyws.swyp.member.entity.Gender;
 import pyws.swyp.member.entity.Role;
 
@@ -11,6 +12,7 @@ public record MemberResponse(
         LocalDate birthDate,
         Gender gender,
         Role role,
+        CharacterType characterType,
         List<SocialAccountInfo> socialAccounts
 ) {
 }
