@@ -2,6 +2,7 @@ package pyws.swyp.meeting.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
@@ -28,6 +29,7 @@ import pyws.swyp.meeting.entity.MeetingParticipant;
 import pyws.swyp.meeting.entity.Role;
 import pyws.swyp.meeting.repository.MeetingParticipantRepository;
 import pyws.swyp.meeting.repository.MeetingRepository;
+import pyws.swyp.member.entity.CharacterType;
 import pyws.swyp.member.entity.Gender;
 import pyws.swyp.member.entity.Member;
 import pyws.swyp.member.repository.MemberRepository;
@@ -68,7 +70,8 @@ public class MeetingServiceTest {
                 "닉네임",
                 LocalDate.of(2000,1,1),
                 Gender.FEMALE,
-                pyws.swyp.member.entity.Role.MEMBER
+                pyws.swyp.member.entity.Role.MEMBER,
+                CharacterType.TRAVELER
                 );
         // Todo: 추후 변경된 로직에 맞게 변경 필요.
         when(memberRepository.findById(memberId)).thenReturn(Optional.of(member));
