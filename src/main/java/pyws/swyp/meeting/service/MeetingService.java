@@ -1,19 +1,24 @@
 package pyws.swyp.meeting.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pyws.swyp.global.error.CustomException;
 import pyws.swyp.global.error.ErrorCode;
+import pyws.swyp.meeting.dto.MeetingBriefResponse;
 import pyws.swyp.meeting.dto.MeetingCreateRequest;
 import pyws.swyp.meeting.dto.MeetingUpdateRequest;
 import pyws.swyp.meeting.entity.Meeting;
 import pyws.swyp.meeting.entity.MeetingParticipant;
 import pyws.swyp.meeting.entity.Role;
+import pyws.swyp.meeting.entity.Status;
 import pyws.swyp.meeting.repository.MeetingParticipantRepository;
 import pyws.swyp.meeting.repository.MeetingRepository;
 import pyws.swyp.member.entity.Member;
 import pyws.swyp.member.repository.MemberRepository;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -63,6 +68,15 @@ public class MeetingService {
         validateMeetingParticipant(memberId, meetingId);
 
         meeting.update(request);
+    }
+
+    public List<MeetingBriefResponse> getAllMeetings(Long memberId) {
+        return meetingParticipantRepository.findByMemberId(memberId);
+    }
+
+    public List<MeetingBriefResponse> getWaitingMeetings(Long memberId, Pageable pageable) {
+        List<Status> statuses = List.of(Status.CREATED, Status.DATE_VOTING, Status.PLACE_VOTING);
+        return meetingParticipantRepository.findByMemberIdAndStatus(memberId, statuses, pageable);
     }
 
     private Meeting validActiveMeeting(Long meetingId) {

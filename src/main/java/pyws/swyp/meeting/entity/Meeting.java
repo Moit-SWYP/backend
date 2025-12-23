@@ -48,10 +48,6 @@ public class Meeting extends BaseEntity {
         this.courseVoteDeadline = courseVoteDeadline;
     }
 
-    public void updateStatus(String status) {
-        this.status = Status.valueOf(status);
-    }
-
     public void update(MeetingUpdateRequest request) {
         if (request.title() != null) {
             if(request.title().isBlank()) {
