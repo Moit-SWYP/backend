@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.TestConstructor;
@@ -237,5 +238,43 @@ public class MeetingControllerTest {
         verifyNoInteractions(meetingService);
         Integer status = mvcResult.getResponse().getStatus();
         assertThat(status).isEqualTo(HttpStatus.BAD_REQUEST.value());
+    }
+
+    @Test
+    @DisplayName("정상 요청 시 전체 모임 조회 성공")
+    void 전체_모임_조회_성공() throws Exception {
+        // given
+        Long memberId = 1L;
+        AuthTestPrincipalContext.setMemberId(memberId);
+
+        // when
+        MvcResult mvcResult = mockMvc.perform(get("/api/meetings/all"))
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andReturn();
+
+        // then
+        verify(meetingService, times(1)).getAllMeetings(memberId);
+        Integer status = mvcResult.getResponse().getStatus();
+        assertThat(status).isEqualTo(HttpStatus.OK.value());
+    }
+
+    @Test
+    @DisplayName("정상 요청 시 기다리고 있는 모임 조회 성공")
+    void 기다리고_있는_모임_조회_성공() throws Exception {
+        // given
+        Long memberId = 1L;
+        AuthTestPrincipalContext.setMemberId(memberId);
+
+        // when
+        MvcResult mvcResult = mockMvc.perform(get("/api/meetings/waiting"))
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andReturn();
+
+        // then
+        verify(meetingService, times(1)).getWaitingMeetings(eq(memberId), any(Pageable.class));
+        Integer status = mvcResult.getResponse().getStatus();
+        assertThat(status).isEqualTo(HttpStatus.OK.value());
     }
 }

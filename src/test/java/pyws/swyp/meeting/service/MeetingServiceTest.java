@@ -2,7 +2,7 @@ package pyws.swyp.meeting.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
@@ -12,6 +12,7 @@ import static org.mockito.Mockito.when;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -20,13 +21,17 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import pyws.swyp.global.error.CustomException;
 import pyws.swyp.global.error.ErrorCode;
+import pyws.swyp.meeting.dto.MeetingBriefResponse;
 import pyws.swyp.meeting.dto.MeetingCreateRequest;
 import pyws.swyp.meeting.dto.MeetingUpdateRequest;
 import pyws.swyp.meeting.entity.Meeting;
 import pyws.swyp.meeting.entity.MeetingParticipant;
 import pyws.swyp.meeting.entity.Role;
+import pyws.swyp.meeting.entity.Status;
 import pyws.swyp.meeting.repository.MeetingParticipantRepository;
 import pyws.swyp.meeting.repository.MeetingRepository;
 import pyws.swyp.member.entity.CharacterType;
@@ -46,7 +51,8 @@ public class MeetingServiceTest {
     @InjectMocks
     private MeetingService meetingService;
 
-    LocalDateTime now = LocalDateTime.now();
+    LocalDate nowDate = LocalDate.now();
+    LocalDateTime nowDateTime = LocalDateTime.now();
 
     /*
     * 모임 생성
@@ -59,9 +65,9 @@ public class MeetingServiceTest {
         MeetingCreateRequest request = mock(MeetingCreateRequest.class);
         Meeting meeting = Meeting.builder()
                 .title("테스트 모임 생성")
-                .date(now.plusDays(7))
-                .dateVoteDeadline(now.plusDays(1))
-                .courseVoteDeadline(now.plusDays(3))
+                .date(nowDate.plusDays(7))
+                .dateVoteDeadline(nowDateTime.plusDays(1))
+                .courseVoteDeadline(nowDateTime.plusDays(3))
                 .build();
         when(request.toMeetingEntity()).thenReturn(meeting);
 
@@ -319,7 +325,7 @@ public class MeetingServiceTest {
 
         MeetingUpdateRequest request = new MeetingUpdateRequest(
                 null,
-                LocalDateTime.of(2026,1,20,13,00),
+                LocalDate.of(2026,1,20),
                 null,
                 null
         );
@@ -359,7 +365,7 @@ public class MeetingServiceTest {
 
         MeetingUpdateRequest request = new MeetingUpdateRequest(
                 null,
-                LocalDateTime.of(2026,1,20,13,00),
+                LocalDate.of(2026,1,20),
                 null,
                 null
         );
@@ -401,7 +407,7 @@ public class MeetingServiceTest {
 
         MeetingUpdateRequest request = new MeetingUpdateRequest(
                 " ",
-                LocalDateTime.of(2026,1,20,13,00),
+                LocalDate.of(2026,1,20),
                 null,
                 null
         );
@@ -428,6 +434,59 @@ public class MeetingServiceTest {
         assertThat(meeting.getDateVoteDeadline()).isEqualTo(LocalDateTime.of(2025,12,31,13,00));
         assertThat(meeting.getCourseVoteDeadline()).isNull();
 
+    }
+
+    /*
+    * 모임 조회
+    */
+
+    @Test
+    @DisplayName("모임 전체 조회 성공")
+    void 모임_전체_조회_성공() {
+        // given
+        Long memberId = 1L;
+
+        List<MeetingBriefResponse> response = List.of(mock(MeetingBriefResponse.class));
+        when(meetingParticipantRepository.findMeetingsByMemberId(memberId)).thenReturn(response);
+
+        // when
+        List<MeetingBriefResponse> result = meetingService.getAllMeetings(memberId);
+
+        // then
+        assertThat(result).isEqualTo(response);
+        verify(meetingParticipantRepository, times(1)).findMeetingsByMemberId(memberId);
+    }
+
+    @Test
+    @DisplayName("대기 중 모임 조회 성공 - CREATED, DATE_VOTING, PLACE_VOTING 상태만 조회")
+    void 대기중_모임_조회_성공() {
+        // given
+        Long memberId = 1L;
+        Pageable pageable = PageRequest.of(0,10);
+
+        List<MeetingBriefResponse> response = List.of(mock(MeetingBriefResponse.class));
+
+        when(meetingParticipantRepository.findMeetingsByMemberIdAndStatus(
+                eq(memberId),
+                anyList(),
+                eq(pageable)
+        )).thenReturn(response);
+
+        // when
+        List<MeetingBriefResponse> result = meetingService.getWaitingMeetings(memberId, pageable);
+
+        // then
+        assertThat(result).isEqualTo(response);
+        verify(meetingParticipantRepository, times(1))
+                .findMeetingsByMemberIdAndStatus(
+                        eq(memberId),
+                        eq(List.of(
+                                Status.CREATED,
+                                Status.DATE_VOTING,
+                                Status.PLACE_VOTING
+                        )),
+                        eq(pageable)
+                );
     }
 
 }
