@@ -71,12 +71,12 @@ public class MeetingService {
     }
 
     public List<MeetingBriefResponse> getAllMeetings(Long memberId) {
-        return meetingParticipantRepository.findByMemberId(memberId);
+        return meetingParticipantRepository.findMeetingsByMemberId(memberId);
     }
 
     public List<MeetingBriefResponse> getWaitingMeetings(Long memberId, Pageable pageable) {
         List<Status> statuses = List.of(Status.CREATED, Status.DATE_VOTING, Status.PLACE_VOTING);
-        return meetingParticipantRepository.findByMemberIdAndStatus(memberId, statuses, pageable);
+        return meetingParticipantRepository.findMeetingsByMemberIdAndStatus(memberId, statuses, pageable);
     }
 
     private Meeting validActiveMeeting(Long meetingId) {

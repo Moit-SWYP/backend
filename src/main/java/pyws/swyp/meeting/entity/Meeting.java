@@ -12,7 +12,9 @@ import pyws.swyp.global.entity.BaseEntity;
 import pyws.swyp.global.error.ErrorCode;
 import pyws.swyp.meeting.dto.MeetingUpdateRequest;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 @Entity
 @Getter
@@ -23,7 +25,10 @@ public class Meeting extends BaseEntity {
     private String title;
 
     @Column
-    private LocalDateTime date;
+    private LocalDate date;
+
+    @Column
+    private LocalTime time;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -38,12 +43,14 @@ public class Meeting extends BaseEntity {
     @Builder
     public Meeting(
             String title,
-            LocalDateTime date,
+            LocalDate date,
+            LocalTime time,
             LocalDateTime dateVoteDeadline,
             LocalDateTime courseVoteDeadline
     ) {
         this.title = title;
         this.date = date;
+        this.time = time;
         this.dateVoteDeadline = dateVoteDeadline;
         this.courseVoteDeadline = courseVoteDeadline;
     }
