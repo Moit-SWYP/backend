@@ -8,13 +8,12 @@ import java.io.IOException;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import pyws.swyp.global.jwt.JwtProvider;
-import pyws.swyp.member.entity.Role;
+import pyws.swyp.member.entity.MemberRole;
 
 @Component
 @RequiredArgsConstructor
@@ -41,9 +40,9 @@ public class JwtFilter extends OncePerRequestFilter {
         Boolean isAccessToken = jwtProvider.validateToken(accessToken, true);
         if (isAccessToken) {
             Long memberId = jwtProvider.getMemberId(accessToken);
-            Role role = jwtProvider.getRole(accessToken);
+            MemberRole memberRole = jwtProvider.getRole(accessToken);
 
-            var authority = new SimpleGrantedAuthority("ROLE_" + role.name());
+            var authority = new SimpleGrantedAuthority("ROLE_" + memberRole.name());
             var auth = new UsernamePasswordAuthenticationToken(memberId, null, List.of(authority));
             SecurityContextHolder.getContext().setAuthentication(auth);
         } else {

@@ -42,7 +42,7 @@ public class MemberService {
                 member.getNickname(),
                 member.getBirthDate(),
                 member.getGender(),
-                member.getRole(),
+                member.getMemberRole(),
                 member.getCharacterType(),
                 socialAccounts
         );

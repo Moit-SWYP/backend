@@ -76,7 +76,7 @@ public interface MeetingParticipantRepository extends JpaRepository<MeetingParti
                             mp.member.id,
                             mp.member.nickname,
                             mp.member.characterType,
-                            mp.role
+                            mp.participantRole
                         )
             )
             FROM MeetingParticipant mp

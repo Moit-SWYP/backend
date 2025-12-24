@@ -67,7 +67,7 @@ SET FOREIGN_KEY_CHECKS = 0;
 --     created_at DATETIME(6)             NOT NULL,
 --     is_active  BIT                     NOT NULL,
 --     updated_at DATETIME(6)             NULL,
---     role       ENUM ('HOST', 'MEMBER') NOT NULL,
+--     participantRole       ENUM ('HOST', 'MEMBER') NOT NULL,
 --     meeting_id BIGINT                  NOT NULL,
 --     member_id  BIGINT                  NOT NULL,
 --     CONSTRAINT fk_meeting_participant_member
@@ -143,7 +143,7 @@ VALUES
     (1, NOW(), 'KAKAO', 'existing-social-id-123', 4);
 
 -- MEETING_PARTICIPANT
-INSERT IGNORE INTO meeting_participant (id, created_at, is_active, updated_at, role, meeting_id, member_id)
+INSERT IGNORE INTO meeting_participant (id, created_at, is_active, updated_at, participant_role, meeting_id, member_id)
 VALUES
     (1, NOW(), 1, NULL, 'HOST',   1, 1),
     (2, NOW(), 1, NULL, 'MEMBER', 1, 2),

@@ -17,7 +17,7 @@ import pyws.swyp.member.dto.SocialLinkRequest;
 import pyws.swyp.member.entity.CharacterType;
 import pyws.swyp.member.entity.Gender;
 import pyws.swyp.member.entity.Member;
-import pyws.swyp.member.entity.Role;
+import pyws.swyp.member.entity.MemberRole;
 import pyws.swyp.member.entity.SocialAccount;
 import pyws.swyp.member.entity.SocialProvider;
 import pyws.swyp.member.repository.MemberRepository;
@@ -50,7 +50,7 @@ class SocialAccountServiceTest {
                 .nickname("테스트")
                 .birthDate(LocalDate.of(1999, 1, 1))
                 .gender(Gender.MALE)
-                .role(Role.MEMBER)
+                .memberRole(MemberRole.MEMBER)
                 .characterType(CharacterType.ACTIVE)
                 .build());
     }

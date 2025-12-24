@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 import pyws.swyp.auth.dto.JwtResponse;
 import pyws.swyp.auth.repository.RefreshTokenRepository;
 import pyws.swyp.global.jwt.JwtProvider;
-import pyws.swyp.member.entity.Role;
+import pyws.swyp.member.entity.MemberRole;
 
 @Service
 @RequiredArgsConstructor
@@ -16,9 +16,9 @@ public class JwtService {
     private final JwtProvider jwtProvider;
     private final RefreshTokenRepository refreshTokenRepository;
 
-    public JwtResponse issueTokens(Long memberId, Role role) {
-        String accessToken = jwtProvider.createAccessToken(memberId, role);
-        String refreshToken = jwtProvider.createRefreshToken(memberId, role);
+    public JwtResponse issueTokens(Long memberId, MemberRole memberRole) {
+        String accessToken = jwtProvider.createAccessToken(memberId, memberRole);
+        String refreshToken = jwtProvider.createRefreshToken(memberId, memberRole);
 
         refreshTokenRepository.save(memberId, refreshToken);
 
@@ -33,7 +33,7 @@ public class JwtService {
         }
 
         Long memberId = jwtProvider.getMemberId(refreshToken);
-        Role role = jwtProvider.getRole(refreshToken);
+        MemberRole memberRole = jwtProvider.getRole(refreshToken);
 
         // Redis에 저장된 Refresh Token과 일치하는지 확인
         boolean matches = refreshTokenRepository.matches(memberId, refreshToken);
@@ -43,7 +43,7 @@ public class JwtService {
         }
 
         // 재발급하여 반환
-        return issueTokens(memberId, role);
+        return issueTokens(memberId, memberRole);
     }
 
     public void logout(Long memberId) {

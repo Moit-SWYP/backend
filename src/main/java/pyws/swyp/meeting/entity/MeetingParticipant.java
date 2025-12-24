@@ -20,20 +20,20 @@ public class MeetingParticipant extends BaseEntity {
     
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 30)
-    private Role role;
+    private ParticipantRole participantRole;
 
     @Builder
-    public MeetingParticipant(Meeting meeting, Member member, Role role) {
+    public MeetingParticipant(Meeting meeting, Member member, ParticipantRole participantRole) {
         this.meeting = meeting;
         this.member = member;
-        this.role = role;
+        this.participantRole = participantRole;
     }
 
     public static MeetingParticipant host(Meeting meeting, Member member) {
         return MeetingParticipant.builder()
                 .meeting(meeting)
                 .member(member)
-                .role(Role.HOST)
+                .participantRole(pyws.swyp.meeting.entity.ParticipantRole.HOST)
                 .build();
     }
 }

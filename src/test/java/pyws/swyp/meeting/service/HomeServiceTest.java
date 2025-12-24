@@ -8,7 +8,7 @@ import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
 import pyws.swyp.meeting.dto.*;
-import pyws.swyp.meeting.entity.Role;
+import pyws.swyp.meeting.entity.ParticipantRole;
 import pyws.swyp.meeting.entity.Status;
 import pyws.swyp.meeting.repository.MeetingParticipantRepository;
 import pyws.swyp.member.entity.CharacterType;
@@ -44,11 +44,11 @@ public class HomeServiceTest {
                 new MeetingBriefResponse(2L, "카공", Status.PLACE_VOTING, fixedNow.plusDays(6))
         );
 
-        ParticipantResponse p1 = new ParticipantResponse(memberId, "닉네임1", CharacterType.FOODIE, Role.HOST);
-        ParticipantResponse p2 = new ParticipantResponse(2L, "닉네임2", CharacterType.TRAVELER, Role.MEMBER);
-        ParticipantResponse p3 = new ParticipantResponse(3L, "닉네임3", CharacterType.HEALER, Role.MEMBER);
-        ParticipantResponse p4 = new ParticipantResponse(4L, "닉네임4", CharacterType.STUDYER, Role.MEMBER);
-        ParticipantResponse p5 = new ParticipantResponse(5L, "닉네임5", CharacterType.FOODIE, Role.MEMBER);
+        ParticipantResponse p1 = new ParticipantResponse(memberId, "닉네임1", CharacterType.FOODIE, pyws.swyp.meeting.entity.ParticipantRole.HOST);
+        ParticipantResponse p2 = new ParticipantResponse(2L, "닉네임2", CharacterType.TRAVELER, pyws.swyp.meeting.entity.ParticipantRole.MEMBER);
+        ParticipantResponse p3 = new ParticipantResponse(3L, "닉네임3", CharacterType.HEALER, ParticipantRole.MEMBER);
+        ParticipantResponse p4 = new ParticipantResponse(4L, "닉네임4", CharacterType.STUDYER, pyws.swyp.meeting.entity.ParticipantRole.MEMBER);
+        ParticipantResponse p5 = new ParticipantResponse(5L, "닉네임5", CharacterType.FOODIE, pyws.swyp.meeting.entity.ParticipantRole.MEMBER);
 
         List<ParticipantRow> participantRows = List.of(
                 new ParticipantRow(1L, p1),

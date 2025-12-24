@@ -25,7 +25,7 @@ import pyws.swyp.member.entity.CharacterType;
 import pyws.swyp.member.entity.Gender;
 import pyws.swyp.member.entity.Member;
 import pyws.swyp.member.entity.MemberWithdrawal;
-import pyws.swyp.member.entity.Role;
+import pyws.swyp.member.entity.MemberRole;
 import pyws.swyp.member.entity.SocialAccount;
 import pyws.swyp.member.entity.SocialProvider;
 import pyws.swyp.member.entity.WithdrawalType;
@@ -65,7 +65,7 @@ class MemberServiceTest {
                 .nickname("테스트")
                 .birthDate(LocalDate.of(1999, 1, 1))
                 .gender(Gender.MALE)
-                .role(Role.MEMBER)
+                .memberRole(MemberRole.MEMBER)
                 .characterType(CharacterType.ACTIVE)
                 .build());
 
@@ -97,7 +97,7 @@ class MemberServiceTest {
         assertEquals("테스트", response.nickname());
         assertEquals(LocalDate.of(1999, 1, 1), response.birthDate());
         assertEquals(Gender.MALE, response.gender());
-        assertEquals(Role.MEMBER, response.role());
+        assertEquals(MemberRole.MEMBER, response.memberRole());
 
         List<SocialProvider> providers = response.socialAccounts().stream()
                 .map(SocialAccountInfo::socialProvider)
