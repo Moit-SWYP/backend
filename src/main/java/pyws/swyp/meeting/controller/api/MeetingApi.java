@@ -4,14 +4,17 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
+import pyws.swyp.meeting.dto.MeetingBriefResponse;
 import pyws.swyp.meeting.dto.MeetingCreateRequest;
 import pyws.swyp.meeting.dto.MeetingUpdateRequest;
+
+import java.util.List;
 
 @SecurityRequirement(name = "auth")
 @Tag(name = "Meeting API")
@@ -77,4 +80,32 @@ public interface MeetingApi {
             @PathVariable Long id,
             @RequestBody MeetingUpdateRequest request
     );
+
+    @Operation(
+            summary = "전체 모임 리스트 조회",
+            description =
+                    """
+                            캘린더뷰에서 필요한 전체 모임 리스트 조회 요청을 처리합니다.
+                            본인이 속한 모임들에 대한 brief 모임 정보를 가져옵니다.
+                    """
+    )
+    @ApiResponse(
+            responseCode = "200",
+            description = "전체 모임 리스트 조회 성공"
+    )
+    List<MeetingBriefResponse> getAllMeetings(@AuthenticationPrincipal Long memberId);
+
+    @Operation(
+            summary = "기다리고 있는 모임 리스트 조회",
+            description =
+                    """
+                            "친구들이 기다려요" -> 더보기 클릭 시 요청한 모임 리스트 조회를 처리합니다.
+                            Meeting.Status의 값이 CREATED, DATE_VOTING, PLACE_VOTING인 경우만 반환합니다.
+                    """
+    )
+    @ApiResponse(
+            responseCode = "200",
+            description = "전체 모임 리스트 조회 성공"
+    )
+    List<MeetingBriefResponse> getWaitingMeetings(@AuthenticationPrincipal Long memberId, @PageableDefault Pageable pageable);
 }

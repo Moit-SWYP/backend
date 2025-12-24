@@ -11,7 +11,7 @@ import pyws.swyp.auth.dto.JwtResponse;
 import pyws.swyp.auth.dto.LoginRequest;
 import pyws.swyp.auth.dto.SignupRequest;
 import pyws.swyp.member.entity.Member;
-import pyws.swyp.member.entity.Role;
+import pyws.swyp.member.entity.MemberRole;
 import pyws.swyp.member.entity.SocialAccount;
 import pyws.swyp.member.repository.MemberRepository;
 import pyws.swyp.member.repository.SocialAccountRepository;
@@ -40,7 +40,7 @@ public class AuthService {
 
         // 기존 회원 -> JWT 발급
         Member member = socialAccountOpt.get().getMember();
-        JwtResponse tokens = jwtService.issueTokens(member.getId(), member.getRole());
+        JwtResponse tokens = jwtService.issueTokens(member.getId(), member.getMemberRole());
 
         return new AuthResponse(false, tokens);
     }
@@ -64,7 +64,7 @@ public class AuthService {
                 .nickname(request.nickname())
                 .birthDate(request.birthDate())
                 .gender(request.gender())
-                .role(Role.MEMBER)
+                .memberRole(MemberRole.MEMBER)
                 .characterType(request.characterType())
                 .build();
         memberRepository.save(member);
@@ -78,7 +78,7 @@ public class AuthService {
         socialAccountRepository.save(socialAccount);
 
         // 로그인 처리
-        JwtResponse tokens = jwtService.issueTokens(member.getId(), member.getRole());
+        JwtResponse tokens = jwtService.issueTokens(member.getId(), member.getMemberRole());
 
         return new AuthResponse(false, tokens);
     }

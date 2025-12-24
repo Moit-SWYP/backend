@@ -4,12 +4,13 @@ package pyws.swyp.meeting.dto;
 import jakarta.validation.constraints.NotBlank;
 import pyws.swyp.meeting.entity.Meeting;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 public record MeetingCreateRequest(
         @NotBlank(message = "모임명을 입력해주세요")
         String title,
-        LocalDateTime date,
+        LocalDate date,
         LocalDateTime dateVoteDeadline,
         LocalDateTime courseVoteDeadline
 ) {

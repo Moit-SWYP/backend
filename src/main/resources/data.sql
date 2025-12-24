@@ -67,7 +67,7 @@ SET FOREIGN_KEY_CHECKS = 0;
 --     created_at DATETIME(6)             NOT NULL,
 --     is_active  BIT                     NOT NULL,
 --     updated_at DATETIME(6)             NULL,
---     role       ENUM ('HOST', 'MEMBER') NOT NULL,
+--     participantRole       ENUM ('HOST', 'MEMBER') NOT NULL,
 --     meeting_id BIGINT                  NOT NULL,
 --     member_id  BIGINT                  NOT NULL,
 --     CONSTRAINT fk_meeting_participant_member
@@ -124,10 +124,10 @@ SET FOREIGN_KEY_CHECKS = 0;
 ------------------------------------------------------
 
 -- MEETING
-INSERT IGNORE INTO meeting (id, created_at, is_active, updated_at, date, status, title)
+INSERT IGNORE INTO meeting (id, created_at, is_active, updated_at, date, time, status, title)
 VALUES
-    (1, NOW(), 1, NULL, '2025-12-20 18:00:00', 'CREATED', '연말 모임'),
-    (2, NOW(), 1, NULL, '2025-12-25 19:00:00', 'VOTING', '크리스마스 모임');
+    (1, NOW(), 1, NULL, '2025-12-20', NULL, 'CREATED', '연말 모임'),
+    (2, NOW(), 1, NULL, '2025-12-25', '19:00:00', 'PLACE_VOTING', '크리스마스 모임');
 
 -- MEMBER
 INSERT IGNORE INTO member (id, created_at, birth_date, email, gender, nickname, character_type)
@@ -143,7 +143,7 @@ VALUES
     (1, NOW(), 'KAKAO', 'existing-social-id-123', 4);
 
 -- MEETING_PARTICIPANT
-INSERT IGNORE INTO meeting_participant (id, created_at, is_active, updated_at, role, meeting_id, member_id)
+INSERT IGNORE INTO meeting_participant (id, created_at, is_active, updated_at, participant_role, meeting_id, member_id)
 VALUES
     (1, NOW(), 1, NULL, 'HOST',   1, 1),
     (2, NOW(), 1, NULL, 'MEMBER', 1, 2),

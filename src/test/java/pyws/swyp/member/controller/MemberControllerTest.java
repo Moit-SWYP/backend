@@ -28,13 +28,8 @@ import pyws.swyp.config.TestRedisConfig;
 import pyws.swyp.global.error.ErrorCode;
 import pyws.swyp.member.dto.MemberWithdrawRequest;
 import pyws.swyp.member.dto.SocialLinkRequest;
-import pyws.swyp.member.entity.CharacterType;
-import pyws.swyp.member.entity.Gender;
-import pyws.swyp.member.entity.Member;
-import pyws.swyp.member.entity.Role;
-import pyws.swyp.member.entity.SocialAccount;
-import pyws.swyp.member.entity.SocialProvider;
-import pyws.swyp.member.entity.WithdrawalType;
+import pyws.swyp.member.entity.*;
+import pyws.swyp.member.entity.MemberRole;
 import pyws.swyp.member.repository.MemberRepository;
 import pyws.swyp.member.repository.MemberWithdrawalRepository;
 import pyws.swyp.member.repository.SocialAccountRepository;
@@ -73,7 +68,7 @@ class MemberControllerTest {
                 .nickname("테스트")
                 .gender(Gender.MALE)
                 .birthDate(of(1999, 1, 1))
-                .role(Role.MEMBER)
+                .memberRole(MemberRole.MEMBER)
                 .characterType(CharacterType.ACTIVE)
                 .build());
 
@@ -99,7 +94,7 @@ class MemberControllerTest {
                 .andExpect(jsonPath("$.data.email").value("test@example.com"))
                 .andExpect(jsonPath("$.data.nickname").value("테스트"))
                 .andExpect(jsonPath("$.data.gender").value("MALE"))
-                .andExpect(jsonPath("$.data.role").value("MEMBER"))
+                .andExpect(jsonPath("$.data.memberRole").value("MEMBER"))
                 .andExpect(jsonPath("$.data.socialAccounts[0].socialProvider").value(this.provider.name()));
     }
 

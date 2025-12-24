@@ -1,6 +1,6 @@
 package pyws.swyp.meeting.entity;
 
-public enum Role {
+public enum ParticipantRole {
 
     HOST, MEMBER
 }

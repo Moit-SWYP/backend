@@ -8,9 +8,10 @@ import lombok.RequiredArgsConstructor;
 public enum Status {
 
     CREATED(1),
-    VOTING(2),
-    FIXED(3),
-    DONE(4),
+    DATE_VOTING(2),
+    PLACE_VOTING(3),
+    FIXED(4),
+    DONE(5),
     ;
 
     private final int level;

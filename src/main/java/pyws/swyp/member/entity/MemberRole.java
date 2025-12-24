@@ -1,5 +1,5 @@
 package pyws.swyp.member.entity;
 
-public enum Role {
+public enum MemberRole {
     ADMIN, MEMBER;
 }
