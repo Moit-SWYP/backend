@@ -344,7 +344,7 @@ public class MeetingServiceTest {
         verify(meetingParticipantRepository).findByMemberIdAndMeetingId(memberId, meetingId);
 
         assertThat(meeting.getTitle()).isEqualTo("모잇 오프라인 모임");
-        assertThat(meeting.getDate()).isEqualTo(LocalDateTime.of(2026,1,20,13,00));
+        assertThat(meeting.getDate()).isEqualTo(LocalDate.of(2026,1,20));
         assertThat(meeting.getDateVoteDeadline()).isEqualTo(LocalDateTime.of(2025,12,31,13,00));
         assertThat(meeting.getCourseVoteDeadline()).isNull();
     }
