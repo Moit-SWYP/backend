@@ -32,7 +32,7 @@ public class Meeting extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private Status status = Status.CREATED;
+    private MeetingStatus status = MeetingStatus.CREATED;
 
     @Column
     private LocalDateTime dateVoteDeadline;
@@ -53,6 +53,10 @@ public class Meeting extends BaseEntity {
         this.time = time;
         this.dateVoteDeadline = dateVoteDeadline;
         this.courseVoteDeadline = courseVoteDeadline;
+    }
+
+    public void updateStatus(MeetingStatus status) {
+        this.status = status;
     }
 
     public void update(MeetingUpdateRequest request) {

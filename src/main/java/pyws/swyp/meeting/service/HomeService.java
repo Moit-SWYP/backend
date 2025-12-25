@@ -5,7 +5,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pyws.swyp.meeting.dto.*;
-import pyws.swyp.meeting.entity.Status;
+import pyws.swyp.meeting.entity.MeetingStatus;
 import pyws.swyp.meeting.repository.MeetingParticipantRepository;
 
 import java.time.LocalDate;
@@ -53,7 +53,7 @@ public class HomeService {
                         .toList();
 
         // 홈 하단 기다리고 있는 일정 카드
-        List<Status> statuses = List.of(Status.CREATED, Status.DATE_VOTING, Status.PLACE_VOTING);
+        List<MeetingStatus> statuses = List.of(MeetingStatus.CREATED, MeetingStatus.DATE_VOTING, MeetingStatus.PLACE_VOTING);
         List<MeetingBriefResponse> waitingMeetings
                 = meetingParticipantRepository.findMeetingsByMemberIdAndStatus(
                         memberId, statuses, PageRequest.of(0, DEFAULT_TOP));

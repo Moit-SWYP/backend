@@ -31,7 +31,7 @@ import pyws.swyp.meeting.dto.MeetingUpdateRequest;
 import pyws.swyp.meeting.entity.Meeting;
 import pyws.swyp.meeting.entity.MeetingParticipant;
 import pyws.swyp.meeting.entity.ParticipantRole;
-import pyws.swyp.meeting.entity.Status;
+import pyws.swyp.meeting.entity.MeetingStatus;
 import pyws.swyp.meeting.repository.MeetingParticipantRepository;
 import pyws.swyp.meeting.repository.MeetingRepository;
 import pyws.swyp.member.entity.CharacterType;
@@ -482,9 +482,9 @@ public class MeetingServiceTest {
                 .findMeetingsByMemberIdAndStatus(
                         eq(memberId),
                         eq(List.of(
-                                Status.CREATED,
-                                Status.DATE_VOTING,
-                                Status.PLACE_VOTING
+                                MeetingStatus.CREATED,
+                                MeetingStatus.DATE_VOTING,
+                                MeetingStatus.PLACE_VOTING
                         )),
                         eq(pageable)
                 );
