@@ -1,24 +1,21 @@
 package pyws.swyp.global.error;
 
 
-import java.util.Arrays;
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
-import org.springframework.core.convert.ConversionFailedException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
-import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
-import tools.jackson.core.JacksonException.Reference;
 import tools.jackson.databind.exc.MismatchedInputException;
 
+@Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
@@ -41,9 +38,8 @@ public class GlobalExceptionHandler {
 
         if (cause instanceof MismatchedInputException mie) {
             Map<String, String> error = new HashMap<>();
-            String fieldName = mie.getPath().getLast().getPropertyName();
-            String message = "값의 형식이 올바르지 않습니다.";
-            error.put(fieldName, message);
+            String path = toPathString(mie);
+            error.put(path, "값의 형식이 올바르지 않습니다.");
             return new ErrorResponse(ErrorCode.INVALID_INPUT, error);
         }
 
@@ -75,5 +71,36 @@ public class GlobalExceptionHandler {
         return ResponseEntity
                 .status(errorCode.getStatus())
                 .body(new ErrorResponse(errorCode));
+    }
+
+    /**
+     * 처리되지 않은 서버 내부 오류에 대한 최종 처리
+     */
+    @ExceptionHandler(Exception.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ErrorResponse handle(Exception e, HttpServletRequest request) {
+        log.error(
+                "[INTERNAL_SERVER_ERROR] path={} method={} message={}",
+                request.getRequestURI(),
+                request.getMethod(),
+                e.getMessage(),
+                e
+        );
+        return new ErrorResponse(ErrorCode.INTERNAL_SERVER_ERROR);
+    }
+
+    private String toPathString(MismatchedInputException mie) {
+        StringBuilder sb = new StringBuilder();
+
+        for (var ref : mie.getPath()) {
+            if (ref.getPropertyName() != null) {
+                if (!sb.isEmpty()) sb.append(".");
+                sb.append(ref.getPropertyName());
+            } else if (ref.getIndex() >= 0) {
+                sb.append("[").append(ref.getIndex()).append("]");
+            }
+        }
+
+        return sb.isEmpty() ? "unknown" : sb.toString();
     }
 }
