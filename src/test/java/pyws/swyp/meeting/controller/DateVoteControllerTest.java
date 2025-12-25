@@ -38,6 +38,8 @@ import pyws.swyp.meeting.repository.MeetingParticipantRepository;
 import pyws.swyp.meeting.repository.MeetingRepository;
 import pyws.swyp.meeting.repository.vote.DateOptionRepository;
 import pyws.swyp.meeting.repository.vote.DateVoteRepository;
+import pyws.swyp.meeting.repository.vote.TimeOptionRepository;
+import pyws.swyp.meeting.repository.vote.TimeVoteRepository;
 import pyws.swyp.member.entity.CharacterType;
 import pyws.swyp.member.entity.Gender;
 import pyws.swyp.member.entity.Member;
@@ -63,6 +65,10 @@ class DateVoteControllerTest {
     DateOptionRepository dateOptionRepository;
     @Autowired
     DateVoteRepository dateVoteRepository;
+    @Autowired
+    TimeOptionRepository timeOptionRepository;
+    @Autowired
+    TimeVoteRepository timeVoteRepository;
 
     private Long meetingId;
     private Long memberId1;
@@ -76,6 +82,8 @@ class DateVoteControllerTest {
     void setUp() {
         dateVoteRepository.deleteAll();
         dateOptionRepository.deleteAll();
+        timeVoteRepository.deleteAll();
+        timeOptionRepository.deleteAll();
         meetingParticipantRepository.deleteAll();
         meetingRepository.deleteAll();
         memberRepository.deleteAll();
