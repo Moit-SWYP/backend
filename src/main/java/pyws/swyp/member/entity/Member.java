@@ -40,7 +40,7 @@ public class Member {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 50)
-    private MemberRole memberRole;
+    private MemberRole role;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 50)
@@ -54,12 +54,12 @@ public class Member {
     private LocalDateTime updatedAt;
 
     @Builder
-    public Member(String email, String nickname, LocalDate birthDate, Gender gender, MemberRole memberRole, CharacterType characterType) {
+    public Member(String email, String nickname, LocalDate birthDate, Gender gender, MemberRole role, CharacterType characterType) {
         this.email = email;
         this.nickname = nickname;
         this.birthDate = birthDate;
         this.gender = gender;
-        this.memberRole = memberRole;
+        this.role = role;
         this.characterType = characterType;
     }
 

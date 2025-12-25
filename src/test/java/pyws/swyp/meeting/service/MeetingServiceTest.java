@@ -94,7 +94,7 @@ public class MeetingServiceTest {
         MeetingParticipant savedParticipant = captor.getValue();
         assertThat(savedParticipant.getMeeting()).isSameAs(meeting);
         assertThat(savedParticipant.getMember()).isSameAs(member);
-        assertThat(savedParticipant.getParticipantRole()).isEqualTo(pyws.swyp.meeting.entity.ParticipantRole.HOST);
+        assertThat(savedParticipant.getRole()).isEqualTo(pyws.swyp.meeting.entity.ParticipantRole.HOST);
     }
 
     @Test
@@ -133,7 +133,7 @@ public class MeetingServiceTest {
         when(meetingRepository.findById(meetingId)).thenReturn(Optional.of(meeting));
 
         MeetingParticipant meetingParticipant = mock(MeetingParticipant.class);
-        when(meetingParticipant.getParticipantRole()).thenReturn(ParticipantRole.HOST);
+        when(meetingParticipant.getRole()).thenReturn(ParticipantRole.HOST);
         when(meetingParticipantRepository.findByMemberIdAndMeetingId(memberId, meetingId))
                 .thenReturn(Optional.of(meetingParticipant));
 
@@ -204,7 +204,7 @@ public class MeetingServiceTest {
         when(meetingRepository.findById(meetingId)).thenReturn(Optional.of(meeting));
 
         MeetingParticipant meetingParticipant = mock(MeetingParticipant.class);
-        when(meetingParticipant.getParticipantRole()).thenReturn(pyws.swyp.meeting.entity.ParticipantRole.MEMBER);
+        when(meetingParticipant.getRole()).thenReturn(pyws.swyp.meeting.entity.ParticipantRole.MEMBER);
         when(meetingParticipantRepository.findByMemberIdAndMeetingId(memberId, meetingId))
                 .thenReturn(Optional.of(meetingParticipant));
 
@@ -237,7 +237,7 @@ public class MeetingServiceTest {
         when(meetingRepository.findById(meetingId)).thenReturn(Optional.of(meeting));
 
         MeetingParticipant meetingParticipant = mock(MeetingParticipant.class);
-        when(meetingParticipant.getParticipantRole()).thenReturn(pyws.swyp.meeting.entity.ParticipantRole.MEMBER);
+        when(meetingParticipant.getRole()).thenReturn(pyws.swyp.meeting.entity.ParticipantRole.MEMBER);
         when(meetingParticipantRepository.findByMemberIdAndMeetingId(memberId, meetingId))
                 .thenReturn(Optional.of(meetingParticipant));
 
@@ -289,7 +289,7 @@ public class MeetingServiceTest {
         when(meetingRepository.findById(meetingId)).thenReturn(Optional.of(meeting));
 
         MeetingParticipant meetingParticipant = mock(MeetingParticipant.class);
-        when(meetingParticipant.getParticipantRole()).thenReturn(pyws.swyp.meeting.entity.ParticipantRole.HOST);
+        when(meetingParticipant.getRole()).thenReturn(pyws.swyp.meeting.entity.ParticipantRole.HOST);
         when(meetingParticipantRepository.findByMemberIdAndMeetingId(memberId, meetingId))
                 .thenReturn(Optional.of(meetingParticipant));
 

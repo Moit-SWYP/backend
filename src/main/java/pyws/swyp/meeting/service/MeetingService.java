@@ -45,7 +45,7 @@ public class MeetingService {
         Meeting meeting = validActiveMeeting(meetingId);
 
         MeetingParticipant participant = validateMeetingParticipant(memberId, meetingId);
-        if(participant.getParticipantRole() != pyws.swyp.meeting.entity.ParticipantRole.HOST) {
+        if(participant.getRole() != pyws.swyp.meeting.entity.ParticipantRole.HOST) {
             throw ErrorCode.MEETING_ACCESS_DENIED.toException();
         }
 
@@ -56,7 +56,7 @@ public class MeetingService {
         validActiveMeeting(meetingId);
 
         MeetingParticipant participant = validateMeetingParticipant(memberId, meetingId);
-        if(participant.getParticipantRole() != ParticipantRole.MEMBER) {
+        if(participant.getRole() != ParticipantRole.MEMBER) {
             throw ErrorCode.MEETING_QUIT_DENIED.toException();
         }
 

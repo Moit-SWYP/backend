@@ -65,7 +65,7 @@ class MemberServiceTest {
                 .nickname("테스트")
                 .birthDate(LocalDate.of(1999, 1, 1))
                 .gender(Gender.MALE)
-                .memberRole(MemberRole.MEMBER)
+                .role(MemberRole.MEMBER)
                 .characterType(CharacterType.ACTIVE)
                 .build());
 
