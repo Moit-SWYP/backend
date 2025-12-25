@@ -143,7 +143,7 @@ VALUES
     (1, NOW(), 'KAKAO', 'existing-social-id-123', 4);
 
 -- MEETING_PARTICIPANT
-INSERT IGNORE INTO meeting_participant (id, created_at, is_active, updated_at, participant_role, meeting_id, member_id)
+INSERT IGNORE INTO meeting_participant (id, created_at, is_active, updated_at, role, meeting_id, member_id)
 VALUES
     (1, NOW(), 1, NULL, 'HOST',   1, 1),
     (2, NOW(), 1, NULL, 'MEMBER', 1, 2),
@@ -159,21 +159,21 @@ VALUES
     (3, NOW(), 1, NULL, 1, 2);
 
 -- DATE_OPTION
-INSERT IGNORE INTO date_option (id, created_at, is_active, updated_at, candidate_date, meeting_id)
+INSERT IGNORE INTO date_option (id, created_at, date, meeting_id)
 VALUES
-    (1, NOW(), 1, NULL, '2025-12-20 18:00:00', 1),
-    (2, NOW(), 1, NULL, '2025-12-21 18:00:00', 1),
-    (3, NOW(), 1, NULL, '2025-12-24 19:00:00', 2),
-    (4, NOW(), 1, NULL, '2025-12-25 19:00:00', 2);
+    (1, NOW(), '2025-12-20 18:00:00', 1),
+    (2, NOW(), '2025-12-21 18:00:00', 1),
+    (3, NOW(), '2025-12-24 19:00:00', 2),
+    (4, NOW(), '2025-12-25 19:00:00', 2);
 
 -- DATE_VOTE
-INSERT IGNORE INTO date_vote (id, created_at, is_active, updated_at, date_option_id, meeting_participant_id)
+INSERT IGNORE INTO date_vote (id, created_at, date_option_id, meeting_participant_id)
 VALUES
-    (1, NOW(), 1, NULL, 1, 1),
-    (2, NOW(), 1, NULL, 2, 2),
-    (3, NOW(), 1, NULL, 1, 3),
-    (4, NOW(), 1, NULL, 3, 4),
-    (5, NOW(), 1, NULL, 4, 5);
+    (1, NOW(), 1, 1),
+    (2, NOW(), 2, 2),
+    (3, NOW(), 1, 3),
+    (4, NOW(), 3, 4),
+    (5, NOW(), 4, 5);
 
 -- PLACE_OPTION
 INSERT IGNORE INTO place_option (id, created_at, is_active, updated_at, status, course_id)
