@@ -161,10 +161,10 @@ VALUES
 -- DATE_OPTION
 INSERT IGNORE INTO date_option (id, created_at, date, meeting_id)
 VALUES
-    (1, NOW(), '2025-12-20 18:00:00', 1),
-    (2, NOW(), '2025-12-21 18:00:00', 1),
-    (3, NOW(), '2025-12-24 19:00:00', 2),
-    (4, NOW(), '2025-12-25 19:00:00', 2);
+    (1, NOW(), '2025-12-20', 1),
+    (2, NOW(), '2025-12-21', 1),
+    (3, NOW(), '2025-12-24', 2),
+    (4, NOW(), '2025-12-25', 2);
 
 -- DATE_VOTE
 INSERT IGNORE INTO date_vote (id, created_at, date_option_id, meeting_participant_id)
