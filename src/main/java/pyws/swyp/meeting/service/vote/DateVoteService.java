@@ -107,6 +107,10 @@ public class DateVoteService {
         List<LocalDate> rankedByCount = dateOptionRepository.findRankedDatesByMeetingId(meetingId,
                 PageRequest.of(0, limit));
 
+        if (rankedByCount.isEmpty()) {
+            throw ErrorCode.DATE_VOTE_NOT_FOUND.toException();
+        }
+
         // 오름차순으로 정렬
         List<LocalDate> sortedByDate = rankedByCount.stream()
                 .sorted()
