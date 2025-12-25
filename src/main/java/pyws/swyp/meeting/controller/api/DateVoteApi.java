@@ -56,45 +56,54 @@ public interface DateVoteApi {
     )
     @ApiResponse(
             responseCode = "400",
-            description = "투표 불가능한 모임 상태",
+            description = "잘못된 요청 또는 투표 불가능한 모임 상태",
             content = @Content(
                     mediaType = "application/json",
                     examples = {
                             @ExampleObject(
-                                    name = "투표 불가",
+                                    name = "잘못된 요청",
                                     value = """
-                                            {
-                                              "code": "MEETING_NOT_VOTABLE",
-                                              "message": "투표할 수 없는 모임 상태입니다."
-                                            }
-                                            """
+                        {
+                          "code": "COM0001",
+                          "message": "잘못된 요청입니다."
+                        }
+                        """
+                            ),
+                            @ExampleObject(
+                                    name = "투표 불가 상태",
+                                    value = """
+                        {
+                          "code": "MEET0005",
+                          "message": "이미 확정됐거나 완료된 모임입니다."
+                        }
+                        """
                             )
                     }
             )
     )
     @ApiResponse(
             responseCode = "404",
-            description = "모임 또는 모임원(참가자) 정보를 찾을 수 없음",
+            description = "모임 또는 모임원 정보를 찾을 수 없음",
             content = @Content(
                     mediaType = "application/json",
                     examples = {
                             @ExampleObject(
                                     name = "모임 없음",
                                     value = """
-                                            {
-                                              "code": "MEETING_NOT_FOUND",
-                                              "message": "모임을 찾을 수 없습니다."
-                                            }
-                                            """
+                        {
+                          "code": "MEET0001",
+                          "message": "존재하지 않는 모임입니다."
+                        }
+                        """
                             ),
                             @ExampleObject(
-                                    name = "모임 참가자 아님",
+                                    name = "모임원 아님",
                                     value = """
-                                            {
-                                              "code": "MEETING_PARTICIPANT_NOT_FOUND",
-                                              "message": "모임 참가자를 찾을 수 없습니다."
-                                            }
-                                            """
+                        {
+                          "code": "MEET0006",
+                          "message": "존재하지 않는 모임원입니다."
+                        }
+                        """
                             )
                     }
             )
@@ -145,18 +154,27 @@ public interface DateVoteApi {
     )
     @ApiResponse(
             responseCode = "404",
-            description = "모임 참가자 아님",
+            description = "모임 또는 모임원 정보를 찾을 수 없음",
             content = @Content(
                     mediaType = "application/json",
                     examples = {
                             @ExampleObject(
-                                    name = "모임 참가자 아님",
+                                    name = "모임 없음",
                                     value = """
-                                            {
-                                              "code": "MEETING_PARTICIPANT_NOT_FOUND",
-                                              "message": "모임 참가자를 찾을 수 없습니다."
-                                            }
-                                            """
+                        {
+                          "code": "MEET0001",
+                          "message": "존재하지 않는 모임입니다."
+                        }
+                        """
+                            ),
+                            @ExampleObject(
+                                    name = "모임원 아님",
+                                    value = """
+                        {
+                          "code": "MEET0006",
+                          "message": "존재하지 않는 모임원입니다."
+                        }
+                        """
                             )
                     }
             )
@@ -210,18 +228,27 @@ public interface DateVoteApi {
     )
     @ApiResponse(
             responseCode = "404",
-            description = "모임 참가자 아님",
+            description = "모임 또는 모임원 정보를 찾을 수 없음",
             content = @Content(
                     mediaType = "application/json",
                     examples = {
                             @ExampleObject(
-                                    name = "모임 참가자 아님",
+                                    name = "모임 없음",
                                     value = """
-                                            {
-                                              "code": "MEETING_PARTICIPANT_NOT_FOUND",
-                                              "message": "모임 참가자를 찾을 수 없습니다."
-                                            }
-                                            """
+                        {
+                          "code": "MEET0001",
+                          "message": "존재하지 않는 모임입니다."
+                        }
+                        """
+                            ),
+                            @ExampleObject(
+                                    name = "모임원 아님",
+                                    value = """
+                        {
+                          "code": "MEET00006",
+                          "message": "존재하지 않는 모임원입니다."
+                        }
+                        """
                             )
                     }
             )
@@ -282,18 +309,27 @@ public interface DateVoteApi {
     )
     @ApiResponse(
             responseCode = "404",
-            description = "모임 참가자 아님",
+            description = "모임 또는 모임원 정보를 찾을 수 없음",
             content = @Content(
                     mediaType = "application/json",
                     examples = {
                             @ExampleObject(
-                                    name = "모임 참가자 아님",
+                                    name = "모임 없음",
                                     value = """
-                                            {
-                                              "code": "MEETING_PARTICIPANT_NOT_FOUND",
-                                              "message": "모임 참가자를 찾을 수 없습니다."
-                                            }
-                                            """
+                        {
+                          "code": "MEET0001",
+                          "message": "존재하지 않는 모임입니다."
+                        }
+                        """
+                            ),
+                            @ExampleObject(
+                                    name = "모임원 아님",
+                                    value = """
+                        {
+                          "code": "MEET00006",
+                          "message": "존재하지 않는 모임원입니다."
+                        }
+                        """
                             )
                     }
             )
