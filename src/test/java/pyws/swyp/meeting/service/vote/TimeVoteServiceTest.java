@@ -1,13 +1,17 @@
 package pyws.swyp.meeting.service.vote;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonFormat.Shape;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.stream.Collectors;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -17,19 +21,18 @@ import org.springframework.boot.test.context.SpringBootTest;
 import pyws.swyp.global.error.CustomException;
 import pyws.swyp.global.error.ErrorCode;
 import pyws.swyp.meeting.dto.vote.TimeVoteRequest;
-import pyws.swyp.meeting.dto.vote.TimeVoterResponse;
-import pyws.swyp.meeting.dto.vote.TimeVotersResponse;
 import pyws.swyp.meeting.dto.vote.TopVotedTimeResponse;
 import pyws.swyp.meeting.dto.vote.VotedTimeResponse;
 import pyws.swyp.meeting.dto.vote.VotedTimesResponse;
+import pyws.swyp.meeting.dto.vote.VoterResponse;
+import pyws.swyp.meeting.dto.vote.VotersResponse;
 import pyws.swyp.meeting.entity.Meeting;
 import pyws.swyp.meeting.entity.MeetingParticipant;
 import pyws.swyp.meeting.entity.MeetingStatus;
 import pyws.swyp.meeting.entity.ParticipantRole;
-import pyws.swyp.meeting.entity.vote.TimeOption;
+import pyws.swyp.meeting.entity.vote.TimeVote;
 import pyws.swyp.meeting.repository.MeetingParticipantRepository;
 import pyws.swyp.meeting.repository.MeetingRepository;
-import pyws.swyp.meeting.repository.vote.TimeOptionRepository;
 import pyws.swyp.meeting.repository.vote.TimeVoteRepository;
 import pyws.swyp.member.entity.CharacterType;
 import pyws.swyp.member.entity.Gender;
@@ -48,8 +51,6 @@ class TimeVoteServiceTest {
     MeetingRepository meetingRepository;
     @Autowired
     MeetingParticipantRepository meetingParticipantRepository;
-    @Autowired
-    TimeOptionRepository timeOptionRepository;
     @Autowired
     TimeVoteRepository timeVoteRepository;
 
@@ -94,7 +95,6 @@ class TimeVoteServiceTest {
         p3 = participants.get(2);
 
         timeVoteRepository.deleteAll();
-        timeOptionRepository.deleteAll();
     }
 
     @Test
@@ -111,18 +111,14 @@ class TimeVoteServiceTest {
         timeVoteService.voteTimes(memberId, meeting.getId(), request);
 
         // then
-        List<TimeOption> options = timeOptionRepository.findAll();
-        assertEquals(2, options.size());
+        List<TimeVote> timeVotes = timeVoteRepository.findAllByMeetingParticipantId(p1.getId());
+        assertEquals(2, timeVotes.size());
 
-        List<LocalTime> times = options.stream()
-                .map(TimeOption::getTime)
+        List<LocalTime> times = timeVotes.stream()
+                .map(TimeVote::getTime)
                 .toList();
-
         assertTrue(times.contains(t1));
         assertTrue(times.contains(t2));
-
-        List<Long> optionIds = timeVoteRepository.findOptionIdsByMeetingParticipantId(p1.getId());
-        assertEquals(2, optionIds.size());
     }
 
     @Test
@@ -143,72 +139,19 @@ class TimeVoteServiceTest {
         timeVoteService.voteTimes(memberId, meeting.getId(), secondRequest);
 
         // then
-        List<Long> optionIds = timeVoteRepository.findOptionIdsByMeetingParticipantId(p1.getId());
-        assertEquals(1, optionIds.size());
+        List<TimeVote> timeVotes = timeVoteRepository.findAllByMeetingParticipantId(p1.getId());
+        assertEquals(1, timeVotes.size());
 
-        TimeOption optT3 = timeOptionRepository.findAll().stream()
-                .filter(o -> o.getTime().equals(t3))
-                .findFirst()
-                .orElseThrow();
-
-        assertEquals(optT3.getId(), optionIds.getFirst());
-    }
-
-    @Test
-    @DisplayName("0표가 된 투표 후보는 제거된다.")
-    void voteTimes_cleanupOrphanOptions_deletedWhenNoVotes() {
-        // given
-        LocalTime t1 = LocalTime.of(15, 0);
-        LocalTime t2 = LocalTime.of(15, 30);
-        LocalTime t3 = LocalTime.of(16, 0);
-
-        Long memberId = p1.getMember().getId();
-
-        TimeVoteRequest firstRequest = new TimeVoteRequest(List.of(t1, t2));
-        TimeVoteRequest secondRequest = new TimeVoteRequest(List.of(t1, t3));
-
-        // when
-        timeVoteService.voteTimes(memberId, meeting.getId(), firstRequest);
-        timeVoteService.voteTimes(memberId, meeting.getId(), secondRequest);
-
-        // then
-        List<LocalTime> remainingTimes = timeOptionRepository.findAll().stream()
-                .map(TimeOption::getTime)
+        List<LocalTime> times = timeVotes.stream()
+                .map(TimeVote::getTime)
                 .toList();
-
-        assertEquals(secondRequest.times().size(), remainingTimes.size());
-        assertTrue(remainingTimes.contains(t1));
-        assertTrue(remainingTimes.contains(t3));
-        assertFalse(remainingTimes.contains(t2));
+        assertFalse(times.contains(t1));
+        assertFalse(times.contains(t2));
+        assertTrue(times.contains(t3));
     }
 
     @Test
-    @DisplayName("다른 사람이 사용 중인 TimeOption은 orphan 정리로 삭제되지 않는다")
-    void voteTimes_cleanupDoesNotDeleteOptionsUsedByOthers() {
-        // given
-        LocalTime t1 = LocalTime.of(15, 0);
-        LocalTime t2 = LocalTime.of(15, 30);
-        LocalTime t3 = LocalTime.of(16, 0);
-
-        Long memberId = p1.getMember().getId();
-        Long anotherId = p2.getMember().getId();
-        Long meetingId = meeting.getId();
-
-        // when
-        timeVoteService.voteTimes(memberId, meetingId, new TimeVoteRequest(List.of(t1, t2)));
-        timeVoteService.voteTimes(anotherId, meetingId, new TimeVoteRequest(List.of(t2)));
-        timeVoteService.voteTimes(memberId, meetingId, new TimeVoteRequest(List.of(t1, t3)));
-
-        // then
-        Set<LocalTime> remainingTimes = timeOptionRepository.findAll().stream()
-                .map(TimeOption::getTime)
-                .collect(Collectors.toSet());
-
-        assertTrue(remainingTimes.contains(t2));
-    }
-
-    @Test
-    @DisplayName("최다 득표 시간 1개를 조회한다. (동점이면 시간 오름차순)")
+    @DisplayName("시간 투표 Top N은 투표 수 내림차순, 날짜 오름차순으로 정렬된다.")
     void getTopVotedTime_returnsTop1() {
         // given
         LocalTime t1 = LocalTime.of(15, 0);
@@ -222,17 +165,21 @@ class TimeVoteServiceTest {
 
         // 득표수:
         // t1: 2 (p1, p3)
-        // t2: 2 (p2, p3)  -> 동점, 더 이른 시간이 top1이어야 함 (t1)
+        // t2: 3 (p1, p2, p3)
         // t3: 1 (p1)
-        timeVoteService.voteTimes(memberId1, meetingId, new TimeVoteRequest(List.of(t1, t3)));
+        timeVoteService.voteTimes(memberId1, meetingId, new TimeVoteRequest(List.of(t1, t2, t3)));
         timeVoteService.voteTimes(memberId2, meetingId, new TimeVoteRequest(List.of(t2)));
         timeVoteService.voteTimes(memberId3, meetingId, new TimeVoteRequest(List.of(t1, t2)));
 
+        int limit = 2;
+
         // when
-        TopVotedTimeResponse response = timeVoteService.getTopVotedTime(memberId1, meetingId);
+        TopVotedTimeResponse response = timeVoteService.getTopVotedTimes(memberId1, meetingId, limit);
 
         // then
-        assertEquals(t1, response.time());
+        List<LocalTime> times = response.times();
+        assertEquals(1, times.size());
+        assertTrue(times.contains(t2));
     }
 
     @Test
@@ -284,13 +231,13 @@ class TimeVoteServiceTest {
         timeVoteService.voteTimes(memberId3, meetingId, new TimeVoteRequest(List.of(t1, t2, t3)));
 
         // when
-        TimeVotersResponse response = timeVoteService.getVotersByTime(memberId1, meetingId, t1);
+        VotersResponse response = timeVoteService.getVotersByTime(memberId1, meetingId, t1);
 
         // then
         assertEquals(2, response.voters().size());
 
         List<Long> voterIds = response.voters().stream()
-                .map(TimeVoterResponse::memberId)
+                .map(VoterResponse::memberId)
                 .toList();
 
         assertTrue(voterIds.contains(memberId1));

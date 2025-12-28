@@ -3,6 +3,7 @@ package pyws.swyp.meeting.controller.vote;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -36,9 +37,7 @@ import pyws.swyp.meeting.entity.ParticipantRole;
 import pyws.swyp.meeting.entity.vote.DateVote;
 import pyws.swyp.meeting.repository.MeetingParticipantRepository;
 import pyws.swyp.meeting.repository.MeetingRepository;
-import pyws.swyp.meeting.repository.vote.DateOptionRepository;
 import pyws.swyp.meeting.repository.vote.DateVoteRepository;
-import pyws.swyp.meeting.repository.vote.TimeOptionRepository;
 import pyws.swyp.meeting.repository.vote.TimeVoteRepository;
 import pyws.swyp.member.entity.CharacterType;
 import pyws.swyp.member.entity.Gender;
@@ -62,11 +61,7 @@ class DateVoteControllerTest {
     @Autowired
     MeetingParticipantRepository meetingParticipantRepository;
     @Autowired
-    DateOptionRepository dateOptionRepository;
-    @Autowired
     DateVoteRepository dateVoteRepository;
-    @Autowired
-    TimeOptionRepository timeOptionRepository;
     @Autowired
     TimeVoteRepository timeVoteRepository;
 
@@ -81,9 +76,7 @@ class DateVoteControllerTest {
     @BeforeEach
     void setUp() {
         dateVoteRepository.deleteAll();
-        dateOptionRepository.deleteAll();
         timeVoteRepository.deleteAll();
-        timeOptionRepository.deleteAll();
         meetingParticipantRepository.deleteAll();
         meetingRepository.deleteAll();
         memberRepository.deleteAll();
@@ -149,6 +142,12 @@ class DateVoteControllerTest {
         // then
         List<DateVote> votes = dateVoteRepository.findAllByMeetingParticipantId(participantId1);
         assertEquals(2, votes.size());
+
+        List<LocalDate> dates = votes.stream()
+                .map(DateVote::getDate)
+                .toList();
+        assertTrue(dates.contains(d1));
+        assertTrue(dates.contains(d2));
     }
 
     @Test
@@ -175,8 +174,9 @@ class DateVoteControllerTest {
         // then
         List<DateVote> votes = dateVoteRepository.findAllByMeetingParticipantId(participantId1);
         assertEquals(1, votes.size());
+        assertEquals(d3, votes.getFirst().getDate());
 
-        List<LocalDate> votedDates = dateOptionRepository.findVotedDatesByMeetingId(meetingId);
+        List<LocalDate> votedDates = dateVoteRepository.findVotedDatesByMeetingId(meetingId);
         assertEquals(d3, votedDates.getFirst());
     }
 
@@ -246,8 +246,8 @@ class DateVoteControllerTest {
     }
 
     @Test
-    @DisplayName("Top N 날짜 조회에 성공한다.")
-    void getTopDates_success() throws Exception {
+    @DisplayName("최대 투표수를 받은 날짜를 조회한다 (동점 시 날짜 오름차순)")
+    void getTopVotedDates_success() throws Exception {
         // given: d2가 가장 많이 나오게 투표
         LocalDate d1 = LocalDate.of(2025, 1, 10);
         LocalDate d2 = LocalDate.of(2025, 1, 11);
@@ -272,11 +272,11 @@ class DateVoteControllerTest {
                 .andExpect(status().isOk());
 
         // expected
-        mockMvc.perform(get("/api/meetings/{meetingId}/votes/dates/top?limit=1", meetingId))
+        mockMvc.perform(get("/api/meetings/{meetingId}/votes/dates/top?limit=2", meetingId))
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.data.dates").value(d2.toString()));
+                .andExpect(jsonPath("$.data.dates[0]").value(d2.toString()));
     }
 
     @Test

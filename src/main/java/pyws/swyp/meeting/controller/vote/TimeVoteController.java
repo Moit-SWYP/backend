@@ -9,12 +9,13 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import pyws.swyp.meeting.controller.api.TimeVoteApi;
 import pyws.swyp.meeting.dto.vote.TimeVoteRequest;
-import pyws.swyp.meeting.dto.vote.TimeVotersResponse;
 import pyws.swyp.meeting.dto.vote.TopVotedTimeResponse;
 import pyws.swyp.meeting.dto.vote.VotedTimesResponse;
+import pyws.swyp.meeting.dto.vote.VotersResponse;
 import pyws.swyp.meeting.service.vote.TimeVoteService;
 
 @RestController
@@ -36,9 +37,10 @@ public class TimeVoteController implements TimeVoteApi {
     @GetMapping("/top")
     public TopVotedTimeResponse getTopVotedTime(
             @AuthenticationPrincipal Long memberId,
-            @PathVariable Long meetingId
+            @PathVariable Long meetingId,
+            @RequestParam(defaultValue = "3") int limit
     ) {
-        return timeVoteService.getTopVotedTime(memberId, meetingId);
+        return timeVoteService.getTopVotedTimes(memberId, meetingId, limit);
     }
 
     @GetMapping
@@ -50,7 +52,7 @@ public class TimeVoteController implements TimeVoteApi {
     }
 
     @GetMapping("/{time}/voters")
-    public TimeVotersResponse getVotersByTime(
+    public VotersResponse getVotersByTime(
             @AuthenticationPrincipal Long memberId,
             @PathVariable Long meetingId,
             @PathVariable @DateTimeFormat(iso = DateTimeFormat.ISO.TIME) LocalTime time

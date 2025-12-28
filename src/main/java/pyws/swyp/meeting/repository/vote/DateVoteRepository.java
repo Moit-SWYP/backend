@@ -2,51 +2,57 @@ package pyws.swyp.meeting.repository.vote;
 
 import java.time.LocalDate;
 import java.util.List;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
+import pyws.swyp.meeting.dto.vote.VoterResponse;
 import pyws.swyp.meeting.entity.vote.DateVote;
 
 public interface DateVoteRepository extends JpaRepository<DateVote, Long> {
 
-    @Query("""
-            select dv.dateOption.id
-            from DateVote dv
-            where dv.dateOption.id in :optionIds
-            group by dv.dateOption.id
-            """)
-    List<Long> findExistingOptionIds(@Param("optionIds") List<Long> optionIds);
-
-    @Query("""
-            select dv.dateOption.id
-            from DateVote dv
-            where dv.meetingParticipant.id = :meetingParticipantId
-            """)
-    List<Long> findOptionIdsByMeetingParticipantId(@Param("meetingParticipantId") Long meetingParticipantId);
-
     List<DateVote> findAllByMeetingParticipantId(Long meetingParticipantId);
 
-    @Query("""
-            select dv
-            from DateVote dv
-                join fetch dv.dateOption do
-                join fetch dv.meetingParticipant mp
-                join fetch mp.member m
-            where do.meeting.id = :meetingId
-              and do.date between :startDate and :endDate
-            """)
-    List<DateVote> findAllByMeeting(
-            @Param("meetingId") Long meetingId);
+    void deleteAllByMeetingParticipantId(Long participantId);
 
     @Query("""
-            select dv
+            select dv.date
             from DateVote dv
-                join fetch dv.meetingParticipant mp
-                join fetch mp.member m
-                join dv.dateOption o
-            where o.meeting.id = :meetingId
-              and o.date = :date
+            where dv.meeting.id = :meetingId
+            group by dv.date
+            having count (dv.id) = (
+                select max(cnt)
+                from (
+                   select count(dv.id) as cnt
+                   from DateVote dv
+                   where dv.meeting.id = :meetingId
+                   group by dv.date
+                )
+            )
+            order by dv.date asc
             """)
-    List<DateVote> findAllByMeetingIdAndDate(Long meetingId, LocalDate date);
+    List<LocalDate> findTopDatesByMeetingId(Long meetingId, Pageable pageable);
+
+    @Query("""
+            select distinct dv.date
+            from DateVote dv
+            where dv.meeting.id = :meetingId
+            order by dv.date asc
+            """)
+    List<LocalDate> findVotedDatesByMeetingId(Long meetingId);
+
+    @Query("""
+            select new pyws.swyp.meeting.dto.vote.VoterResponse(
+                m.id,
+                m.nickname,
+                m.characterType
+            )
+            from DateVote dv
+            join dv.meetingParticipant mp
+            join mp.member m
+            where dv.meeting.id = :meetingId
+              and dv.date = :date
+            order by m.id asc
+            """)
+    List<VoterResponse> findVotersByMeetingIdAndDate(Long meetingId, LocalDate date);
 }
 

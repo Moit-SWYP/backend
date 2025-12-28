@@ -16,7 +16,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import pyws.swyp.meeting.dto.vote.DateVoteRequest;
-import pyws.swyp.meeting.dto.vote.DateVotersResponse;
+import pyws.swyp.meeting.dto.vote.VotersResponse;
 import pyws.swyp.meeting.dto.vote.VotedDatesResponse;
 
 @SecurityRequirement(name = "auth")
@@ -179,7 +179,7 @@ public interface DateVoteApi {
                     }
             )
     )
-    VotedDatesResponse getTopDates(
+    VotedDatesResponse getTopVotedDates(
             @Parameter(hidden = true)
             @AuthenticationPrincipal Long memberId,
 
@@ -334,7 +334,7 @@ public interface DateVoteApi {
                     }
             )
     )
-    DateVotersResponse getVotersByDate(
+    VotersResponse getVotersByDate(
             @Parameter(hidden = true)
             @AuthenticationPrincipal Long memberId,
 

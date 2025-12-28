@@ -130,12 +130,12 @@ VALUES
     (2, NOW(), 1, NULL, '2025-12-25', '19:00:00', 'PLACE_VOTING', '크리스마스 모임');
 
 -- MEMBER
-INSERT IGNORE INTO member (id, created_at, birth_date, email, gender, nickname, character_type)
+INSERT IGNORE INTO member (id, created_at, birth_date, email, gender, nickname, character_type, role)
 VALUES
-    (1, NOW(), '1999-01-01', 'host@example.com',   'MALE',   '호스트유저', 'FOODIE'),
-    (2, NOW(), '1998-05-10', 'member1@example.com', 'FEMALE', '참여자1', 'DRINKER'),
-    (3, NOW(), '1995-02-14', 'member2@example.com', 'MALE',   '참여자2', 'HEALER'),
-    (4, NOW(), '1995-02-14', 'existing@example.com', 'MALE',   '기존 회원', 'TRAVELER');
+    (1, NOW(), '1999-01-01', 'host@example.com',   'MALE',   '호스트유저', 'FOODIE', 'MEMBER'),
+    (2, NOW(), '1998-05-10', 'member1@example.com', 'FEMALE', '참여자1', 'DRINKER', 'MEMBER'),
+    (3, NOW(), '1995-02-14', 'member2@example.com', 'MALE',   '참여자2', 'HEALER', 'MEMBER'),
+    (4, NOW(), '1995-02-14', 'existing@example.com', 'MALE',   '기존 회원', 'TRAVELER', 'MEMBER');
 
 -- SOCIAL_ACCOUNT
 INSERT IGNORE INTO social_account (id, created_at, social_provider, social_id, member_id)
@@ -158,22 +158,21 @@ VALUES
     (2, NOW(), 1, NULL, 2, 1),
     (3, NOW(), 1, NULL, 1, 2);
 
--- DATE_OPTION
-INSERT IGNORE INTO date_option (id, created_at, date, meeting_id)
-VALUES
-    (1, NOW(), '2025-12-20', 1),
-    (2, NOW(), '2025-12-21', 1),
-    (3, NOW(), '2025-12-24', 2),
-    (4, NOW(), '2025-12-25', 2);
-
 -- DATE_VOTE
-INSERT IGNORE INTO date_vote (id, created_at, date_option_id, meeting_participant_id)
+INSERT IGNORE INTO date_vote (id, created_at, meeting_participant_id, meeting_id, date)
 VALUES
-    (1, NOW(), 1, 1),
-    (2, NOW(), 2, 2),
-    (3, NOW(), 1, 3),
-    (4, NOW(), 3, 4),
-    (5, NOW(), 4, 5);
+    (1, NOW(), 1,1, '2025-12-20'),
+    (2, NOW(), 2,1, '2025-12-21'),
+    (3, NOW(), 3,1, '2025-12-24'),
+    (4, NOW(), 4,2, '2025-12-25'),
+    (5, NOW(), 5,2, '2025-12-26');
+
+-- TIME_VOTE
+INSERT IGNORE INTO time_vote (id, created_at, meeting_id, meeting_participant_id, time)
+VALUES
+    (1, NOW(), 1, 1, '15:00:00'), -- host
+    (2, NOW(), 1, 2, '15:00:00'), -- member1
+    (3, NOW(), 1, 3, '16:00:00'); -- member2
 
 -- PLACE_OPTION
 INSERT IGNORE INTO place_option (id, created_at, is_active, updated_at, status, course_id)

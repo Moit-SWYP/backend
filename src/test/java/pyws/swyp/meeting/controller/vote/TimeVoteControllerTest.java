@@ -3,6 +3,8 @@ package pyws.swyp.meeting.controller.vote;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -34,13 +36,10 @@ import pyws.swyp.meeting.entity.Meeting;
 import pyws.swyp.meeting.entity.MeetingParticipant;
 import pyws.swyp.meeting.entity.MeetingStatus;
 import pyws.swyp.meeting.entity.ParticipantRole;
-import pyws.swyp.meeting.entity.vote.TimeOption;
 import pyws.swyp.meeting.entity.vote.TimeVote;
 import pyws.swyp.meeting.repository.MeetingParticipantRepository;
 import pyws.swyp.meeting.repository.MeetingRepository;
-import pyws.swyp.meeting.repository.vote.DateOptionRepository;
 import pyws.swyp.meeting.repository.vote.DateVoteRepository;
-import pyws.swyp.meeting.repository.vote.TimeOptionRepository;
 import pyws.swyp.meeting.repository.vote.TimeVoteRepository;
 import pyws.swyp.member.entity.CharacterType;
 import pyws.swyp.member.entity.Gender;
@@ -64,11 +63,7 @@ class TimeVoteControllerTest {
     @Autowired
     MeetingParticipantRepository meetingParticipantRepository;
     @Autowired
-    DateOptionRepository dateOptionRepository;
-    @Autowired
     DateVoteRepository dateVoteRepository;
-    @Autowired
-    TimeOptionRepository timeOptionRepository;
     @Autowired
     TimeVoteRepository timeVoteRepository;
 
@@ -83,9 +78,7 @@ class TimeVoteControllerTest {
     @BeforeEach
     void setUp() {
         dateVoteRepository.deleteAll();
-        dateOptionRepository.deleteAll();
         timeVoteRepository.deleteAll();
-        timeOptionRepository.deleteAll();
         meetingParticipantRepository.deleteAll();
         meetingRepository.deleteAll();
         memberRepository.deleteAll();
@@ -150,6 +143,12 @@ class TimeVoteControllerTest {
         // then
         List<TimeVote> votes = timeVoteRepository.findAllByMeetingParticipantId(participantId1);
         assertEquals(2, votes.size());
+
+        List<LocalTime> times = votes.stream()
+                .map(TimeVote::getTime)
+                .toList();
+        assertTrue(times.contains(t1));
+        assertTrue(times.contains(t2));
     }
 
     @Test
@@ -177,11 +176,10 @@ class TimeVoteControllerTest {
         // then
         List<TimeVote> votes = timeVoteRepository.findAllByMeetingParticipantId(participantId1);
         assertEquals(1, votes.size());
+        assertEquals(t3, votes.getFirst().getTime());
 
-        List<TimeOption> timeOptions = timeOptionRepository.findAll();
-        assertEquals(1, timeOptions.size());
-        TimeOption timeOption = timeOptions.getFirst();
-        assertEquals(t3, timeOption.getTime());
+        List<LocalTime> times = timeVoteRepository.findVotedTimesByMeetingId(meetingId);
+        assertEquals(t3, times.getFirst());
     }
 
     @Test
@@ -246,24 +244,25 @@ class TimeVoteControllerTest {
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.data.times").isArray())
                 .andExpect(jsonPath("$.data.times[*].time",
-                        contains(t1.toString(), t2.toString(), t3.toString())))
+                        contains(t2.toString(), t1.toString(), t3.toString())))
                 .andExpect(jsonPath("$.data.times[?(@.time=='15:00')].count").value(1))
                 .andExpect(jsonPath("$.data.times[?(@.time=='15:30')].count").value(2))
                 .andExpect(jsonPath("$.data.times[?(@.time=='16:00')].count").value(1));
     }
 
     @Test
-    @DisplayName("최다 득표 시간 1개 조회에 성공한다. (동점이면 시간 오름차순)")
+    @DisplayName("최대 투표수를 받은 시간을 조회한다. (동점 시 날짜 오름차순)")
     void getTopVotedTime_success() throws Exception {
         // given
         LocalTime t1 = LocalTime.of(15, 0);
         LocalTime t2 = LocalTime.of(15, 30);
+        LocalTime t3 = LocalTime.of(16, 0);
 
-        // 득표: t1=2, t2=2 (동점) -> 더 이른 t1 반환 기대
+        // 득표: t1=2, t2=2 (동점)
         AuthTestPrincipalContext.setMemberId(memberId1);
         mockMvc.perform(post("/api/meetings/{meetingId}/votes/times", meetingId)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(new TimeVoteRequest(List.of(t1)))))
+                        .content(objectMapper.writeValueAsString(new TimeVoteRequest(List.of(t1, t3)))))
                 .andExpect(status().isOk());
 
         AuthTestPrincipalContext.setMemberId(memberId2);
@@ -279,11 +278,12 @@ class TimeVoteControllerTest {
                 .andExpect(status().isOk());
 
         // expected
-        mockMvc.perform(get("/api/meetings/{meetingId}/votes/times/top", meetingId))
+        mockMvc.perform(get("/api/meetings/{meetingId}/votes/times/top?limit=2", meetingId))
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.data.time").value(t1.toString()));
+                .andExpect(jsonPath("$.data.times[0]").value(t1.toString()))
+                .andExpect(jsonPath("$.data.times[1]").value(t2.toString()));
     }
 
     @Test

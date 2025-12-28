@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import pyws.swyp.meeting.controller.api.DateVoteApi;
 import pyws.swyp.meeting.dto.vote.DateVoteRequest;
-import pyws.swyp.meeting.dto.vote.DateVotersResponse;
+import pyws.swyp.meeting.dto.vote.VotersResponse;
 import pyws.swyp.meeting.dto.vote.VotedDatesResponse;
 import pyws.swyp.meeting.service.vote.DateVoteService;
 
@@ -37,12 +37,12 @@ public class DateVoteController implements DateVoteApi {
     }
 
     @GetMapping("/top")
-    public VotedDatesResponse getTopDates(
+    public VotedDatesResponse getTopVotedDates(
             @AuthenticationPrincipal Long memberId,
             @PathVariable Long meetingId,
             @RequestParam(defaultValue = "3") int limit
     ) {
-        return dateVoteService.getTopDateOptions(memberId, meetingId, limit);
+        return dateVoteService.getTopVotedDates(memberId, meetingId, limit);
     }
 
     @GetMapping
@@ -54,7 +54,7 @@ public class DateVoteController implements DateVoteApi {
     }
 
     @GetMapping("/{date}/voters")
-    public DateVotersResponse getVotersByDate(
+    public VotersResponse getVotersByDate(
             @AuthenticationPrincipal Long memberId,
             @PathVariable Long meetingId,
             @PathVariable @DateTimeFormat(iso = ISO.DATE) LocalDate date

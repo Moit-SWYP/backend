@@ -11,12 +11,13 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
-import pyws.swyp.global.entity.BaseEntity;
+import pyws.swyp.meeting.entity.Meeting;
 import pyws.swyp.meeting.entity.MeetingParticipant;
 
 @Entity
@@ -25,8 +26,8 @@ import pyws.swyp.meeting.entity.MeetingParticipant;
 @Table(
         uniqueConstraints = {
                 @UniqueConstraint(
-                        name = "uk_participant_time_option",
-                        columnNames = {"meeting_participant_id", "time_option_id"}
+                        name = "uk_participant_time",
+                        columnNames = {"meeting_participant_id", "time"}
                 )
         }
 )
@@ -37,20 +38,24 @@ public class TimeVote {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "meeting_id", nullable = false)
+    private Meeting meeting;
+
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "meeting_participant_id", nullable = false)
     private MeetingParticipant meetingParticipant;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "time_option_id", nullable = false)
-    private TimeOption timeOption;
+    @Column(nullable = false)
+    private LocalTime time;
 
     @CreationTimestamp
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
     @Builder
-    public TimeVote(MeetingParticipant meetingParticipant, TimeOption timeOption) {
+    public TimeVote(Meeting meeting, MeetingParticipant meetingParticipant, LocalTime time) {
+        this.meeting = meeting;
         this.meetingParticipant = meetingParticipant;
-        this.timeOption = timeOption;
+        this.time = time;
     }
 }

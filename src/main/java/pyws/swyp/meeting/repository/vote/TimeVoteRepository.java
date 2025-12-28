@@ -2,35 +2,69 @@ package pyws.swyp.meeting.repository.vote;
 
 import java.time.LocalTime;
 import java.util.List;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
+import pyws.swyp.meeting.dto.vote.VotedTimeResponse;
+import pyws.swyp.meeting.dto.vote.VoterResponse;
 import pyws.swyp.meeting.entity.vote.TimeVote;
 
 public interface TimeVoteRepository extends JpaRepository<TimeVote, Long> {
+
     List<TimeVote> findAllByMeetingParticipantId(Long participantId);
 
-    @Query("""
-            select tv.timeOption.id
-            from TimeVote tv
-            where tv.timeOption.id in :optionIds
-            group by tv.timeOption.id
-            """)
-    List<Long> findExistingOptionIds(List<Long> optionIds);
+    void deleteAllByMeetingParticipantId(Long id);
 
     @Query("""
-            select tv
+            select tv.time
             from TimeVote tv
-            join tv.timeOption to
-            where to.meeting.id = :meetingId
-              and to.time = :time
+            where tv.meeting.id = :meetingId
+            group by tv.time
+            having count(tv.id) = (
+                select max(cnt)
+                from (
+                    select count(tv2.id) as cnt
+                    from TimeVote tv2
+                    where tv2.meeting.id = :meetingId
+                    group by tv2.time
+                )
+            )
+            order by tv.time asc
             """)
-    List<TimeVote> findAllByMeetingIdAndTime(Long meetingId, LocalTime time);
+    List<LocalTime> findTopTimesByMeetingId(Long meetingId, Pageable pageable);
 
     @Query("""
-            select tv.timeOption.id
+            select new pyws.swyp.meeting.dto.vote.VotedTimeResponse(
+                tv.time,
+                count(tv.id)
+            )
             from TimeVote tv
-            where tv.meetingParticipant.id = :meetingParticipantId
+            where tv.meeting.id = :meetingId
+            group by tv.time
+            order by count(tv.id) desc, tv.time asc
             """)
-    List<Long> findOptionIdsByMeetingParticipantId(Long meetingParticipantId);
+    List<VotedTimeResponse> findVotedTimesWithCounts(Long meetingId);
+
+    @Query("""
+            select new pyws.swyp.meeting.dto.vote.VoterResponse(
+                m.id,
+                m.nickname,
+                m.characterType
+            )
+            from TimeVote tv
+            join tv.meetingParticipant mp
+            join mp.member m
+            where tv.meeting.id = :meetingId
+              and tv.time = :time
+            order by m.id asc
+            """)
+    List<VoterResponse> findVotersByMeetingIdAndTime(Long meetingId, LocalTime time);
+
+    @Query("""
+            select distinct tv.time
+            from TimeVote tv
+            where tv.meeting.id = :meetingId
+            order by tv.time asc
+            """)
+    List<LocalTime> findVotedTimesByMeetingId(Long meetingId);
 }

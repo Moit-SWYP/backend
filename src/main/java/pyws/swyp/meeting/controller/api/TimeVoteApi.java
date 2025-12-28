@@ -8,21 +8,16 @@ import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import java.time.LocalDate;
 import java.time.LocalTime;
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.format.annotation.DateTimeFormat.ISO;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
-import pyws.swyp.meeting.dto.vote.DateVoteRequest;
-import pyws.swyp.meeting.dto.vote.DateVotersResponse;
 import pyws.swyp.meeting.dto.vote.TimeVoteRequest;
-import pyws.swyp.meeting.dto.vote.TimeVotersResponse;
 import pyws.swyp.meeting.dto.vote.TopVotedTimeResponse;
-import pyws.swyp.meeting.dto.vote.VotedDatesResponse;
 import pyws.swyp.meeting.dto.vote.VotedTimesResponse;
+import pyws.swyp.meeting.dto.vote.VotersResponse;
 
 @SecurityRequirement(name = "auth")
 @Tag(name = "Time Vote API", description = "모임 시간 투표 / 투표 현황 조회 API")
@@ -124,12 +119,13 @@ public interface TimeVoteApi {
     );
 
     @Operation(
-            summary = "최다 득표 시간 조회",
+            summary = "상위 시간 조회",
             description =
                     """
-                            투표 수 기준으로 가장 많이 득표된 시간을 조회합니다.
+                            투표 수 기준으로 상위 시간을 조회합니다.
                             
-                            - 동점인 경우 시간 오름차순으로 하나만 반환됩니다.
+                            - limit 만큼만 반환합니다. (기본값: 3)
+                            - 동점인 경우 시간 오름차순으로 정렬됩니다.
                             
                             Authorization 헤더에 Access Token이 필요합니다.
                             """
@@ -147,7 +143,7 @@ public interface TimeVoteApi {
                                               "code": "SUCCESS",
                                               "message": "요청이 성공적으로 처리되었습니다.",
                                               "data": {
-                                                "time": "15:00"
+                                                "time": ["15:00", "15:30"]
                                               }
                                             }
                                             """
@@ -187,7 +183,13 @@ public interface TimeVoteApi {
             @AuthenticationPrincipal Long memberId,
 
             @Parameter(description = "모임 ID", example = "1")
-            @PathVariable Long meetingId
+            @PathVariable Long meetingId,
+            @Parameter(
+                    name = "limit",
+                    description = "조회할 최대 개수 (기본값 3)",
+                    example = "3"
+            )
+            @RequestParam(defaultValue = "3") int limit
     );
 
     @Operation(
@@ -327,7 +329,7 @@ public interface TimeVoteApi {
                     }
             )
     )
-    TimeVotersResponse getVotersByTime(
+    VotersResponse getVotersByTime(
             @Parameter(hidden = true)
             @AuthenticationPrincipal Long memberId,
 

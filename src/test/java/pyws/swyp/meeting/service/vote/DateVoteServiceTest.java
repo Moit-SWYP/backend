@@ -7,25 +7,22 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import pyws.swyp.meeting.dto.vote.DateVoteRequest;
-import pyws.swyp.meeting.dto.vote.DateVoterResponse;
-import pyws.swyp.meeting.dto.vote.DateVotersResponse;
+import pyws.swyp.meeting.dto.vote.VoterResponse;
+import pyws.swyp.meeting.dto.vote.VotersResponse;
 import pyws.swyp.meeting.dto.vote.VotedDatesResponse;
 import pyws.swyp.meeting.entity.Meeting;
 import pyws.swyp.meeting.entity.MeetingParticipant;
 import pyws.swyp.meeting.entity.MeetingStatus;
 import pyws.swyp.meeting.entity.ParticipantRole;
-import pyws.swyp.meeting.entity.vote.DateOption;
+import pyws.swyp.meeting.entity.vote.DateVote;
 import pyws.swyp.meeting.repository.MeetingParticipantRepository;
 import pyws.swyp.meeting.repository.MeetingRepository;
-import pyws.swyp.meeting.repository.vote.DateOptionRepository;
 import pyws.swyp.meeting.repository.vote.DateVoteRepository;
 import pyws.swyp.member.entity.CharacterType;
 import pyws.swyp.member.entity.Gender;
@@ -44,8 +41,6 @@ class DateVoteServiceTest {
     MeetingRepository meetingRepository;
     @Autowired
     MeetingParticipantRepository meetingParticipantRepository;
-    @Autowired
-    DateOptionRepository dateOptionRepository;
     @Autowired
     DateVoteRepository dateVoteRepository;
 
@@ -90,12 +85,11 @@ class DateVoteServiceTest {
         p3 = participants.get(2);
 
         dateVoteRepository.deleteAll();
-        dateOptionRepository.deleteAll();
     }
 
     @Test
     @DisplayName("첫 날짜 투표에 성공한다.")
-    void voteDates_createsOptionsAndVotes() {
+    void voteDates_createsDateVotes() {
         // given
         LocalDate d1 = LocalDate.of(2025, 1, 10);
         LocalDate d2 = LocalDate.of(2025, 1, 12);
@@ -107,24 +101,20 @@ class DateVoteServiceTest {
         dateVoteService.voteDates(memberId, meeting.getId(), request);
 
         // then
-        List<DateOption> options = dateOptionRepository.findAll();
-        assertEquals(2, options.size());
+        List<DateVote> dateVotes = dateVoteRepository.findAllByMeetingParticipantId(p1.getId());
+        assertEquals(2, dateVotes.size());
 
-        List<LocalDate> dates = options.stream()
-                .map(DateOption::getDate)
+        List<LocalDate> dates = dateVotes.stream()
+                .map(DateVote::getDate)
                 .toList();
-
         assertTrue(dates.contains(d1));
         assertTrue(dates.contains(d2));
-
-        List<Long> optionIds = dateVoteRepository.findOptionIdsByMeetingParticipantId(p1.getId());
-        assertEquals(2, optionIds.size());
     }
 
     @Test
     @DisplayName("재투표 시에 기존 투표 기록은 덮어써진다.")
     void voteDates_overwriteReplacesVotes() {
-        // given
+        // given: 덮어쓰기로 d3만 투표됨
         LocalDate d1 = LocalDate.of(2025, 1, 10);
         LocalDate d2 = LocalDate.of(2025, 1, 12);
         LocalDate d3 = LocalDate.of(2025, 1, 11);
@@ -139,73 +129,20 @@ class DateVoteServiceTest {
         dateVoteService.voteDates(memberId, meeting.getId(), secondRequest);
 
         // then
-        List<Long> optionIds = dateVoteRepository.findOptionIdsByMeetingParticipantId(p1.getId());
-        assertEquals(1, optionIds.size());
+        List<DateVote> dateVotes = dateVoteRepository.findAllByMeetingParticipantId(p1.getId());
+        assertEquals(1, dateVotes.size());
 
-        DateOption optD3 = dateOptionRepository.findAll().stream()
-                .filter(o -> o.getDate().equals(d3))
-                .findFirst()
-                .orElseThrow();
-
-        assertEquals(optD3.getId(), optionIds.get(0));
-    }
-
-    @Test
-    @DisplayName("0표가 된 투표 후보는 제거된다.")
-    void voteDates_cleanupOrphanOptions_deletedWhenNoVotes() {
-        // given
-        LocalDate d1 = LocalDate.of(2025, 1, 10);
-        LocalDate d2 = LocalDate.of(2025, 1, 12);
-        LocalDate d3 = LocalDate.of(2025, 1, 11);
-
-        Long memberId = p1.getMember().getId();
-
-        DateVoteRequest firstRequest = new DateVoteRequest(List.of(d1, d2));
-        DateVoteRequest secondRequest = new DateVoteRequest(List.of(d1, d3));
-
-        // when
-        dateVoteService.voteDates(memberId, meeting.getId(), firstRequest);
-        dateVoteService.voteDates(memberId, meeting.getId(), secondRequest);
-
-        // then
-        List<LocalDate> remainingDates = dateOptionRepository.findAll().stream()
-                .map(DateOption::getDate)
+        List<LocalDate> dates = dateVotes.stream()
+                .map(DateVote::getDate)
                 .toList();
-
-        assertEquals(secondRequest.dates().size(), remainingDates.size());
-        assertTrue(remainingDates.contains(d1));
-        assertTrue(remainingDates.contains(d3));
-        assertFalse(remainingDates.contains(d2));
-    }
-
-    @Test
-    @DisplayName("다른 사람이 사용 중인 DateOption은 orphan 정리로 삭제되지 않는다")
-    void voteDates_cleanupDoesNotDeleteOptionsUsedByOthers() {
-        // given
-        LocalDate d1 = LocalDate.of(2025, 1, 10);
-        LocalDate d2 = LocalDate.of(2025, 1, 12);
-        LocalDate d3 = LocalDate.of(2025, 1, 11);
-
-        Long memberId = p1.getMember().getId();
-        Long anotherId = p2.getMember().getId();
-        Long meetingId = meeting.getId();
-
-        // when
-        dateVoteService.voteDates(memberId, meetingId, new DateVoteRequest(List.of(d1, d2)));
-        dateVoteService.voteDates(anotherId, meetingId, new DateVoteRequest(List.of(d2)));
-        dateVoteService.voteDates(memberId, meetingId, new DateVoteRequest(List.of(d1, d3)));
-
-        // then
-        Set<LocalDate> remainingDates = dateOptionRepository.findAll().stream()
-                .map(DateOption::getDate)
-                .collect(Collectors.toSet());
-
-        assertTrue(remainingDates.contains(d2));
+        assertFalse(dates.contains(d1));
+        assertFalse(dates.contains(d2));
+        assertTrue(dates.contains(d3));
     }
 
     @Test
     @DisplayName("날짜 투표 Top N은 투표 수 내림차순, 날짜 오름차순으로 정렬된다.")
-    void getTopDateOptions_returnsRankedLocalDates() {
+    void getTopDatesOptions_returnsRankedLocalVotedDates() {
         // given
         LocalDate d1 = LocalDate.of(2025, 1, 10);
         LocalDate d2 = LocalDate.of(2025, 1, 11);
@@ -217,7 +154,7 @@ class DateVoteServiceTest {
         Long memberId2 = p2.getMember().getId();
         Long memberId3 = p3.getMember().getId();
 
-        // d1: 2, d2: 3, d3: 2, d4: 1
+        // d1: 2, d2: 3, d3: 2, d4: 1 -> d2만 반환
         dateVoteService.voteDates(memberId1, meetingId, new DateVoteRequest(List.of(d1, d2)));
         dateVoteService.voteDates(memberId2, meetingId, new DateVoteRequest(List.of(d2, d3)));
         dateVoteService.voteDates(memberId3, meetingId, new DateVoteRequest(List.of(d1, d2, d3, d4)));
@@ -225,12 +162,12 @@ class DateVoteServiceTest {
         int limit = 2;
 
         // when
-        VotedDatesResponse response = dateVoteService.getTopDateOptions(memberId1, meetingId, limit);
-        List<LocalDate> topDates = response.dates();
+        VotedDatesResponse response = dateVoteService.getTopVotedDates(memberId1, meetingId, limit);
 
         // then
-        assertEquals(limit, topDates.size());
-        assertEquals(List.of(d1, d2), topDates);
+        List<LocalDate> dates = response.dates();
+        assertEquals(1, dates.size());
+        assertTrue(dates.contains(d2));
     }
 
     @Test
@@ -278,13 +215,13 @@ class DateVoteServiceTest {
         dateVoteService.voteDates(memberId3, meetingId, new DateVoteRequest(List.of(d1, d2, d3, d4)));
 
         //when: d1에 투표한 모임원 조회
-        DateVotersResponse response = dateVoteService.getVotersByDate(memberId1, meetingId, d1);
+        VotersResponse response = dateVoteService.getVotersByDate(memberId1, meetingId, d1);
 
         //then
         assertEquals(2, response.voters().size());
 
         List<Long> voterIds = response.voters().stream()
-                .map(DateVoterResponse::memberId)
+                .map(VoterResponse::memberId)
                 .toList();
 
         assertTrue(voterIds.contains(memberId1));
