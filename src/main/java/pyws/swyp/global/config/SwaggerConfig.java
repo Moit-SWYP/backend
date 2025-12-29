@@ -18,7 +18,14 @@ import org.springframework.context.annotation.Configuration;
                 version = "v1.0"
         ),
         servers = {
-                @Server(url = "https://moit.shop/")
+                @Server(
+                        url = "https://moit.shop",
+                        description = "Develop Server"
+                ),
+                @Server(
+                        url = "http://localhost:8080",
+                        description = "Local Development Server"
+                )
         }
 )
 @SecurityScheme(
