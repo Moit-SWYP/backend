@@ -65,7 +65,7 @@ jobs:
         with:
           host: ${{ secrets.NCP_SERVER_HOST }}
           username: ${{ secrets.NCP_SERVER_USER }}
-          key: ${{ secrets.NCP_SERVER_PASSWORD }}
+          key: ${{ secrets.NCP_SERVER_SSH_KEY }}
           port: ${{  secrets.SSH_PORT }}
           script: |
             docker login \
@@ -73,6 +73,6 @@ jobs:
               -p ${{ secrets.NCP_SECRET_KEY }} \
               ${{ secrets.NCP_REGISTRY_NAME }}.kr.ncr.ntruss.com
             
-            cd /root/moit
+            cd /home/deploy/moit
             docker compose pull
             docker compose up -d --force-recreate
