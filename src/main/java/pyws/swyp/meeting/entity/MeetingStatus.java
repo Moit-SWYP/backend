@@ -5,7 +5,7 @@ import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 @Getter
-public enum Status {
+public enum MeetingStatus {
 
     CREATED(1),
     DATE_VOTING(2),
@@ -15,4 +15,8 @@ public enum Status {
     ;
 
     private final int level;
+
+    public boolean isNotVotable() {
+        return this == FIXED || this == DONE;
+    }
 }

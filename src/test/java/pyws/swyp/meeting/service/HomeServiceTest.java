@@ -9,7 +9,7 @@ import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
 import pyws.swyp.meeting.dto.*;
 import pyws.swyp.meeting.entity.ParticipantRole;
-import pyws.swyp.meeting.entity.Status;
+import pyws.swyp.meeting.entity.MeetingStatus;
 import pyws.swyp.meeting.repository.MeetingParticipantRepository;
 import pyws.swyp.member.entity.CharacterType;
 
@@ -39,9 +39,9 @@ public class HomeServiceTest {
         LocalDate fixedEnd = fixedNow.plusDays(7);
 
         List<MeetingBriefResponse> meetingInfos = List.of(
-                new MeetingBriefResponse(3L, "데이트", Status.FIXED, fixedNow.plusDays(2)),
-                new MeetingBriefResponse(1L, "모잇 오프라인 모임", Status.PLACE_VOTING, fixedNow.plusDays(4)),
-                new MeetingBriefResponse(2L, "카공", Status.PLACE_VOTING, fixedNow.plusDays(6))
+                new MeetingBriefResponse(3L, "데이트", MeetingStatus.FIXED, fixedNow.plusDays(2)),
+                new MeetingBriefResponse(1L, "모잇 오프라인 모임", MeetingStatus.PLACE_VOTING, fixedNow.plusDays(4)),
+                new MeetingBriefResponse(2L, "카공", MeetingStatus.PLACE_VOTING, fixedNow.plusDays(6))
         );
 
         ParticipantResponse p1 = new ParticipantResponse(memberId, "닉네임1", CharacterType.FOODIE, pyws.swyp.meeting.entity.ParticipantRole.HOST);
@@ -61,10 +61,10 @@ public class HomeServiceTest {
         );
 
         List<MeetingBriefResponse> waitingMeetings = List.of(
-                new MeetingBriefResponse(1L, "모잇 오프라인 모임", Status.PLACE_VOTING, fixedNow.plusDays(4)),
-                new MeetingBriefResponse(2L, "카공", Status.PLACE_VOTING, fixedNow.plusDays(6)),
-                new MeetingBriefResponse(4L, "보드게임 모임", Status.DATE_VOTING, null),
-                new MeetingBriefResponse(5L, "동아리 전체 회식", Status.CREATED, null)
+                new MeetingBriefResponse(1L, "모잇 오프라인 모임", MeetingStatus.PLACE_VOTING, fixedNow.plusDays(4)),
+                new MeetingBriefResponse(2L, "카공", MeetingStatus.PLACE_VOTING, fixedNow.plusDays(6)),
+                new MeetingBriefResponse(4L, "보드게임 모임", MeetingStatus.DATE_VOTING, null),
+                new MeetingBriefResponse(5L, "동아리 전체 회식", MeetingStatus.CREATED, null)
         );
 
         when(meetingParticipantRepository.findMeetingsByMemberIdWithin7Days(memberId, fixedNow, fixedEnd))

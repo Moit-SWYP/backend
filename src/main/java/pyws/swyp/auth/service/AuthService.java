@@ -40,7 +40,7 @@ public class AuthService {
 
         // 기존 회원 -> JWT 발급
         Member member = socialAccountOpt.get().getMember();
-        JwtResponse tokens = jwtService.issueTokens(member.getId(), member.getMemberRole());
+        JwtResponse tokens = jwtService.issueTokens(member.getId(), member.getRole());
 
         return new AuthResponse(false, tokens);
     }
@@ -64,7 +64,7 @@ public class AuthService {
                 .nickname(request.nickname())
                 .birthDate(request.birthDate())
                 .gender(request.gender())
-                .memberRole(MemberRole.MEMBER)
+                .role(MemberRole.MEMBER)
                 .characterType(request.characterType())
                 .build();
         memberRepository.save(member);
@@ -78,7 +78,7 @@ public class AuthService {
         socialAccountRepository.save(socialAccount);
 
         // 로그인 처리
-        JwtResponse tokens = jwtService.issueTokens(member.getId(), member.getMemberRole());
+        JwtResponse tokens = jwtService.issueTokens(member.getId(), member.getRole());
 
         return new AuthResponse(false, tokens);
     }

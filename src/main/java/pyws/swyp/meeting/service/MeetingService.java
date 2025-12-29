@@ -12,7 +12,7 @@ import pyws.swyp.meeting.dto.MeetingUpdateRequest;
 import pyws.swyp.meeting.entity.Meeting;
 import pyws.swyp.meeting.entity.MeetingParticipant;
 import pyws.swyp.meeting.entity.ParticipantRole;
-import pyws.swyp.meeting.entity.Status;
+import pyws.swyp.meeting.entity.MeetingStatus;
 import pyws.swyp.meeting.repository.MeetingParticipantRepository;
 import pyws.swyp.meeting.repository.MeetingRepository;
 import pyws.swyp.member.entity.Member;
@@ -45,7 +45,7 @@ public class MeetingService {
         Meeting meeting = validActiveMeeting(meetingId);
 
         MeetingParticipant participant = validateMeetingParticipant(memberId, meetingId);
-        if(participant.getParticipantRole() != pyws.swyp.meeting.entity.ParticipantRole.HOST) {
+        if(participant.getRole() != pyws.swyp.meeting.entity.ParticipantRole.HOST) {
             throw ErrorCode.MEETING_ACCESS_DENIED.toException();
         }
 
@@ -56,7 +56,7 @@ public class MeetingService {
         validActiveMeeting(meetingId);
 
         MeetingParticipant participant = validateMeetingParticipant(memberId, meetingId);
-        if(participant.getParticipantRole() != ParticipantRole.MEMBER) {
+        if(participant.getRole() != ParticipantRole.MEMBER) {
             throw ErrorCode.MEETING_QUIT_DENIED.toException();
         }
 
@@ -77,7 +77,7 @@ public class MeetingService {
 
     @Transactional(readOnly = true)
     public List<MeetingBriefResponse> getWaitingMeetings(Long memberId, Pageable pageable) {
-        List<Status> statuses = List.of(Status.CREATED, Status.DATE_VOTING, Status.PLACE_VOTING);
+        List<MeetingStatus> statuses = List.of(MeetingStatus.CREATED, MeetingStatus.DATE_VOTING, MeetingStatus.PLACE_VOTING);
         return meetingParticipantRepository.findMeetingsByMemberIdAndStatus(memberId, statuses, pageable);
     }
 

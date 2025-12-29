@@ -1,7 +1,16 @@
 package pyws.swyp.meeting.entity;
 
-import jakarta.persistence.*;
-import lombok.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import pyws.swyp.global.entity.BaseEntity;
 import pyws.swyp.member.entity.Member;
 
@@ -20,20 +29,20 @@ public class MeetingParticipant extends BaseEntity {
     
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 30)
-    private ParticipantRole participantRole;
+    private ParticipantRole role;
 
     @Builder
-    public MeetingParticipant(Meeting meeting, Member member, ParticipantRole participantRole) {
+    public MeetingParticipant(Meeting meeting, Member member, ParticipantRole role) {
         this.meeting = meeting;
         this.member = member;
-        this.participantRole = participantRole;
+        this.role = role;
     }
 
     public static MeetingParticipant host(Meeting meeting, Member member) {
         return MeetingParticipant.builder()
                 .meeting(meeting)
                 .member(member)
-                .participantRole(pyws.swyp.meeting.entity.ParticipantRole.HOST)
+                .role(ParticipantRole.HOST)
                 .build();
     }
 }

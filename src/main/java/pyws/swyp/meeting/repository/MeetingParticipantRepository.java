@@ -7,7 +7,7 @@ import org.springframework.data.repository.query.Param;
 import pyws.swyp.meeting.dto.MeetingBriefResponse;
 import pyws.swyp.meeting.dto.ParticipantRow;
 import pyws.swyp.meeting.entity.MeetingParticipant;
-import pyws.swyp.meeting.entity.Status;
+import pyws.swyp.meeting.entity.MeetingStatus;
 
 import java.time.LocalDate;
 import java.util.Collection;
@@ -46,7 +46,7 @@ public interface MeetingParticipantRepository extends JpaRepository<MeetingParti
     """)
     List<MeetingBriefResponse> findMeetingsByMemberIdAndStatus(
             @Param("memberId") Long memberId,
-            @Param("statuses")Collection<Status> statuses,
+            @Param("statuses")Collection<MeetingStatus> statuses,
             Pageable pageable
     );
 
@@ -76,11 +76,13 @@ public interface MeetingParticipantRepository extends JpaRepository<MeetingParti
                             mp.member.id,
                             mp.member.nickname,
                             mp.member.characterType,
-                            mp.participantRole
+                            mp.role
                         )
             )
             FROM MeetingParticipant mp
             WHERE mp.meeting.id IN :meetingIds
     """)
     List<ParticipantRow> findByMeetingIds(@Param("meetingIds") List<Long> meetingIds);
+
+    boolean existsByMemberIdAndMeetingId(Long memberId, Long meetingId);
 }

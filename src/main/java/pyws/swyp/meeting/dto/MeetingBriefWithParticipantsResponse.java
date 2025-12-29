@@ -1,6 +1,6 @@
 package pyws.swyp.meeting.dto;
 
-import pyws.swyp.meeting.entity.Status;
+import pyws.swyp.meeting.entity.MeetingStatus;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -8,7 +8,7 @@ import java.util.List;
 public record MeetingBriefWithParticipantsResponse(
         Long meetingId,
         String title,
-        Status status,
+        MeetingStatus status,
         LocalDate date,
         List<ParticipantResponse> participants
 ) {

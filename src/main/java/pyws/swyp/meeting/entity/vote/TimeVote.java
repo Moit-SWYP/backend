@@ -10,8 +10,8 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -26,12 +26,12 @@ import pyws.swyp.meeting.entity.MeetingParticipant;
 @Table(
         uniqueConstraints = {
                 @UniqueConstraint(
-                        name = "uk_participant_date",
-                        columnNames = {"meeting_participant_id", "date"}
+                        name = "uk_participant_time",
+                        columnNames = {"meeting_participant_id", "time"}
                 )
         }
 )
-public class DateVote {
+public class TimeVote {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -46,16 +46,16 @@ public class DateVote {
     private MeetingParticipant meetingParticipant;
 
     @Column(nullable = false)
-    private LocalDate date;
+    private LocalTime time;
 
     @CreationTimestamp
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
     @Builder
-    public DateVote(Meeting meeting, MeetingParticipant meetingParticipant, LocalDate date) {
+    public TimeVote(Meeting meeting, MeetingParticipant meetingParticipant, LocalTime time) {
         this.meeting = meeting;
         this.meetingParticipant = meetingParticipant;
-        this.date = date;
+        this.time = time;
     }
 }

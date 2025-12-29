@@ -2,7 +2,6 @@ package pyws.swyp.member.controller;
 
 import static java.time.LocalDate.of;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -26,10 +25,17 @@ import pyws.swyp.config.AuthPrincipalTestConfig;
 import pyws.swyp.config.AuthTestPrincipalContext;
 import pyws.swyp.config.TestRedisConfig;
 import pyws.swyp.global.error.ErrorCode;
+import pyws.swyp.meeting.repository.MeetingParticipantRepository;
+import pyws.swyp.meeting.repository.vote.DateVoteRepository;
 import pyws.swyp.member.dto.MemberWithdrawRequest;
 import pyws.swyp.member.dto.SocialLinkRequest;
-import pyws.swyp.member.entity.*;
+import pyws.swyp.member.entity.CharacterType;
+import pyws.swyp.member.entity.Gender;
+import pyws.swyp.member.entity.Member;
 import pyws.swyp.member.entity.MemberRole;
+import pyws.swyp.member.entity.SocialAccount;
+import pyws.swyp.member.entity.SocialProvider;
+import pyws.swyp.member.entity.WithdrawalType;
 import pyws.swyp.member.repository.MemberRepository;
 import pyws.swyp.member.repository.MemberWithdrawalRepository;
 import pyws.swyp.member.repository.SocialAccountRepository;
@@ -54,6 +60,12 @@ class MemberControllerTest {
     @Autowired
     MemberWithdrawalRepository memberWithdrawalRepository;
 
+    @Autowired
+    DateVoteRepository dateVoteRepository;
+
+    @Autowired
+    MeetingParticipantRepository meetingParticipantRepository;
+
     private Long memberId;
     private SocialProvider provider;
 
@@ -61,6 +73,8 @@ class MemberControllerTest {
     void setUp() {
         socialAccountRepository.deleteAll();
         memberWithdrawalRepository.deleteAll();
+        dateVoteRepository.deleteAll();
+        meetingParticipantRepository.deleteAll();
         memberRepository.deleteAll();
 
         Member member = memberRepository.save(Member.builder()
@@ -68,7 +82,7 @@ class MemberControllerTest {
                 .nickname("테스트")
                 .gender(Gender.MALE)
                 .birthDate(of(1999, 1, 1))
-                .memberRole(MemberRole.MEMBER)
+                .role(MemberRole.MEMBER)
                 .characterType(CharacterType.ACTIVE)
                 .build());
 
