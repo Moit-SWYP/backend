@@ -45,4 +45,12 @@ public class MeetingParticipant extends BaseEntity {
                 .role(ParticipantRole.HOST)
                 .build();
     }
+
+    public static MeetingParticipant member(Meeting meeting, Member member) {
+        return MeetingParticipant.builder()
+                .meeting(meeting)
+                .member(member)
+                .role(ParticipantRole.MEMBER)
+                .build();
+    }
 }

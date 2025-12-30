@@ -19,12 +19,7 @@ import org.springframework.context.annotation.Configuration;
         ),
         servers = {
                 @Server(
-                        url = "https://moit.shop",
-                        description = "Develop Server"
-                ),
-                @Server(
-                        url = "http://localhost:8080",
-                        description = "Local Development Server"
+                        url = "/"
                 )
         }
 )

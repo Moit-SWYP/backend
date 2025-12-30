@@ -57,7 +57,8 @@ public class SecurityConfig {
         CorsConfiguration config = new CorsConfiguration();
 
         config.setAllowedOrigins(List.of(
-                "https://moit.shop"
+                "https://moit.shop",
+                "http://localhost:8080"
         ));
 
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));

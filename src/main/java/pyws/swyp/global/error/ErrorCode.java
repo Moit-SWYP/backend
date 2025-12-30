@@ -34,8 +34,9 @@ public enum ErrorCode {
     MEETING_ACCESS_DENIED(HttpStatus.FORBIDDEN, "MEET0002", "해당 모임에 대한 접근 권한이 없습니다."),
     MEETING_QUIT_DENIED(HttpStatus.FORBIDDEN, "MEET0003", "모임 생성자는 탈퇴할 수 없습니다."),
     MEETING_TITLE_EMPTY(BAD_REQUEST, "MEET0004", "모임 제목은 필수이며, 빈칸일 수 없습니다."),
-    MEETING_NOT_VOTABLE(BAD_REQUEST, "MEET0005", "이미 확정됐거나 완료된 모임입니다."),
+    MEETING_NOT_VOTABLE(CONFLICT, "MEET0005", "이미 확정됐거나 완료된 모임입니다."),
     MEETING_PARTICIPANT_NOT_FOUND(NOT_FOUND, "MEET0006", "존재하지 않는 모임원입니다."),
+    MEETING_ALREADY_JOINED(CONFLICT, "MEET0007", "이미 참여중인 모임입니다."),
 
     // Vote
     DATE_VOTE_NOT_FOUND(NOT_FOUND, "VOTE0001", "아직 시간 투표가 존재하지 않습니다."),
