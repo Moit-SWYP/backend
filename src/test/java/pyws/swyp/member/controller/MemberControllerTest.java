@@ -27,6 +27,7 @@ import pyws.swyp.config.TestRedisConfig;
 import pyws.swyp.global.error.ErrorCode;
 import pyws.swyp.meeting.repository.MeetingParticipantRepository;
 import pyws.swyp.meeting.repository.vote.DateVoteRepository;
+import pyws.swyp.meeting.repository.vote.TimeVoteRepository;
 import pyws.swyp.member.dto.MemberWithdrawRequest;
 import pyws.swyp.member.dto.SocialLinkRequest;
 import pyws.swyp.member.entity.CharacterType;
@@ -64,6 +65,9 @@ class MemberControllerTest {
     DateVoteRepository dateVoteRepository;
 
     @Autowired
+    TimeVoteRepository timeVoteRepository;
+
+    @Autowired
     MeetingParticipantRepository meetingParticipantRepository;
 
     private Long memberId;
@@ -74,6 +78,7 @@ class MemberControllerTest {
         socialAccountRepository.deleteAll();
         memberWithdrawalRepository.deleteAll();
         dateVoteRepository.deleteAll();
+        timeVoteRepository.deleteAll();
         meetingParticipantRepository.deleteAll();
         memberRepository.deleteAll();
 

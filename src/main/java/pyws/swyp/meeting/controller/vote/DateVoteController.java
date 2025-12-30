@@ -14,10 +14,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import pyws.swyp.meeting.controller.api.DateVoteApi;
-import pyws.swyp.meeting.dto.vote.DateVoteRequest;
+import pyws.swyp.meeting.controller.api.vote.DateVoteApi;
+import pyws.swyp.meeting.dto.vote.date.DateVoteRequest;
 import pyws.swyp.meeting.dto.vote.VotersResponse;
-import pyws.swyp.meeting.dto.vote.VotedDatesResponse;
+import pyws.swyp.meeting.dto.vote.date.VotedDatesResponse;
 import pyws.swyp.meeting.service.vote.DateVoteService;
 
 @RestController

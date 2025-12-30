@@ -5,7 +5,7 @@ import java.util.List;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import pyws.swyp.meeting.dto.vote.VotedTimeResponse;
+import pyws.swyp.meeting.dto.vote.time.VotedTimeResponse;
 import pyws.swyp.meeting.dto.vote.VoterResponse;
 import pyws.swyp.meeting.entity.vote.TimeVote;
 
@@ -34,7 +34,7 @@ public interface TimeVoteRepository extends JpaRepository<TimeVote, Long> {
     List<LocalTime> findTopTimesByMeetingId(Long meetingId, Pageable pageable);
 
     @Query("""
-            select new pyws.swyp.meeting.dto.vote.VotedTimeResponse(
+            select new pyws.swyp.meeting.dto.vote.time.VotedTimeResponse(
                 tv.time,
                 count(tv.id)
             )

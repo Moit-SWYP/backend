@@ -29,7 +29,7 @@ import pyws.swyp.config.AuthPrincipalTestConfig;
 import pyws.swyp.config.AuthTestPrincipalContext;
 import pyws.swyp.config.TestRedisConfig;
 import pyws.swyp.global.error.ErrorCode;
-import pyws.swyp.meeting.dto.vote.DateVoteRequest;
+import pyws.swyp.meeting.dto.vote.date.DateVoteRequest;
 import pyws.swyp.meeting.entity.Meeting;
 import pyws.swyp.meeting.entity.MeetingParticipant;
 import pyws.swyp.meeting.entity.MeetingStatus;

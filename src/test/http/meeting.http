@@ -9,3 +9,7 @@ Authorization: Bearer {{accessToken}}
   "dateVoteDeadline": "2025-12-17T09:27:25.620Z",
   "courseVoteDeadline": "2025-12-17T09:27:25.620Z"
 }
+
+### 투표 조회
+GET http://localhost:8080/api/meetings/2/votes/summary
+Authorization: Bearer {{accessToken}}
