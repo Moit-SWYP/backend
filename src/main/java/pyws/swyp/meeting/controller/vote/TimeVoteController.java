@@ -11,10 +11,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import pyws.swyp.meeting.controller.api.TimeVoteApi;
-import pyws.swyp.meeting.dto.vote.TimeVoteRequest;
-import pyws.swyp.meeting.dto.vote.TopVotedTimeResponse;
-import pyws.swyp.meeting.dto.vote.VotedTimesResponse;
+import pyws.swyp.meeting.controller.api.vote.TimeVoteApi;
+import pyws.swyp.meeting.dto.vote.time.TimeVoteRequest;
+import pyws.swyp.meeting.dto.vote.time.TopVotedTimeResponse;
+import pyws.swyp.meeting.dto.vote.time.VotedTimesResponse;
 import pyws.swyp.meeting.dto.vote.VotersResponse;
 import pyws.swyp.meeting.service.vote.TimeVoteService;
 

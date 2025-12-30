@@ -8,14 +8,15 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pyws.swyp.global.error.ErrorCode;
-import pyws.swyp.meeting.dto.vote.TimeVoteRequest;
-import pyws.swyp.meeting.dto.vote.TopVotedTimeResponse;
-import pyws.swyp.meeting.dto.vote.VotedTimeResponse;
-import pyws.swyp.meeting.dto.vote.VotedTimesResponse;
+import pyws.swyp.meeting.dto.vote.time.TimeVoteRequest;
+import pyws.swyp.meeting.dto.vote.time.TopVotedTimeResponse;
+import pyws.swyp.meeting.dto.vote.time.VotedTimeResponse;
+import pyws.swyp.meeting.dto.vote.time.VotedTimesResponse;
 import pyws.swyp.meeting.dto.vote.VoterResponse;
 import pyws.swyp.meeting.dto.vote.VotersResponse;
 import pyws.swyp.meeting.entity.Meeting;
 import pyws.swyp.meeting.entity.MeetingParticipant;
+import pyws.swyp.meeting.entity.MeetingStatus;
 import pyws.swyp.meeting.entity.vote.TimeVote;
 import pyws.swyp.meeting.repository.MeetingParticipantRepository;
 import pyws.swyp.meeting.repository.MeetingRepository;
@@ -38,15 +39,11 @@ public class TimeVoteService {
         Meeting meeting = meetingRepository.findById(meetingId)
                 .orElseThrow(ErrorCode.MEETING_NOT_FOUND::toException);
 
-        // 이미 확정됐거나 완료된 모임일 경우
-        if (meeting.getStatus().isNotVotable()) {
+        if (!meeting.getStatus().isTimeVotable()) {
             throw ErrorCode.MEETING_NOT_VOTABLE.toException();
         }
 
-        // 날짜 투표 확정 후 투표 가능
-        // if (meeting.getStatus() != MeetingStatus.DATE_VOTING) {
-        //     throw ErrorCode.MEETING_NOT_VOTABLE.toException();
-        // }
+        meeting.updateStatus(MeetingStatus.TIME_VOTING);
 
         MeetingParticipant participant = meetingParticipantRepository.findByMemberIdAndMeetingId(memberId, meetingId)
                 .orElseThrow(ErrorCode.MEETING_PARTICIPANT_NOT_FOUND::toException);

@@ -1,4 +1,4 @@
-package pyws.swyp.meeting.dto.vote;
+package pyws.swyp.meeting.dto.vote.date;
 
 import java.time.LocalDate;
 import java.util.List;

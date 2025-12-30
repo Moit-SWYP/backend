@@ -170,9 +170,9 @@ VALUES
 -- TIME_VOTE
 INSERT IGNORE INTO time_vote (id, created_at, meeting_id, meeting_participant_id, time)
 VALUES
-    (1, NOW(), 1, 1, '15:00:00'), -- host
-    (2, NOW(), 1, 2, '15:00:00'), -- member1
-    (3, NOW(), 1, 3, '16:00:00'); -- member2
+    (1, NOW(), 2, 1, '15:00:00'), -- host
+    (2, NOW(), 2, 2, '15:00:00'), -- member1
+    (3, NOW(), 2, 3, '16:00:00'); -- member2
 
 -- PLACE_OPTION
 INSERT IGNORE INTO place_option (id, created_at, is_active, updated_at, status, course_id)

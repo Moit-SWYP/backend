@@ -31,7 +31,7 @@ import pyws.swyp.config.AuthPrincipalTestConfig;
 import pyws.swyp.config.AuthTestPrincipalContext;
 import pyws.swyp.config.TestRedisConfig;
 import pyws.swyp.global.error.ErrorCode;
-import pyws.swyp.meeting.dto.vote.TimeVoteRequest;
+import pyws.swyp.meeting.dto.vote.time.TimeVoteRequest;
 import pyws.swyp.meeting.entity.Meeting;
 import pyws.swyp.meeting.entity.MeetingParticipant;
 import pyws.swyp.meeting.entity.MeetingStatus;
@@ -77,8 +77,8 @@ class TimeVoteControllerTest {
 
     @BeforeEach
     void setUp() {
-        dateVoteRepository.deleteAll();
         timeVoteRepository.deleteAll();
+        dateVoteRepository.deleteAll();
         meetingParticipantRepository.deleteAll();
         meetingRepository.deleteAll();
         memberRepository.deleteAll();
@@ -105,7 +105,8 @@ class TimeVoteControllerTest {
         Meeting meeting = meetingRepository.save(Meeting.builder()
                 .title("테스트 모임")
                 .build());
-        meeting.updateStatus(MeetingStatus.CREATED);
+        meeting.updateStatus(MeetingStatus.TIME_VOTING);
+        meetingRepository.save(meeting);
         this.meetingId = meeting.getId();
 
         // participants

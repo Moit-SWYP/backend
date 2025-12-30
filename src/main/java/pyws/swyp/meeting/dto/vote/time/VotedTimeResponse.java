@@ -1,4 +1,4 @@
-package pyws.swyp.meeting.dto.vote;
+package pyws.swyp.meeting.dto.vote.time;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import java.time.LocalTime;
