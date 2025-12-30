@@ -38,6 +38,7 @@ public enum ErrorCode {
     MEETING_PARTICIPANT_NOT_FOUND(NOT_FOUND, "MEET0006", "존재하지 않는 모임원입니다."),
     MEETING_HOST_ONLY(HttpStatus.FORBIDDEN, "MEET0007", "모임장만 투표 확정 및 취소를 할 수 있습니다."),
     MEETING_NOT_CONFIRMABLE(HttpStatus.BAD_REQUEST, "MEET0008", "현재 모임 상태에서는 투표 확정 또는 취소를 할 수 없습니다."),
+    HOST_CANNOT_WITHDRAW_WITH_UNCOMPLETED_MEETING(HttpStatus.BAD_REQUEST, "MEET0009", "완료되지 않은 모임의 모임장은 탈퇴할 수 없습니다."),
 
     // Vote
     DATE_VOTE_NOT_FOUND(NOT_FOUND, "VOTE0001", "아직 시간 투표가 존재하지 않습니다."),

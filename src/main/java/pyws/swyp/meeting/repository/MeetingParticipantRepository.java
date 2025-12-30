@@ -2,6 +2,7 @@ package pyws.swyp.meeting.repository;
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import pyws.swyp.meeting.dto.MeetingBriefResponse;
@@ -85,4 +86,29 @@ public interface MeetingParticipantRepository extends JpaRepository<MeetingParti
     List<ParticipantRow> findByMeetingIds(@Param("meetingIds") List<Long> meetingIds);
 
     boolean existsByMemberIdAndMeetingId(Long memberId, Long meetingId);
+
+    @Query("""
+            select (count(mp) > 0)
+            from MeetingParticipant mp
+            join mp.meeting m
+            where mp.member.id = :memberId
+              and mp.role = 'HOST'
+              and m.status <> 'DONE'
+              and m.isActive = true
+            """)
+    boolean existsHostInUncompletedMeetings(Long memberId);
+
+    @Query("""
+            select mp.id
+            from MeetingParticipant mp
+            where mp.member.id = :memberId
+            """)
+    List<Long> findIdsByMemberId(Long memberId);
+
+    @Modifying(clearAutomatically = true, flushAutomatically = true)
+    @Query("""
+        delete from MeetingParticipant mp
+        where mp.id in :participantIds
+    """)
+    int deleteAllByIds(List<Long> participantIds);
 }

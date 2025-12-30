@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.util.List;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import pyws.swyp.meeting.dto.vote.VoterResponse;
 import pyws.swyp.meeting.entity.vote.DateVote;
@@ -54,5 +55,12 @@ public interface DateVoteRepository extends JpaRepository<DateVote, Long> {
             order by m.id asc
             """)
     List<VoterResponse> findVotersByMeetingIdAndDate(Long meetingId, LocalDate date);
+
+    @Modifying(clearAutomatically = true, flushAutomatically = true)
+    @Query("""
+            delete from DateVote dv
+            where dv.meetingParticipant.id in :participantIds
+            """)
+    void deleteAllByParticipantIds(List<Long> participantIds);
 }
 
