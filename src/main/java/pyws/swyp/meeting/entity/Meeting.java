@@ -76,4 +76,24 @@ public class Meeting extends BaseEntity {
             this.courseVoteDeadline = request.courseVoteDeadline();
         }
     }
+
+    public void confirmDate(LocalDate date) {
+        this.date = date;
+        updateStatus(MeetingStatus.DATE_VOTED);
+    }
+
+    public void cancelConfirmedDate() {
+        this.date = null;
+        updateStatus(MeetingStatus.DATE_VOTING);
+    }
+
+    public void confirmTime(LocalTime time) {
+        this.time = time;
+        updateStatus(MeetingStatus.TIME_VOTED);
+    }
+
+    public void cancelConfirmedTime() {
+        this.time = null;
+        updateStatus(MeetingStatus.TIME_VOTING);
+    }
 }

@@ -1,0 +1,174 @@
+package pyws.swyp.meeting.service;
+
+import static pyws.swyp.global.error.ErrorCode.DATE_VOTE_NOT_FOUND;
+import static pyws.swyp.global.error.ErrorCode.MEETING_HOST_ONLY;
+import static pyws.swyp.global.error.ErrorCode.MEETING_NOT_CONFIRMABLE;
+import static pyws.swyp.global.error.ErrorCode.MEETING_NOT_FOUND;
+import static pyws.swyp.global.error.ErrorCode.MEETING_PARTICIPANT_NOT_FOUND;
+import static pyws.swyp.global.error.ErrorCode.TIME_VOTE_NOT_FOUND;
+
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.util.List;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import pyws.swyp.global.error.ErrorCode;
+import pyws.swyp.meeting.entity.Meeting;
+import pyws.swyp.meeting.entity.MeetingParticipant;
+import pyws.swyp.meeting.entity.MeetingStatus;
+import pyws.swyp.meeting.repository.MeetingParticipantRepository;
+import pyws.swyp.meeting.repository.MeetingRepository;
+import pyws.swyp.meeting.repository.vote.DateVoteRepository;
+import pyws.swyp.meeting.repository.vote.TimeVoteRepository;
+
+@Service
+@Transactional
+@RequiredArgsConstructor
+public class MeetingConfirmService {
+
+    private final MeetingRepository meetingRepository;
+    private final MeetingParticipantRepository meetingParticipantRepository;
+    private final DateVoteRepository dateVoteRepository;
+    private final TimeVoteRepository timeVoteRepository;
+
+    /**
+     * 모임장이 날짜 투표 결과를 기준으로 모임 날짜를 확정한다.
+     */
+    public void confirmDateVote(Long memberId, Long meetingId) {
+        Meeting meeting = getMeeting(meetingId);
+        MeetingParticipant participant = getParticipant(memberId, meetingId);
+
+        validateHost(participant);
+
+        if (meeting.getStatus() != MeetingStatus.DATE_VOTING) {
+            throw MEETING_NOT_CONFIRMABLE.toException();
+        }
+
+        List<LocalDate> topDates = dateVoteRepository.findTopDatesByMeetingId(meetingId,
+                PageRequest.of(0, 1));
+        if (topDates.isEmpty()) {
+            throw DATE_VOTE_NOT_FOUND.toException();
+        }
+
+        LocalDate topDate = topDates.getFirst();
+
+        meeting.confirmDate(topDate);
+    }
+
+    /**
+     * 모임장이 지정한 날짜로 모임 날짜를 임의 확정한다.
+     */
+    public void confirmDate(Long memberId, Long meetingId, LocalDate date) {
+        Meeting meeting = getMeeting(meetingId);
+        MeetingParticipant participant = getParticipant(memberId, meetingId);
+
+        validateHost(participant);
+
+        if (meeting.getStatus() != MeetingStatus.DATE_VOTING) {
+            throw MEETING_NOT_CONFIRMABLE.toException();
+        }
+
+        meeting.confirmDate(date);
+    }
+
+    /**
+     * 날짜 확정을 취소하고, 모임을 DATE_VOTING 상태로 되돌린다.
+     */
+    public void cancelConfirmDateVote(Long memberId, Long meetingId) {
+        Meeting meeting = getMeeting(meetingId);
+        MeetingParticipant participant = getParticipant(memberId, meetingId);
+
+        validateHost(participant);
+
+        if (meeting.getStatus() != MeetingStatus.DATE_VOTED) {
+            throw MEETING_NOT_CONFIRMABLE.toException();
+        }
+
+        meeting.cancelConfirmedDate();
+    }
+
+    /**
+     * 모임장이 시간 투표 결과를 기준으로 모임 시간을 확정한다.
+     */
+    public void confirmTimeVote(Long memberId, Long meetingId) {
+        Meeting meeting = getMeeting(meetingId);
+        MeetingParticipant participant = getParticipant(memberId, meetingId);
+
+        validateHost(participant);
+
+        if (meeting.getStatus() != MeetingStatus.TIME_VOTING) {
+            throw MEETING_NOT_CONFIRMABLE.toException();
+        }
+
+        List<LocalTime> topTimes = timeVoteRepository.findTopTimesByMeetingId(meetingId, PageRequest.of(0, 1));
+        if (topTimes.isEmpty()) {
+            throw TIME_VOTE_NOT_FOUND.toException();
+        }
+
+        meeting.confirmTime(topTimes.getFirst());
+    }
+
+    /**
+     * 모임장이 지정한 시간으로 모임 시간을 임의 확정한다.
+     */
+    public void confirmTime(Long memberId, Long meetingId, LocalTime time) {
+        Meeting meeting = getMeeting(meetingId);
+        MeetingParticipant participant = getParticipant(memberId, meetingId);
+
+        validateHost(participant);
+
+        if (meeting.getStatus() != MeetingStatus.TIME_VOTING) {
+            throw MEETING_NOT_CONFIRMABLE.toException();
+        }
+
+        validateTimeUnit(time);
+
+        meeting.confirmTime(time);
+    }
+
+    /**
+     * 시간 확정을 취소하고, 모임을 TIME_VOTING 상태로 되돌린다.
+     */
+    public void cancelConfirmTimeVote(Long memberId, Long meetingId) {
+        Meeting meeting = getMeeting(meetingId);
+        MeetingParticipant participant = getParticipant(memberId, meetingId);
+
+        validateHost(participant);
+
+        if (meeting.getStatus() != MeetingStatus.TIME_VOTED) {
+            throw MEETING_NOT_CONFIRMABLE.toException();
+        }
+
+        meeting.cancelConfirmedTime();
+    }
+
+    private Meeting getMeeting(Long meetingId) {
+        return meetingRepository.findById(meetingId)
+                .orElseThrow(MEETING_NOT_FOUND::toException);
+    }
+
+    private MeetingParticipant getParticipant(Long memberId, Long meetingId) {
+        return meetingParticipantRepository.findByMemberIdAndMeetingId(memberId, meetingId)
+                .orElseThrow(MEETING_PARTICIPANT_NOT_FOUND::toException);
+    }
+
+    private void validateHost(MeetingParticipant participant) {
+        if (!participant.isHost()) {
+            throw MEETING_HOST_ONLY.toException();
+        }
+    }
+
+    private LocalTime validateTimeUnit(LocalTime time) {
+        int minute = time.getMinute();
+        if (minute != 0 && minute != 30) {
+            throw ErrorCode.TIME_NOT_IN_30_MIN_UNIT.toException();
+        }
+
+        if (time.getSecond() != 0 || time.getNano() != 0) {
+            throw ErrorCode.INVALID_TIME_VOTE_REQUEST.toException();
+        }
+        return time;
+    }
+}

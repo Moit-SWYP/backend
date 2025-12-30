@@ -45,4 +45,8 @@ public class MeetingParticipant extends BaseEntity {
                 .role(ParticipantRole.HOST)
                 .build();
     }
+
+    public boolean isHost() {
+        return ParticipantRole.HOST.equals(this.role);
+    }
 }
