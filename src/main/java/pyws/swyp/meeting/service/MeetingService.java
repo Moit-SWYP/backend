@@ -26,7 +26,6 @@ import java.util.List;
 public class MeetingService {
     private final MeetingRepository meetingRepository;
     private final MeetingParticipantRepository meetingParticipantRepository;
-    // 임시 조치
     private final MemberRepository memberRepository;
 
     public void createMeeting(Long memberId, MeetingCreateRequest request) {

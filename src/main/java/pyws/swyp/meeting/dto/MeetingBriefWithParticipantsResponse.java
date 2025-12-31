@@ -10,6 +10,6 @@ public record MeetingBriefWithParticipantsResponse(
         String title,
         MeetingStatus status,
         LocalDate date,
-        List<ParticipantResponse> participants
+        List<ParticipantInfo> participants
 ) {
 }

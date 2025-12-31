@@ -190,4 +190,28 @@ VALUES
     (3, NOW(), 1, NULL, 2, 3, 3),
     (4, NOW(), 1, NULL, 3, 4, 4);
 
+-- FRIENDSHIP
+INSERT IGNORE INTO friendship(id, created_at, is_active, updated_at, member_id, friend_id, met_count)
+VALUES
+    (1, NOW(), 1, NULL, 4, 3, 1),
+    (2, NOW(), 1, NULL, 3, 4, 1),
+    (3, NOW(), 1, NULL, 2, 4, 1),
+    (4, NOW(), 1, NULL, 4, 2, 1),
+    (5, NOW(), 1, NULL, 3, 2, 1),
+    (6, NOW(), 1, NULL, 2, 3, 1);
+
+-- FRIEND_GROUP
+INSERT IGNORE INTO friend_group(id, created_at, is_active, updated_at, owner_id, group_name)
+VALUES
+    (1, NOW(), 1, NULL, 3, '모잉이들'),
+    (2, NOW(), 1, NULL, 2, '스위프');
+
+-- FRIEND_GROUP_MEMBER
+INSERT IGNORE INTO friend_group_member(id, created_at, is_active, updated_at, friend_group_id, member_id)
+VALUES
+    (1, NOW(), 1, NULL, 1, 2),
+    (2, NOW(), 1, NULL, 1, 4),
+    (3, NOW(), 1, NULL, 2, 3),
+    (4, NOW(), 1, NULL, 2, 4);
+
 SET FOREIGN_KEY_CHECKS = 1;

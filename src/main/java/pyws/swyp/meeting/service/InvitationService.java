@@ -1,5 +1,6 @@
 package pyws.swyp.meeting.service;
 
+import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -11,10 +12,14 @@ import pyws.swyp.meeting.entity.Meeting;
 import pyws.swyp.meeting.entity.MeetingParticipant;
 import pyws.swyp.meeting.repository.MeetingParticipantRepository;
 import pyws.swyp.meeting.repository.MeetingRepository;
+import pyws.swyp.member.entity.friend.Friendship;
 import pyws.swyp.member.entity.Member;
+import pyws.swyp.member.repository.friend.FriendshipRepository;
 import pyws.swyp.member.repository.MemberRepository;
 
-import java.util.UUID;
+import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -24,6 +29,9 @@ public class InvitationService {
     private final MeetingRepository meetingRepository;
     private final MeetingParticipantRepository meetingParticipantRepository;
     private final MemberRepository memberRepository;
+    private final FriendshipRepository friendshipRepository;
+
+    private final EntityManager entityManager;
 
     public InvitationLinkResponse createInvitationLink(Long memberId, Long meetingId) {
         Meeting meeting = validActiveMeeting(meetingId);
@@ -48,6 +56,8 @@ public class InvitationService {
 
         MeetingParticipant participant = MeetingParticipant.member(meeting, member);
         meetingParticipantRepository.save(participant);
+
+        makeFriends(memberId, meeting.getId());
     }
 
     private Meeting validActiveMeeting(Long meetingId) {
@@ -71,6 +81,62 @@ public class InvitationService {
         return meetingParticipantRepository
                 .findByMemberIdAndMeetingId(memberId, meetingId)
                 .orElseThrow(ErrorCode.MEETING_ACCESS_DENIED::toException);
+    }
+
+    /**
+     * 같은 모임에 참여한 사람들과 자동으로 친구 맺기
+     */
+    private void makeFriends(Long memberId, Long meetingId) {
+
+        // 모임 참여자 리스트 확인
+        List<MeetingParticipant> participants = meetingParticipantRepository.findByMeetingId(meetingId);
+
+        // 모임 참여자 ID만 파싱
+        List<Long> friendIds = participants.stream()
+                .map(p -> p.getMember().getId())
+                .filter(id -> !id.equals(memberId))
+                .toList();
+
+        if (friendIds.isEmpty()) return;
+
+        // 기존 친구 관계 확인
+        List<Friendship> existingFriends
+                = friendshipRepository.findByMemberIdAndFriendIds(memberId, friendIds);
+        Map<Long, Friendship> existingFriendshipMap = existingFriends.stream()
+                .collect(Collectors.toMap(
+                        f -> f.getFriend().getId(),
+                        Function.identity()
+                ));
+
+        // 새로운 친구 저장
+        List<Friendship> newFriendships = new ArrayList<>();
+
+        for(Long friendId : friendIds) {
+            Friendship existing = existingFriendshipMap.get(friendId);
+            if (existing != null) {
+                existing.increaseMetCount();
+                continue;
+            }
+
+            Member memberRef = entityManager.getReference(Member.class, memberId);
+            Member friendRef = entityManager.getReference(Member.class, friendId);
+
+            newFriendships.add(
+                    Friendship.builder()
+                            .member(memberRef)
+                            .friend(friendRef)
+                            .build()
+            );
+
+            newFriendships.add(
+                    Friendship.builder()
+                            .member(friendRef)
+                            .friend(memberRef)
+                            .build()
+            );
+        }
+
+        friendshipRepository.saveAll(newFriendships);
     }
 
 }
