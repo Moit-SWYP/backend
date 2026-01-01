@@ -4,21 +4,22 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Filter;
 import pyws.swyp.global.entity.BaseEntity;
 import pyws.swyp.global.error.ErrorCode;
 import pyws.swyp.meeting.dto.MeetingUpdateRequest;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Filter(name = "activeFilter")
 public class Meeting extends BaseEntity {
 
     @Column(nullable = false)

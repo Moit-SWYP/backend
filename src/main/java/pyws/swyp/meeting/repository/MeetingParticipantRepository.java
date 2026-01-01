@@ -111,4 +111,11 @@ public interface MeetingParticipantRepository extends JpaRepository<MeetingParti
         where mp.id in :participantIds
     """)
     int deleteAllByIds(List<Long> participantIds);
+
+    @Query("""
+            select mp.member.id
+            from MeetingParticipant mp
+            where mp.meeting.id = :meetingId
+            """)
+    List<Long> findMemberIdsByMeetingId(Long meetingId);
 }

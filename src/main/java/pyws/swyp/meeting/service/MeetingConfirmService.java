@@ -11,6 +11,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,6 +19,8 @@ import pyws.swyp.global.error.ErrorCode;
 import pyws.swyp.meeting.entity.Meeting;
 import pyws.swyp.meeting.entity.MeetingParticipant;
 import pyws.swyp.meeting.entity.MeetingStatus;
+import pyws.swyp.meeting.event.DateVoteConfirmedEvent;
+import pyws.swyp.meeting.event.TimeVoteConfirmedEvent;
 import pyws.swyp.meeting.repository.MeetingParticipantRepository;
 import pyws.swyp.meeting.repository.MeetingRepository;
 import pyws.swyp.meeting.repository.vote.DateVoteRepository;
@@ -32,6 +35,7 @@ public class MeetingConfirmService {
     private final MeetingParticipantRepository meetingParticipantRepository;
     private final DateVoteRepository dateVoteRepository;
     private final TimeVoteRepository timeVoteRepository;
+    private final ApplicationEventPublisher eventPublisher;
 
     /**
      * 모임장이 날짜 투표 결과를 기준으로 모임 날짜를 확정한다.
@@ -55,6 +59,7 @@ public class MeetingConfirmService {
         LocalDate topDate = topDates.getFirst();
 
         meeting.confirmDate(topDate);
+        eventPublisher.publishEvent(new DateVoteConfirmedEvent(meetingId));
     }
 
     /**
@@ -71,6 +76,7 @@ public class MeetingConfirmService {
         }
 
         meeting.confirmDate(date);
+        eventPublisher.publishEvent(new DateVoteConfirmedEvent(meetingId));
     }
 
     /**
@@ -108,6 +114,7 @@ public class MeetingConfirmService {
         }
 
         meeting.confirmTime(topTimes.getFirst());
+        eventPublisher.publishEvent(new TimeVoteConfirmedEvent(meetingId));
     }
 
     /**
@@ -126,6 +133,7 @@ public class MeetingConfirmService {
         validateTimeUnit(time);
 
         meeting.confirmTime(time);
+        eventPublisher.publishEvent(new TimeVoteConfirmedEvent(meetingId));
     }
 
     /**
@@ -160,7 +168,7 @@ public class MeetingConfirmService {
         }
     }
 
-    private LocalTime validateTimeUnit(LocalTime time) {
+    private void validateTimeUnit(LocalTime time) {
         int minute = time.getMinute();
         if (minute != 0 && minute != 30) {
             throw ErrorCode.TIME_NOT_IN_30_MIN_UNIT.toException();
@@ -169,6 +177,5 @@ public class MeetingConfirmService {
         if (time.getSecond() != 0 || time.getNano() != 0) {
             throw ErrorCode.INVALID_TIME_VOTE_REQUEST.toException();
         }
-        return time;
     }
 }
