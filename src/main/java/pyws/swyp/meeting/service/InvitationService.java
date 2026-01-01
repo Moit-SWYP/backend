@@ -89,14 +89,7 @@ public class InvitationService {
     private void makeFriends(Long memberId, Long meetingId) {
 
         // 모임 참여자 리스트 확인
-        List<MeetingParticipant> participants = meetingParticipantRepository.findByMeetingId(meetingId);
-
-        // 모임 참여자 ID만 파싱
-        List<Long> friendIds = participants.stream()
-                .map(p -> p.getMember().getId())
-                .filter(id -> !id.equals(memberId))
-                .toList();
-
+        List<Long> friendIds = meetingParticipantRepository.findMemberIdsByMeetingId(memberId, meetingId);
         if (friendIds.isEmpty()) return;
 
         // 기존 친구 관계 확인

@@ -46,6 +46,10 @@ public class FriendService {
          */
         List<FriendGroup> friendGroups = friendGroupRepository.findByMemberId(memberId);
 
+        if (friendGroups.isEmpty()) {
+            return MyFriendGroupsResponse.empty();
+        }
+
         List<Long> friendGroupIds = friendGroups.stream()
                 .map(BaseEntity::getId)
                 .toList();

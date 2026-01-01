@@ -97,5 +97,13 @@ public interface MeetingParticipantRepository extends JpaRepository<MeetingParti
     """)
     List<MeetingParticipant> findByMeetingId(Long meetingId);
 
+    @Query("""
+            SELECT mp.member.id
+            FROM MeetingParticipant mp
+            WHERE mp.meeting.id = :meetingId
+                AND mp.member.id <> :memberId
+    """)
+    List<Long> findMemberIdsByMeetingId(Long memberId, Long meetingId);
+
     boolean existsByMemberIdAndMeetingId(Long memberId, Long meetingId);
 }
