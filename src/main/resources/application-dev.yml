@@ -29,3 +29,8 @@ jwt:
   secret-key: ${JWT_SECRET}
   access-token-ttl-ms: 900000
   refresh-token-ttl-ms: 604800000
+
+springdoc:
+  swagger-ui:
+    operations-sorter: alpha
+    persistAuthorization: true  # 새로고침 후에도 인증 헤더 유지

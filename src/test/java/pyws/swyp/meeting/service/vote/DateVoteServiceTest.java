@@ -12,10 +12,10 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import pyws.swyp.meeting.dto.vote.DateVoteRequest;
+import pyws.swyp.meeting.dto.vote.date.DateVoteRequest;
 import pyws.swyp.meeting.dto.vote.VoterResponse;
 import pyws.swyp.meeting.dto.vote.VotersResponse;
-import pyws.swyp.meeting.dto.vote.VotedDatesResponse;
+import pyws.swyp.meeting.dto.vote.date.VotedDatesResponse;
 import pyws.swyp.meeting.entity.Meeting;
 import pyws.swyp.meeting.entity.MeetingParticipant;
 import pyws.swyp.meeting.entity.MeetingStatus;
@@ -24,6 +24,7 @@ import pyws.swyp.meeting.entity.vote.DateVote;
 import pyws.swyp.meeting.repository.MeetingParticipantRepository;
 import pyws.swyp.meeting.repository.MeetingRepository;
 import pyws.swyp.meeting.repository.vote.DateVoteRepository;
+import pyws.swyp.meeting.repository.vote.TimeVoteRepository;
 import pyws.swyp.member.entity.CharacterType;
 import pyws.swyp.member.entity.Gender;
 import pyws.swyp.member.entity.Member;
@@ -43,14 +44,20 @@ class DateVoteServiceTest {
     MeetingParticipantRepository meetingParticipantRepository;
     @Autowired
     DateVoteRepository dateVoteRepository;
+    @Autowired
+    TimeVoteRepository timeVoteRepository;
 
     private Meeting meeting;
-    private MeetingParticipant p1;
-    private MeetingParticipant p2;
-    private MeetingParticipant p3;
+    private MeetingParticipant p1, p2, p3;
 
     @BeforeEach
     void setUp() {
+        dateVoteRepository.deleteAll();
+        timeVoteRepository.deleteAll();
+        meetingParticipantRepository.deleteAll();
+        meetingRepository.deleteAll();
+        memberRepository.deleteAll();
+
         Meeting meeting = Meeting.builder()
                 .title("테스트 모임")
                 .build();
@@ -83,8 +90,6 @@ class DateVoteServiceTest {
         p1 = participants.get(0);
         p2 = participants.get(1);
         p3 = participants.get(2);
-
-        dateVoteRepository.deleteAll();
     }
 
     @Test

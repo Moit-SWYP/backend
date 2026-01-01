@@ -1,4 +1,4 @@
-package pyws.swyp.meeting.dto.vote;
+package pyws.swyp.meeting.dto.vote.date;
 
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
