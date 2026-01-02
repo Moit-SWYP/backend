@@ -1,6 +1,7 @@
 package pyws.swyp.member.repository.friend;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import pyws.swyp.member.entity.friend.Friendship;
 
@@ -22,4 +23,12 @@ public interface FriendshipRepository extends JpaRepository<Friendship, Long> {
             WHERE f.member.id = :memberId
     """)
     List<Friendship> findByMemberId(Long memberId);
+
+    @Modifying(clearAutomatically = true, flushAutomatically = true)
+    @Query("""
+            DELETE FROM Friendship f
+            WHERE f.member.id = :memberId
+                OR f.friend.id = :memberId
+    """)
+    void deleteAllByMemberIds(Long memberId);
 }
