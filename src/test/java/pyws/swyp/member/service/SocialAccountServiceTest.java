@@ -13,6 +13,10 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import pyws.swyp.auth.service.JwtService;
 import pyws.swyp.global.error.CustomException;
 import pyws.swyp.global.error.ErrorCode;
+import pyws.swyp.meeting.repository.MeetingParticipantRepository;
+import pyws.swyp.meeting.repository.MeetingRepository;
+import pyws.swyp.meeting.repository.vote.DateVoteRepository;
+import pyws.swyp.meeting.repository.vote.TimeVoteRepository;
 import pyws.swyp.member.dto.SocialLinkRequest;
 import pyws.swyp.member.entity.CharacterType;
 import pyws.swyp.member.entity.Gender;
@@ -31,9 +35,16 @@ class SocialAccountServiceTest {
 
     @Autowired
     MemberRepository memberRepository;
-
     @Autowired
     SocialAccountRepository socialAccountRepository;
+    @Autowired
+    MeetingRepository meetingRepository;
+    @Autowired
+    MeetingParticipantRepository meetingParticipantRepository;
+    @Autowired
+    DateVoteRepository dateVoteRepository;
+    @Autowired
+    TimeVoteRepository timeVoteRepository;
 
     @MockitoBean
     JwtService jwtService;
@@ -42,6 +53,10 @@ class SocialAccountServiceTest {
 
     @BeforeEach
     void setUp() {
+        dateVoteRepository.deleteAll();
+        timeVoteRepository.deleteAll();
+        meetingParticipantRepository.deleteAll();
+        meetingRepository.deleteAll();
         socialAccountRepository.deleteAll();
         memberRepository.deleteAll();
 

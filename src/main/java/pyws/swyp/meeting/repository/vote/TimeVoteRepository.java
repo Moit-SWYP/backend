@@ -4,6 +4,7 @@ import java.time.LocalTime;
 import java.util.List;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import pyws.swyp.meeting.dto.vote.time.VotedTimeResponse;
 import pyws.swyp.meeting.dto.vote.VoterResponse;
@@ -67,4 +68,11 @@ public interface TimeVoteRepository extends JpaRepository<TimeVote, Long> {
             order by tv.time asc
             """)
     List<LocalTime> findVotedTimesByMeetingId(Long meetingId);
+
+    @Modifying(clearAutomatically = true, flushAutomatically = true)
+    @Query("""
+            delete from TimeVote tv
+            where tv.meetingParticipant.id in :participantIds
+            """)
+    void deleteAllByParticipantIds(List<Long> participantIds);
 }
