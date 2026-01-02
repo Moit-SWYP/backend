@@ -8,6 +8,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.UuidGenerator;
 import pyws.swyp.global.entity.BaseEntity;
 import pyws.swyp.global.error.ErrorCode;
 import pyws.swyp.meeting.dto.MeetingUpdateRequest;
@@ -15,11 +16,16 @@ import pyws.swyp.meeting.dto.MeetingUpdateRequest;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.UUID;
 
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Meeting extends BaseEntity {
+
+    @UuidGenerator
+    @Column(nullable = false, unique = true, columnDefinition = "BINARY(16)")
+    private UUID publicId;
 
     @Column(nullable = false)
     private String title;
