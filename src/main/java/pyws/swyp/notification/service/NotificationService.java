@@ -37,6 +37,22 @@ public class NotificationService {
     }
 
     /**
+     * 날짜 투표 미참여자에게 알림을 발송한다.
+     */
+    public void remindDateVote(Long meetingId) {
+        List<Long> memberIds = meetingParticipantRepository.findMemberIdsNotVotedDate(meetingId);
+        notifyMemberIds(meetingId, memberIds, NotificationCommand.dateVoteReminder(meetingId));
+    }
+
+    /**
+     * 시간 투표 미참여자에게 알림을 발송한다.
+     */
+    public void remindTimeVote(Long meetingId) {
+        List<Long> memberIds = meetingParticipantRepository.findMemberIdsNotVotedTime(meetingId);
+        notifyMemberIds(meetingId, memberIds, NotificationCommand.timeVoteReminder(meetingId));
+    }
+
+    /**
      * 모임에 속한 모든 참여자를 조회하여 알림 발송을 트리거한다.<br>
      * 알림 대상이 없을 경우 로그만 남기고 종료한다.
      */
@@ -44,6 +60,17 @@ public class NotificationService {
         List<Long> memberIds = meetingParticipantRepository.findMemberIdsByMeetingId(meetingId);
         if (memberIds.isEmpty()) {
             log.info("No meeting members to notify. meetingId={}", meetingId);
+            return;
+        }
+        notificationAsyncService.createAndSendMulticast(memberIds, cmd);
+    }
+
+    /**
+     * 특정 모임원들에게만 알림 발송을 트리거한다.
+     */
+    private void notifyMemberIds(Long meetingId, List<Long> memberIds, NotificationCommand cmd) {
+        if (memberIds.isEmpty()) {
+            log.info("No members to notify. meetingId={}, type={}", meetingId, cmd.type());
             return;
         }
         notificationAsyncService.createAndSendMulticast(memberIds, cmd);

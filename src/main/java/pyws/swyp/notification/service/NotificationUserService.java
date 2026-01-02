@@ -52,7 +52,7 @@ public class NotificationUserService {
      */
     @Transactional(readOnly = true)
     public List<NotificationResponse> getMyNotifications(Long memberId) {
-        return notificationRepository.findTop50ByMemberIdOrderByCreatedAtDesc(memberId).stream()
+        return notificationRepository.findTop50ByMemberIdOrderByCreatedAtDescIdDesc(memberId).stream()
                 .map(NotificationResponse::from)
                 .toList();
     }
