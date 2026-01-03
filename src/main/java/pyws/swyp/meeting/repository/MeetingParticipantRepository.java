@@ -163,4 +163,14 @@ public interface MeetingParticipantRepository extends JpaRepository<MeetingParti
               )
             """)
     List<Long> findMemberIdsNotVotedTime(Long meetingId);
+
+    @Query("""
+        select mp.member.id
+        from MeetingParticipant mp
+        left join MeetingReview r
+               on r.meetingParticipant = mp
+        where mp.meeting.id = :meetingId
+          and r.id is null
+    """)
+    List<Long> findMemberIdsNotWrittenReview(Long meetingId);
 }
