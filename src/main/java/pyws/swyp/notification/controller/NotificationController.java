@@ -10,13 +10,14 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import pyws.swyp.notification.controller.api.NotificationApi;
 import pyws.swyp.notification.dto.NotificationResponse;
 import pyws.swyp.notification.service.NotificationUserService;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/notifications")
-public class NotificationController {
+public class NotificationController implements NotificationApi {
 
     private final NotificationUserService notificationUserService;
 

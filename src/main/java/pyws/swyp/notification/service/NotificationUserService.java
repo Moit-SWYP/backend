@@ -2,7 +2,6 @@ package pyws.swyp.notification.service;
 
 import java.util.List;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pyws.swyp.global.error.ErrorCode;
@@ -12,7 +11,6 @@ import pyws.swyp.notification.entity.Notification;
 import pyws.swyp.notification.repository.MemberDeviceTokenRepository;
 import pyws.swyp.notification.repository.NotificationRepository;
 
-@Slf4j
 @Service
 @RequiredArgsConstructor
 public class NotificationUserService {
