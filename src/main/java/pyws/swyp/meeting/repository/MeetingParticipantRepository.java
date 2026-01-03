@@ -17,6 +17,12 @@ import java.util.Optional;
 
 public interface MeetingParticipantRepository extends JpaRepository<MeetingParticipant, Long> {
 
+    @Query("""
+            SELECT mp
+            FROM MeetingParticipant mp
+            WHERE mp.member.id = :memberId
+                AND mp.meeting.id = :meetingId
+    """)
     Optional<MeetingParticipant> findByMemberIdAndMeetingId(Long memberId, Long meetingId);
 
     @Query("""
@@ -73,7 +79,7 @@ public interface MeetingParticipantRepository extends JpaRepository<MeetingParti
     @Query("""
             SELECT new pyws.swyp.meeting.dto.ParticipantRow(
                         mp.meeting.id,
-                        new pyws.swyp.meeting.dto.ParticipantResponse(
+                        new pyws.swyp.meeting.dto.ParticipantInfo(
                             mp.member.id,
                             mp.member.nickname,
                             mp.member.characterType,
@@ -84,6 +90,21 @@ public interface MeetingParticipantRepository extends JpaRepository<MeetingParti
             WHERE mp.meeting.id IN :meetingIds
     """)
     List<ParticipantRow> findByMeetingIds(@Param("meetingIds") List<Long> meetingIds);
+
+    @Query("""
+            SELECT mp
+            FROM MeetingParticipant mp
+            WHERE mp.meeting.id = :meetingId
+    """)
+    List<MeetingParticipant> findByMeetingId(Long meetingId);
+
+    @Query("""
+            SELECT mp.member.id
+            FROM MeetingParticipant mp
+            WHERE mp.meeting.id = :meetingId
+                AND mp.member.id <> :memberId
+    """)
+    List<Long> findMemberIdsByMeetingId(Long memberId, Long meetingId);
 
     boolean existsByMemberIdAndMeetingId(Long memberId, Long meetingId);
 

@@ -13,9 +13,10 @@ SET FOREIGN_KEY_CHECKS = 0;
 ------------------------------------------------------
 
 -- MEETING
-INSERT IGNORE INTO meeting (id, created_at, is_active, updated_at, date, time, status, title)
-VALUES (1, NOW(), 1, NULL, '2025-12-20', NULL, 'CREATED', '연말 모임'),
-       (2, NOW(), 1, NULL, '2025-12-25', '19:00:00', 'PLACE_VOTING', '크리스마스 모임');
+INSERT IGNORE INTO meeting (id, public_id, created_at, is_active, updated_at, date, time, status, title)
+VALUES
+    (1, UUID_TO_BIN(UUID()), NOW(), 1, NULL, '2025-12-20', NULL, 'CREATED', '연말 모임'),
+    (2, UUID_TO_BIN(UUID()), NOW(), 1, NULL, '2025-12-25', '19:00:00', 'PLACE_VOTING', '크리스마스 모임');
 
 -- MEMBER
 INSERT IGNORE INTO member (id, created_at, birth_date, email, gender, nickname, character_type, role)
@@ -79,5 +80,29 @@ VALUES (1, NOW(), 1, NULL, 4, 'VOTE_STARTED', 'SENT', '모임 투표가 시작�
         'moit://meetings/1/votes', 1, NULL, NOW(), NULL),
        (2, NOW(), 1, NULL, 4, 'TIME_VOTE_RESULT_CONFIRMED', 'READ', '모임 시간이 확정됐어요', '투표 결과로 모임 시간이 확정되었습니다.',
         'moit://meetings/1', 1, NULL, NOW(), NOW());
+
+-- FRIENDSHIP
+INSERT IGNORE INTO friendship(id, created_at, is_active, updated_at, member_id, friend_id, met_count)
+VALUES
+    (1, NOW(), 1, NULL, 4, 3, 1),
+    (2, NOW(), 1, NULL, 3, 4, 1),
+    (3, NOW(), 1, NULL, 2, 4, 1),
+    (4, NOW(), 1, NULL, 4, 2, 1),
+    (5, NOW(), 1, NULL, 3, 2, 1),
+    (6, NOW(), 1, NULL, 2, 3, 1);
+
+-- FRIEND_GROUP
+INSERT IGNORE INTO friend_group(id, created_at, is_active, updated_at, owner_id, group_name)
+VALUES
+    (1, NOW(), 1, NULL, 3, '모잉이들'),
+    (2, NOW(), 1, NULL, 2, '스위프');
+
+-- FRIEND_GROUP_MEMBER
+INSERT IGNORE INTO friend_group_member(id, created_at, is_active, updated_at, friend_group_id, member_id)
+VALUES
+    (1, NOW(), 1, NULL, 1, 2),
+    (2, NOW(), 1, NULL, 1, 4),
+    (3, NOW(), 1, NULL, 2, 3),
+    (4, NOW(), 1, NULL, 2, 4);
 
 SET FOREIGN_KEY_CHECKS = 1;
