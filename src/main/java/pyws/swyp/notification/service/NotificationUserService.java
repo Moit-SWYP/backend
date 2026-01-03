@@ -50,7 +50,13 @@ public class NotificationUserService {
      */
     @Transactional(readOnly = true)
     public List<NotificationResponse> getMyNotifications(Long memberId) {
-        return notificationRepository.findTop50ByMemberIdOrderByCreatedAtDescIdDesc(memberId).stream()
+        List<Notification> notifications =
+                notificationRepository.findTop50ByMemberIdOrderByCreatedAtDescIdDesc(memberId);
+        if (notifications.isEmpty()) {
+            throw ErrorCode.NOTIFICATION_NOT_FOUND.toException();
+        }
+
+        return notifications.stream()
                 .map(NotificationResponse::from)
                 .toList();
     }
