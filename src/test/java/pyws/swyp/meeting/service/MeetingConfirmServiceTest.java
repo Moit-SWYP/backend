@@ -19,6 +19,8 @@ import pyws.swyp.meeting.entity.vote.DateVote;
 import pyws.swyp.meeting.entity.vote.TimeVote;
 import pyws.swyp.meeting.repository.MeetingParticipantRepository;
 import pyws.swyp.meeting.repository.MeetingRepository;
+import pyws.swyp.meeting.repository.MeetingReviewRepository;
+import pyws.swyp.meeting.repository.ReviewImageRepository;
 import pyws.swyp.meeting.repository.vote.DateVoteRepository;
 import pyws.swyp.meeting.repository.vote.TimeVoteRepository;
 import pyws.swyp.member.entity.CharacterType;
@@ -43,6 +45,10 @@ class MeetingConfirmServiceTest {
     TimeVoteRepository timeVoteRepository;
     @Autowired
     MemberRepository memberRepository;
+    @Autowired
+    MeetingReviewRepository meetingReviewRepository;
+    @Autowired
+    ReviewImageRepository reviewImageRepository;
 
     private Long hostMemberId;
     private Long normalMemberId;
@@ -51,6 +57,8 @@ class MeetingConfirmServiceTest {
 
     @BeforeEach
     void setUp() {
+        reviewImageRepository.deleteAll();
+        meetingReviewRepository.deleteAll();
         dateVoteRepository.deleteAll();
         timeVoteRepository.deleteAll();
         meetingParticipantRepository.deleteAll();

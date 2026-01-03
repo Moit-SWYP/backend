@@ -5,6 +5,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pyws.swyp.meeting.repository.MeetingParticipantRepository;
+import pyws.swyp.meeting.repository.MeetingReviewRepository;
+import pyws.swyp.meeting.repository.ReviewImageRepository;
 import pyws.swyp.meeting.repository.vote.DateVoteRepository;
 import pyws.swyp.meeting.repository.vote.TimeVoteRepository;
 import pyws.swyp.member.repository.friend.FriendGroupMemberRepository;
@@ -21,6 +23,8 @@ public class MemberWithdrawCleanupService {
     private final FriendshipRepository friendshipRepository;
     private final FriendGroupRepository friendGroupRepository;
     private final FriendGroupMemberRepository friendGroupMemberRepository;
+    private final MeetingReviewRepository  meetingReviewRepository;
+    private final ReviewImageRepository reviewImageRepository;
 
     @Transactional
     public void cleanup(Long memberId) {
@@ -29,6 +33,12 @@ public class MemberWithdrawCleanupService {
             return;
         }
 
+        List<Long> reviewIds = meetingReviewRepository.findIdsByParticipantIds(participantIds);
+        if (!reviewIds.isEmpty()) {
+            reviewImageRepository.deleteAllByReviewIds(reviewIds);
+        }
+
+        meetingReviewRepository.deleteAllByParticipantIds(participantIds);
         dateVoteRepository.deleteAllByParticipantIds(participantIds);
         timeVoteRepository.deleteAllByParticipantIds(participantIds);
         meetingParticipantRepository.deleteAllByIds(participantIds);
