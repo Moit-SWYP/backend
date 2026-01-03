@@ -34,3 +34,7 @@ springdoc:
   swagger-ui:
     operations-sorter: alpha
     persistAuthorization: true  # 새로고침 후에도 인증 헤더 유지
+
+firebase:
+  credentials:
+    location: ${FIREBASE_CREDENTIAL_LOCATION}
