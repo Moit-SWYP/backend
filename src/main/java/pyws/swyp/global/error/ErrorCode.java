@@ -46,6 +46,12 @@ public enum ErrorCode {
     TIME_VOTE_NOT_FOUND(NOT_FOUND, "VOTE0002", "아직 시간 투표가 존재하지 않습니다."),
     INVALID_TIME_VOTE_REQUEST(BAD_REQUEST, "VOTE0003", "시간 투표 요청이 올바르지 않습니다."),
     TIME_NOT_IN_30_MIN_UNIT(BAD_REQUEST, "VOTE0004", "시간은 30분 단위로만 투표할 수 있습니다."),
+
+    // Notification
+    DEVICE_TOKEN_ALREADY_REGISTERED(HttpStatus.CONFLICT, "NOTI0001", "이미 등록된 디바이스 토큰입니다."),
+    DEVICE_TOKEN_NOT_FOUND(HttpStatus.NOT_FOUND, "NOTI0002", "디바이스 토큰을 찾을 수 없습니다."),
+    NOTIFICATION_NOT_FOUND(HttpStatus.NOT_FOUND, "NOTI0003", "알림을 찾을 수 없습니다."),
+    NOTIFICATION_FORBIDDEN(HttpStatus.FORBIDDEN, "NOTI0004", "해당 알림에 대한 권한이 없습니다."),
     ;
 
     private final HttpStatus status;

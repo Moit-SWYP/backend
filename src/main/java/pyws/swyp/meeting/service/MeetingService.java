@@ -1,50 +1,53 @@
 package pyws.swyp.meeting.service;
 
+import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import pyws.swyp.global.error.CustomException;
 import pyws.swyp.global.error.ErrorCode;
 import pyws.swyp.meeting.dto.MeetingBriefResponse;
 import pyws.swyp.meeting.dto.MeetingCreateRequest;
 import pyws.swyp.meeting.dto.MeetingUpdateRequest;
 import pyws.swyp.meeting.entity.Meeting;
 import pyws.swyp.meeting.entity.MeetingParticipant;
-import pyws.swyp.meeting.entity.ParticipantRole;
 import pyws.swyp.meeting.entity.MeetingStatus;
+import pyws.swyp.meeting.entity.ParticipantRole;
+import pyws.swyp.meeting.event.VoteStartedEvent;
 import pyws.swyp.meeting.repository.MeetingParticipantRepository;
 import pyws.swyp.meeting.repository.MeetingRepository;
 import pyws.swyp.member.entity.Member;
 import pyws.swyp.member.repository.MemberRepository;
 
-import java.util.List;
-
 @Service
 @RequiredArgsConstructor
 @Transactional
 public class MeetingService {
+
     private final MeetingRepository meetingRepository;
     private final MeetingParticipantRepository meetingParticipantRepository;
     private final MemberRepository memberRepository;
+    private final ApplicationEventPublisher eventPublisher;
 
     public void createMeeting(Long memberId, MeetingCreateRequest request) {
-        Member member = memberRepository.findById(memberId).orElseThrow(
-                () -> new CustomException(ErrorCode.MEMBER_NOT_FOUND)
-        );
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(ErrorCode.MEMBER_NOT_FOUND::toException);
 
         Meeting meeting = request.toMeetingEntity();
         meetingRepository.save(meeting);
 
         MeetingParticipant meetingParticipant = MeetingParticipant.host(meeting, member);
         meetingParticipantRepository.save(meetingParticipant);
+
+        eventPublisher.publishEvent(new VoteStartedEvent(memberId));
     }
 
     public void deleteMeeting(Long memberId, Long meetingId) {
         Meeting meeting = validActiveMeeting(meetingId);
 
         MeetingParticipant participant = validateMeetingParticipant(memberId, meetingId);
-        if(participant.getRole() != pyws.swyp.meeting.entity.ParticipantRole.HOST) {
+        if (participant.getRole() != ParticipantRole.HOST) {
             throw ErrorCode.MEETING_ACCESS_DENIED.toException();
         }
 
@@ -55,7 +58,7 @@ public class MeetingService {
         validActiveMeeting(meetingId);
 
         MeetingParticipant participant = validateMeetingParticipant(memberId, meetingId);
-        if(participant.getRole() != ParticipantRole.MEMBER) {
+        if (participant.getRole() != ParticipantRole.MEMBER) {
             throw ErrorCode.MEETING_QUIT_DENIED.toException();
         }
 
@@ -76,7 +79,8 @@ public class MeetingService {
 
     @Transactional(readOnly = true)
     public List<MeetingBriefResponse> getWaitingMeetings(Long memberId, Pageable pageable) {
-        List<MeetingStatus> statuses = List.of(MeetingStatus.CREATED, MeetingStatus.DATE_VOTING, MeetingStatus.PLACE_VOTING);
+        List<MeetingStatus> statuses = List.of(MeetingStatus.CREATED, MeetingStatus.DATE_VOTING,
+                MeetingStatus.PLACE_VOTING);
         return meetingParticipantRepository.findMeetingsByMemberIdAndStatus(memberId, statuses, pageable);
     }
 
@@ -91,5 +95,4 @@ public class MeetingService {
                 .findByMemberIdAndMeetingId(memberId, meetingId)
                 .orElseThrow(ErrorCode.MEETING_ACCESS_DENIED::toException);
     }
-
 }

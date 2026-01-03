@@ -18,3 +18,7 @@ jwt:
   secret-key: nlqoqoZvab6v8CZfyJL/WByEerJmqhvXMNozGYpmHS4ZYS0NCrQjvGMozwQRgC2HRWY46MDaHmut/mw4j3IOmw==
   access-token-ttl-ms: 900000       # 15분
   refresh-token-ttl-ms: 604800000   # 일주일
+
+firebase:
+  credentials:
+    location: classpath:firebase/serviceAccount.json

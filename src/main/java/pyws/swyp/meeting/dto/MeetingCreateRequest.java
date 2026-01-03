@@ -8,7 +8,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 public record MeetingCreateRequest(
-        @NotBlank(message = "모임명을 입력해주세요")
+        @NotBlank(message = "모임명을 입력해 주세요.")
         String title,
         LocalDate date,
         LocalDateTime dateVoteDeadline,

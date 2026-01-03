@@ -132,4 +132,35 @@ public interface MeetingParticipantRepository extends JpaRepository<MeetingParti
         where mp.id in :participantIds
     """)
     int deleteAllByIds(List<Long> participantIds);
+
+    @Query("""
+            select mp.member.id
+            from MeetingParticipant mp
+            where mp.meeting.id = :meetingId
+            """)
+    List<Long> findMemberIdsByMeetingId(Long meetingId);
+
+    @Query("""
+            select mp.member.id
+            from MeetingParticipant mp
+            where mp.meeting.id = :meetingId
+              and not exists (
+                    select 1
+                    from DateVote dv
+                    where dv.meetingParticipant = mp
+              )
+            """)
+    List<Long> findMemberIdsNotVotedDate(Long meetingId);
+
+    @Query("""
+            select mp.member.id
+            from MeetingParticipant mp
+            where mp.meeting.id = :meetingId
+              and not exists (
+                    select 1
+                    from TimeVote tv
+                    where tv.meetingParticipant = mp
+              )
+            """)
+    List<Long> findMemberIdsNotVotedTime(Long meetingId);
 }

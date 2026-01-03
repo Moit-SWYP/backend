@@ -2,7 +2,9 @@ package pyws.swyp.meeting.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
@@ -21,6 +23,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import pyws.swyp.global.error.CustomException;
@@ -30,8 +33,8 @@ import pyws.swyp.meeting.dto.MeetingCreateRequest;
 import pyws.swyp.meeting.dto.MeetingUpdateRequest;
 import pyws.swyp.meeting.entity.Meeting;
 import pyws.swyp.meeting.entity.MeetingParticipant;
-import pyws.swyp.meeting.entity.ParticipantRole;
 import pyws.swyp.meeting.entity.MeetingStatus;
+import pyws.swyp.meeting.entity.ParticipantRole;
 import pyws.swyp.meeting.repository.MeetingParticipantRepository;
 import pyws.swyp.meeting.repository.MeetingRepository;
 import pyws.swyp.member.entity.CharacterType;
@@ -48,6 +51,8 @@ public class MeetingServiceTest {
     private MeetingParticipantRepository meetingParticipantRepository;
     @Mock
     private MemberRepository memberRepository;
+    @Mock
+    private ApplicationEventPublisher eventPublisher;
 
     @InjectMocks
     private MeetingService meetingService;
