@@ -7,26 +7,26 @@ import org.springframework.transaction.event.TransactionalEventListener;
 import pyws.swyp.meeting.event.DateVoteConfirmedEvent;
 import pyws.swyp.meeting.event.TimeVoteConfirmedEvent;
 import pyws.swyp.meeting.event.VoteStartedEvent;
-import pyws.swyp.notification.service.NotificationService;
+import pyws.swyp.notification.service.MeetingNotificationService;
 
 @Component
 @RequiredArgsConstructor
 public class VoteNotificationListener {
 
-    private final NotificationService notificationService;
+    private final MeetingNotificationService meetingNotificationService;
 
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     public void onVoteStarted(VoteStartedEvent event) {
-        notificationService.notifyVoteStarted(event.meetingId());
+        meetingNotificationService.notifyVoteStarted(event.meetingId());
     }
 
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     public void onDateVoteConfirmed(DateVoteConfirmedEvent event) {
-        notificationService.notifyDateVoteConfirmed(event.meetingId());
+        meetingNotificationService.notifyDateVoteConfirmed(event.meetingId());
     }
 
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     public void onTimeVoteConfirmed(TimeVoteConfirmedEvent event) {
-        notificationService.notifyTimeVoteConfirmed(event.meetingId());
+        meetingNotificationService.notifyTimeVoteConfirmed(event.meetingId());
     }
 }
