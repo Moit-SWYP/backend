@@ -105,4 +105,12 @@ VALUES
     (3, NOW(), 1, NULL, 2, 3),
     (4, NOW(), 1, NULL, 2, 4);
 
+-- MEETING_REVIEW
+INSERT IGNORE INTO meeting_review (id, created_at, is_active, updated_at, meeting_participant_id, content)
+VALUES
+    (1, NOW(), 1, NULL, 5, '분위기도 좋고 시간 조율이 잘 돼서 정말 만족스러운 모임이었어요.'),
+    (2, NOW(), 1, NULL, 1, '처음 만나는 분들이었는데 어색하지 않게 잘 진행됐어요.'),
+    (3, NOW(), 1, NULL, 2, '장소 선정이 특히 마음에 들었고 다음에도 참여하고 싶어요.'),
+    (4, NOW(), 1, NULL, 3, '투표 과정이 편리해서 일정 잡기가 쉬웠습니다.');
+
 SET FOREIGN_KEY_CHECKS = 1;

@@ -40,6 +40,8 @@ public enum ErrorCode {
     MEETING_NOT_CONFIRMABLE(HttpStatus.BAD_REQUEST, "MEET0008", "현재 모임 상태에서는 투표 확정 또는 취소를 할 수 없습니다."),
     HOST_CANNOT_WITHDRAW_WITH_UNCOMPLETED_MEETING(HttpStatus.BAD_REQUEST, "MEET0009", "완료되지 않은 모임의 모임장은 탈퇴할 수 없습니다."),
     MEETING_ALREADY_JOINED(CONFLICT, "MEET0010", "이미 참여중인 모임입니다."),
+    MEETING_NOT_DONE(HttpStatus.BAD_REQUEST, "MEET0011", "종료된 모임에만 후기를 작성할 수 있습니다."),
+    MEETING_NOT_FOUND_IN_MONTH(NOT_FOUND, "MEET0012", "해당 월에 모임이 존재하지 않습니다."),
 
     // Vote
     DATE_VOTE_NOT_FOUND(NOT_FOUND, "VOTE0001", "아직 시간 투표가 존재하지 않습니다."),
@@ -52,6 +54,10 @@ public enum ErrorCode {
     DEVICE_TOKEN_NOT_FOUND(HttpStatus.NOT_FOUND, "NOTI0002", "디바이스 토큰을 찾을 수 없습니다."),
     NOTIFICATION_NOT_FOUND(HttpStatus.NOT_FOUND, "NOTI0003", "알림을 찾을 수 없습니다."),
     NOTIFICATION_FORBIDDEN(HttpStatus.FORBIDDEN, "NOTI0004", "해당 알림에 대한 권한이 없습니다."),
+
+    // Review
+    REVIEW_ALREADY_EXISTS(HttpStatus.CONFLICT, "REV0001", "이미 해당 모임에 대한 후기가 존재합니다."),
+    REVIEW_NOT_FOUND(NOT_FOUND, "REV0002", "해당 모임에 대한 후기가 존재하지 않습니다."),
     ;
 
     private final HttpStatus status;
