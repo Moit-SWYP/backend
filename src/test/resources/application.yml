@@ -20,8 +20,11 @@ jwt:
   refresh-token-ttl-ms: 604800000   # 일주일
 
 firebase:
-  credentials:
-    location: ${FIREBASE_CREDENTIAL_LOCATION}
+  enabled: false
+
+#firebase:
+#  credentials:
+#    location: ${FIREBASE_CREDENTIAL_LOCATION:classpath:firebase/serviceAccount.json}
 
 ncp:
   object-storage:
