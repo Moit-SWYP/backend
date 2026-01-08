@@ -33,7 +33,7 @@ public class HomeService {
                 .map(MeetingBriefResponse::meetingId)
                 .toList();
 
-        Map<Long, List<ParticipantResponse>> participants
+        Map<Long, List<ParticipantInfo>> participants
                 = meetingIds.isEmpty() ? Map.of()
                 : meetingParticipantRepository.findByMeetingIds(meetingIds).stream()
                 .collect(Collectors.groupingBy(

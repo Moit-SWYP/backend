@@ -18,3 +18,18 @@ jwt:
   secret-key: nlqoqoZvab6v8CZfyJL/WByEerJmqhvXMNozGYpmHS4ZYS0NCrQjvGMozwQRgC2HRWY46MDaHmut/mw4j3IOmw==
   access-token-ttl-ms: 900000       # 15분
   refresh-token-ttl-ms: 604800000   # 일주일
+
+firebase:
+  enabled: false
+
+#firebase:
+#  credentials:
+#    location: ${FIREBASE_CREDENTIAL_LOCATION:classpath:firebase/serviceAccount.json}
+
+ncp:
+  object-storage:
+    end-point: http://localhost
+    bucket: test-bucket
+    region: test-region
+    access-key: test-access-key
+    secret-key: test-secret-key
