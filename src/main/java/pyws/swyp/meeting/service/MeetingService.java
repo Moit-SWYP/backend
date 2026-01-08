@@ -1,5 +1,6 @@
 package pyws.swyp.meeting.service;
 
+import java.time.LocalDate;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
@@ -94,5 +95,10 @@ public class MeetingService {
         return meetingParticipantRepository
                 .findByMemberIdAndMeetingId(memberId, meetingId)
                 .orElseThrow(ErrorCode.MEETING_ACCESS_DENIED::toException);
+    }
+
+    public void markMeetingsDone() {
+        LocalDate today = LocalDate.now();
+        meetingRepository.bulkMarkMeetingsDone(today, MeetingStatus.DONE);
     }
 }
