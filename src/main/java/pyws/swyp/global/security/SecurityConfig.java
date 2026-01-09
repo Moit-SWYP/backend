@@ -39,7 +39,8 @@ public class SecurityConfig {
                                 "/v3/api-docs/**",
                                 "/api/auth/login",
                                 "/api/auth/signup",
-                                "/api/auth/reissue"
+                                "/api/auth/reissue",
+                                "/api/auth/oauth/**"
                         ).permitAll()
                         .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
                         .anyRequest().authenticated())
