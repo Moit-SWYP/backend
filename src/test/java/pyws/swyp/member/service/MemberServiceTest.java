@@ -23,10 +23,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 import pyws.swyp.auth.service.JwtService;
 import pyws.swyp.global.error.CustomException;
 import pyws.swyp.global.error.ErrorCode;
-import pyws.swyp.meeting.entity.Meeting;
-import pyws.swyp.meeting.entity.MeetingParticipant;
-import pyws.swyp.meeting.entity.MeetingStatus;
-import pyws.swyp.meeting.entity.ParticipantRole;
+import pyws.swyp.meeting.entity.*;
 import pyws.swyp.meeting.entity.vote.DateVote;
 import pyws.swyp.meeting.entity.vote.TimeVote;
 import pyws.swyp.meeting.repository.MeetingParticipantRepository;
@@ -121,6 +118,7 @@ class MemberServiceTest {
 
         meeting = Meeting.builder()
                 .title("테스트 모임")
+                .type(MeetingType.CULTURE_LOVER)
                 .build();
         meeting.updateStatus(MeetingStatus.DATE_VOTING);
         meetingRepository.save(meeting);
@@ -230,6 +228,7 @@ class MemberServiceTest {
         // given
         Meeting completed = Meeting.builder()
                 .title("완료된 모임")
+                .type(MeetingType.CULTURE_LOVER)
                 .build();
         completed.updateStatus(MeetingStatus.DONE);
         meetingRepository.save(completed);
