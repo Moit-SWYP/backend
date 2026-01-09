@@ -52,7 +52,7 @@ public class AuthController implements AuthApi {
             @RequestHeader("Authorization") String authorization,
             @RequestParam("app_id") String appId,
             @RequestParam("user_id") String userId,
-            @RequestParam(value = "referrer_type") String referrerType
+            @RequestParam("referrer_type") String referrerType
     ) {
         authService.handleKakaoUnlinkCallback(authorization, appId, userId, referrerType);
         return ResponseEntity.ok().build();
