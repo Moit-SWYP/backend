@@ -26,15 +26,14 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.test.util.ReflectionTestUtils;
 import pyws.swyp.global.error.CustomException;
 import pyws.swyp.global.error.ErrorCode;
 import pyws.swyp.meeting.dto.MeetingBriefResponse;
 import pyws.swyp.meeting.dto.MeetingCreateRequest;
+import pyws.swyp.meeting.dto.MeetingCreateResponse;
 import pyws.swyp.meeting.dto.MeetingUpdateRequest;
-import pyws.swyp.meeting.entity.Meeting;
-import pyws.swyp.meeting.entity.MeetingParticipant;
-import pyws.swyp.meeting.entity.MeetingStatus;
-import pyws.swyp.meeting.entity.ParticipantRole;
+import pyws.swyp.meeting.entity.*;
 import pyws.swyp.meeting.repository.MeetingParticipantRepository;
 import pyws.swyp.meeting.repository.MeetingRepository;
 import pyws.swyp.member.entity.CharacterType;
@@ -68,14 +67,7 @@ public class MeetingServiceTest {
     void 모임_생성_성공() {
         // given
         Long memberId = 1L;
-        MeetingCreateRequest request = mock(MeetingCreateRequest.class);
-        Meeting meeting = Meeting.builder()
-                .title("테스트 모임 생성")
-                .date(nowDate.plusDays(7))
-                .dateVoteDeadline(nowDateTime.plusDays(1))
-                .courseVoteDeadline(nowDateTime.plusDays(3))
-                .build();
-        when(request.toMeetingEntity()).thenReturn(meeting);
+        MeetingCreateRequest request = new MeetingCreateRequest("테스트 모임 생성", MeetingType.DRINKER);
 
         Member member = new Member(
                 "1234@example.com",
@@ -85,21 +77,38 @@ public class MeetingServiceTest {
                 MemberRole.MEMBER,
                 CharacterType.TRAVELER
                 );
-        // Todo: 추후 변경된 로직에 맞게 변경 필요.
+
         when(memberRepository.findById(memberId)).thenReturn(Optional.of(member));
+        when(meetingRepository.save(any(Meeting.class)))
+                .thenAnswer(invocation -> {
+                    Meeting savedMeeting = invocation.getArgument(0);
+                    ReflectionTestUtils.setField(savedMeeting, "id", 10L);
+                    return savedMeeting;
+                });
 
         // when
-        meetingService.createMeeting(memberId, request);
+        MeetingCreateResponse response = meetingService.createMeeting(memberId, request);
 
         // then
-        verify(meetingRepository, times(1)).save(meeting);
-        ArgumentCaptor<MeetingParticipant> captor = ArgumentCaptor.forClass(MeetingParticipant.class);
-        verify(meetingParticipantRepository, times(1)).save(captor.capture());
+        // meeting 저장 검증
+        ArgumentCaptor<Meeting> meetingCaptor = ArgumentCaptor.forClass(Meeting.class);
+        verify(meetingRepository, times(1)).save(meetingCaptor.capture());
 
-        MeetingParticipant savedParticipant = captor.getValue();
-        assertThat(savedParticipant.getMeeting()).isSameAs(meeting);
-        assertThat(savedParticipant.getMember()).isSameAs(member);
+        Meeting savedMeeting = meetingCaptor.getValue();
+        assertThat(savedMeeting.getTitle()).isEqualTo("테스트 모임 생성");
+        assertThat(savedMeeting.getType()).isEqualTo(MeetingType.DRINKER);
+
+        // meetingParticipant 저장 검증
+        ArgumentCaptor<MeetingParticipant> meetingParticipantCaptor = ArgumentCaptor.forClass(MeetingParticipant.class);
+        verify(meetingParticipantRepository, times(1)).save(meetingParticipantCaptor.capture());
+
+        MeetingParticipant savedParticipant = meetingParticipantCaptor.getValue();
+        assertThat(savedParticipant.getMeeting().getTitle()).isEqualTo("테스트 모임 생성");
+        assertThat(savedParticipant.getMember()).isEqualTo(member);
         assertThat(savedParticipant.getRole()).isEqualTo(pyws.swyp.meeting.entity.ParticipantRole.HOST);
+
+        // 응답값 검증
+        assertThat(response.meetingId()).isEqualTo(10L);
     }
 
     @Test
@@ -324,9 +333,7 @@ public class MeetingServiceTest {
 
         Meeting meeting = Meeting.builder()
                 .title("모잇 오프라인 모임")
-                .date(null)
-                .dateVoteDeadline(LocalDateTime.of(2025,12,31,13,00))
-                .courseVoteDeadline(null)
+                .type(MeetingType.DRINKER)
                 .build();
 
         MeetingUpdateRequest request = new MeetingUpdateRequest(
@@ -351,8 +358,6 @@ public class MeetingServiceTest {
 
         assertThat(meeting.getTitle()).isEqualTo("모잇 오프라인 모임");
         assertThat(meeting.getDate()).isEqualTo(LocalDate.of(2026,1,20));
-        assertThat(meeting.getDateVoteDeadline()).isEqualTo(LocalDateTime.of(2025,12,31,13,00));
-        assertThat(meeting.getCourseVoteDeadline()).isNull();
     }
 
     @Test
@@ -364,9 +369,7 @@ public class MeetingServiceTest {
 
         Meeting meeting = Meeting.builder()
                 .title("모잇 오프라인 모임")
-                .date(null)
-                .dateVoteDeadline(LocalDateTime.of(2025,12,31,13,00))
-                .courseVoteDeadline(null)
+                .type(MeetingType.DRINKER)
                 .build();
 
         MeetingUpdateRequest request = new MeetingUpdateRequest(
@@ -393,8 +396,6 @@ public class MeetingServiceTest {
 
         assertThat(meeting.getTitle()).isEqualTo("모잇 오프라인 모임");
         assertThat(meeting.getDate()).isNull();
-        assertThat(meeting.getDateVoteDeadline()).isEqualTo(LocalDateTime.of(2025,12,31,13,00));
-        assertThat(meeting.getCourseVoteDeadline()).isNull();
     }
 
     @Test
@@ -406,9 +407,7 @@ public class MeetingServiceTest {
 
         Meeting meeting = Meeting.builder()
                 .title("모잇 오프라인 모임")
-                .date(null)
-                .dateVoteDeadline(LocalDateTime.of(2025,12,31,13,00))
-                .courseVoteDeadline(null)
+                .type(MeetingType.DRINKER)
                 .build();
 
         MeetingUpdateRequest request = new MeetingUpdateRequest(
@@ -437,8 +436,6 @@ public class MeetingServiceTest {
 
         assertThat(meeting.getTitle()).isEqualTo("모잇 오프라인 모임");
         assertThat(meeting.getDate()).isNull();
-        assertThat(meeting.getDateVoteDeadline()).isEqualTo(LocalDateTime.of(2025,12,31,13,00));
-        assertThat(meeting.getCourseVoteDeadline()).isNull();
 
     }
 

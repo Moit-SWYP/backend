@@ -20,6 +20,7 @@ import pyws.swyp.config.AuthTestPrincipalContext;
 import pyws.swyp.global.jwt.JwtProvider;
 import pyws.swyp.meeting.dto.MeetingCreateRequest;
 import pyws.swyp.meeting.dto.MeetingUpdateRequest;
+import pyws.swyp.meeting.entity.MeetingType;
 import pyws.swyp.meeting.service.MeetingService;
 
 import java.time.LocalDate;
@@ -57,9 +58,7 @@ public class MeetingControllerTest {
 
         MeetingCreateRequest request = new MeetingCreateRequest(
                 "모잇 오프라인",
-                LocalDate.of(2025,12,30),
-                LocalDateTime.of(2025,12,15,23,59),
-                LocalDateTime.of(2025,12,26,23,59)
+                MeetingType.FOODIE
         );
 
         // when
@@ -83,9 +82,7 @@ public class MeetingControllerTest {
         // given
         MeetingCreateRequest request = new MeetingCreateRequest(
                 "  ",
-                LocalDate.of(2025,12,30),
-                LocalDateTime.of(2025,12,15,23,59),
-                LocalDateTime.of(2025,12,26,23,59)
+                MeetingType.FOODIE
         );
 
         // when
