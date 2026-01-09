@@ -38,8 +38,12 @@ public class Meeting extends BaseEntity {
     private LocalTime time;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column(nullable = false, length = 50)
     private MeetingStatus status = MeetingStatus.CREATED;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 50)
+    private MeetingType type;
 
     @Column
     private LocalDateTime dateVoteDeadline;
@@ -50,17 +54,26 @@ public class Meeting extends BaseEntity {
     @Builder
     public Meeting(
             String title,
-            LocalDate date,
-            LocalTime time,
-            LocalDateTime dateVoteDeadline,
-            LocalDateTime courseVoteDeadline
+            MeetingType type
     ) {
         this.title = title;
-        this.date = date;
-        this.time = time;
-        this.dateVoteDeadline = dateVoteDeadline;
-        this.courseVoteDeadline = courseVoteDeadline;
+        this.type = type;
     }
+
+//    @Builder
+//    public Meeting(
+//            String title,
+//            LocalDate date,
+//            LocalTime time,
+//            LocalDateTime dateVoteDeadline,
+//            LocalDateTime courseVoteDeadline
+//    ) {
+//        this.title = title;
+//        this.date = date;
+//        this.time = time;
+//        this.dateVoteDeadline = dateVoteDeadline;
+//        this.courseVoteDeadline = courseVoteDeadline;
+//    }
 
     public void updateStatus(MeetingStatus status) {
         this.status = status;

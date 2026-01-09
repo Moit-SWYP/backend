@@ -53,7 +53,7 @@ public interface MeetingParticipantRepository extends JpaRepository<MeetingParti
     """)
     List<MeetingBriefResponse> findMeetingsByMemberIdAndStatus(
             @Param("memberId") Long memberId,
-            @Param("statuses")Collection<MeetingStatus> statuses,
+            @Param("statuses") Collection<MeetingStatus> statuses,
             Pageable pageable
     );
 
