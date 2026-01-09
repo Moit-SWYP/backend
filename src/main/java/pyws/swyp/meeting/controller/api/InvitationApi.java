@@ -8,8 +8,10 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import pyws.swyp.meeting.dto.InvitationLinkResponse;
+import pyws.swyp.meeting.dto.InviteFriendsRequest;
 
 @SecurityRequirement(name = "auth")
 @Tag(name = "Invitation API", description = "모임 초대 API")
@@ -141,4 +143,52 @@ public interface InvitationApi {
             )
     )
     void joinMeetingFromLink(@AuthenticationPrincipal Long memberId, @RequestParam String inviteToken);
+
+    @Operation(
+            summary = "친구 리스트에서 모임 초대",
+            description =
+                    """
+                            친구 목록에서 초대할 멤버들을 선택해 리스트로 요청합니다.
+                            초대된 멤버들을 MEMBER로 모임에 추가합니다.
+                            멤버 구성원들 중 친구가 아닌 사람이 있다면 친구에 양방향으로 추가합니다.
+                            이미 친구라면 metCount를 증가시킵니다.
+                    """
+    )
+    @ApiResponse(
+            responseCode = "200",
+            description = "모임 초대 성공",
+            content = @Content(
+                    mediaType = "application/json",
+                    examples = {
+                            @ExampleObject(
+                                    name = "모임 초대 성공",
+                                    value = """
+                                            {
+                                                "code": "SUCCESS",
+                                                "message": "요청이 성공적으로 처리되었습니다."
+                                            }
+                                            """
+                            )
+                    }
+            )
+    )
+    @ApiResponse(
+            responseCode = "404",
+            description = "존재하지 않은 멤버를 초대하려 함.",
+            content = @Content(
+                    mediaType = "application/json",
+                    examples = {
+                            @ExampleObject(
+                                    name = "추가하려는 멤버가 존재하지 않음",
+                                    value = """
+                                            {
+                                                "code": "MEM0002",
+                                                "message": "존재하지 않는 멤버가 포함되어 있습니다"
+                                            }
+                                            """
+                            )
+                    }
+            )
+    )
+    void inviteToMeetingFromFriends(@AuthenticationPrincipal Long memberId, @PathVariable Long meetingId, @RequestBody InviteFriendsRequest request);
 }

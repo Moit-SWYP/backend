@@ -24,6 +24,13 @@ public interface FriendshipRepository extends JpaRepository<Friendship, Long> {
     """)
     List<Friendship> findByMemberId(Long memberId);
 
+    @Query("""
+            SELECT f
+            FROM Friendship f
+            WHERE f.member.id IN :memberIds
+        """)
+    List<Friendship> findByMemberIds(List<Long> memberIds);
+
     @Modifying(clearAutomatically = true, flushAutomatically = true)
     @Query("""
             DELETE FROM Friendship f
