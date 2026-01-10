@@ -19,6 +19,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.transaction.support.TransactionTemplate;
 import pyws.swyp.auth.service.JwtService;
 import pyws.swyp.global.error.CustomException;
@@ -204,12 +205,9 @@ class MemberServiceTest {
     @DisplayName("완료되지 않은 모임 HOST는 탈퇴 불가 + 로그아웃 미호출")
     void withdraw_denied_whenHostInUncompletedMeeting() {
         // given
-        MeetingParticipant host = MeetingParticipant.builder()
-                .meeting(meeting)
-                .member(member)
-                .role(ParticipantRole.HOST)
-                .build();
-        meetingParticipantRepository.save(host);
+        // BeforeEach로 생성한 participant role 변경
+        ReflectionTestUtils.setField(participant, "role", ParticipantRole.HOST);
+        meetingParticipantRepository.save(participant);
 
         MemberWithdrawRequest request = new MemberWithdrawRequest(WithdrawalType.ETC, "테스트");
 

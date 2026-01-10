@@ -11,7 +11,7 @@ import pyws.swyp.member.entity.Member;
 @Table(
         uniqueConstraints = {
                 @UniqueConstraint(
-                        columnNames = {"meetind_id", "member_id"}
+                        columnNames = {"meeting_id", "member_id"}
                 )
         }
 )
