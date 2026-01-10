@@ -27,7 +27,8 @@ spring:
 jwt:
   issuer: swyp
   secret-key: ${JWT_SECRET}
-  access-token-ttl-ms: 900000
+  access-token-ttl-ms: 604800000  # 개발용
+#  access-token-ttl-ms: 900000
   refresh-token-ttl-ms: 604800000
 
 springdoc:
