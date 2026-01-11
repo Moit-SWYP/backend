@@ -219,6 +219,9 @@ public class InvitationServiceTest {
         when(meeting.isActive()).thenReturn(true);
         when(meetingRepository.findById(meetingId)).thenReturn(Optional.of(meeting));
 
+        when(memberRepository.findAllById(List.of(2L, 3L)))
+                .thenReturn(List.of(friendRef2, friendRef3));
+
         when(meetingParticipantRepository.findByMemberIdAndMeetingId(memberId, meetingId))
                 .thenReturn(Optional.of(mock(MeetingParticipant.class)));
 
@@ -257,9 +260,14 @@ public class InvitationServiceTest {
         InviteFriendsRequest request = new InviteFriendsRequest(List.of(2L, 3L));
 
         Meeting meeting = mock(Meeting.class);
+        Member friendRef2 = mock(Member.class);
+        Member friendRef3 = mock(Member.class);
 
         when(meeting.isActive()).thenReturn(true);
         when(meetingRepository.findById(meetingId)).thenReturn(Optional.of(meeting));
+
+        when(memberRepository.findAllById(List.of(2L, 3L)))
+                .thenReturn(List.of(friendRef2, friendRef3));
 
         when(meetingParticipantRepository.findByMemberIdAndMeetingId(memberId, meetingId))
                 .thenReturn(Optional.of(mock(MeetingParticipant.class)));

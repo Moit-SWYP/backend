@@ -70,6 +70,9 @@ public class InvitationService {
         Meeting meeting = validActiveMeeting(meetingId);
         validateMeetingParticipant(memberId, meetingId);
 
+        // friend memberId 존재 여부 검증
+        validateMembersExist(request.friendIds());
+
         // 이미 존재하는 참여자 memberId 조회
         List<Long> existingIds = meetingParticipantRepository
                 .findOtherMemberIdsByMeetingId(memberId, meetingId);
@@ -85,7 +88,7 @@ public class InvitationService {
 
         if(participants.isEmpty()) return;
 
-        // 저장 시 FK 에러 발생 예외 처리
+        // 저장 시 DB 제약 에러 예외 처리
         try {
             meetingParticipantRepository.saveAll(participants);
         } catch (DataIntegrityViolationException e) {
@@ -119,6 +122,14 @@ public class InvitationService {
         return meetingParticipantRepository
                 .findByMemberIdAndMeetingId(memberId, meetingId)
                 .orElseThrow(ErrorCode.MEETING_ACCESS_DENIED::toException);
+    }
+
+    private void validateMembersExist(List<Long> memberIds) {
+        List<Member> members = memberRepository.findAllById(memberIds);
+
+        if (members.size() != memberIds.size()) {
+            throw ErrorCode.INVALID_INVITE_MEMBER.toException();
+        }
     }
 
     /**
