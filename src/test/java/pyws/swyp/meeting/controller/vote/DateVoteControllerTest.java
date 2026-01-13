@@ -30,10 +30,7 @@ import pyws.swyp.config.AuthTestPrincipalContext;
 import pyws.swyp.config.TestRedisConfig;
 import pyws.swyp.global.error.ErrorCode;
 import pyws.swyp.meeting.dto.vote.date.DateVoteRequest;
-import pyws.swyp.meeting.entity.Meeting;
-import pyws.swyp.meeting.entity.MeetingParticipant;
-import pyws.swyp.meeting.entity.MeetingStatus;
-import pyws.swyp.meeting.entity.ParticipantRole;
+import pyws.swyp.meeting.entity.*;
 import pyws.swyp.meeting.entity.vote.DateVote;
 import pyws.swyp.meeting.repository.MeetingParticipantRepository;
 import pyws.swyp.meeting.repository.MeetingRepository;
@@ -103,6 +100,7 @@ class DateVoteControllerTest {
         // meeting
         Meeting meeting = meetingRepository.save(Meeting.builder()
                 .title("테스트 모임")
+                .type(MeetingType.DRINKER)
                 .build());
         meeting.updateStatus(MeetingStatus.CREATED);
         this.meetingId = meeting.getId();

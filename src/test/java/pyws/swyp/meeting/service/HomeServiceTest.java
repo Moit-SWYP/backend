@@ -47,7 +47,7 @@ public class HomeServiceTest {
         ParticipantInfo p1 = new ParticipantInfo(memberId, "닉네임1", CharacterType.FOODIE, pyws.swyp.meeting.entity.ParticipantRole.HOST);
         ParticipantInfo p2 = new ParticipantInfo(2L, "닉네임2", CharacterType.TRAVELER, pyws.swyp.meeting.entity.ParticipantRole.MEMBER);
         ParticipantInfo p3 = new ParticipantInfo(3L, "닉네임3", CharacterType.HEALER, ParticipantRole.MEMBER);
-        ParticipantInfo p4 = new ParticipantInfo(4L, "닉네임4", CharacterType.STUDYER, pyws.swyp.meeting.entity.ParticipantRole.MEMBER);
+        ParticipantInfo p4 = new ParticipantInfo(4L, "닉네임4", CharacterType.STUDIER, pyws.swyp.meeting.entity.ParticipantRole.MEMBER);
         ParticipantInfo p5 = new ParticipantInfo(5L, "닉네임5", CharacterType.FOODIE, pyws.swyp.meeting.entity.ParticipantRole.MEMBER);
 
         List<ParticipantRow> participantRows = List.of(

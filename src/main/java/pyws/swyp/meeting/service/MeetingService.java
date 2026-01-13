@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import pyws.swyp.global.error.ErrorCode;
 import pyws.swyp.meeting.dto.MeetingBriefResponse;
 import pyws.swyp.meeting.dto.MeetingCreateRequest;
+import pyws.swyp.meeting.dto.MeetingCreateResponse;
 import pyws.swyp.meeting.dto.MeetingUpdateRequest;
 import pyws.swyp.meeting.entity.Meeting;
 import pyws.swyp.meeting.entity.MeetingParticipant;
@@ -31,17 +32,22 @@ public class MeetingService {
     private final MemberRepository memberRepository;
     private final ApplicationEventPublisher eventPublisher;
 
-    public void createMeeting(Long memberId, MeetingCreateRequest request) {
+    public MeetingCreateResponse createMeeting(Long memberId, MeetingCreateRequest request) {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(ErrorCode.MEMBER_NOT_FOUND::toException);
 
-        Meeting meeting = request.toMeetingEntity();
+        Meeting meeting = Meeting.builder()
+                .title(request.title())
+                .type(request.type())
+                .build();
         meetingRepository.save(meeting);
 
         MeetingParticipant meetingParticipant = MeetingParticipant.host(meeting, member);
         meetingParticipantRepository.save(meetingParticipant);
 
         eventPublisher.publishEvent(new VoteStartedEvent(memberId));
+
+        return new MeetingCreateResponse(meeting.getId(), meeting.getTitle());
     }
 
     public void deleteMeeting(Long memberId, Long meetingId) {
