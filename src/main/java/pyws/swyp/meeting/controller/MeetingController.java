@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import pyws.swyp.meeting.controller.api.MeetingApi;
 import pyws.swyp.meeting.dto.MeetingBriefResponse;
 import pyws.swyp.meeting.dto.MeetingCreateRequest;
+import pyws.swyp.meeting.dto.MeetingCreateResponse;
 import pyws.swyp.meeting.dto.MeetingUpdateRequest;
 import pyws.swyp.meeting.service.MeetingService;
 
@@ -22,8 +23,8 @@ public class MeetingController implements MeetingApi {
     private final MeetingService meetingService;
 
     @PostMapping
-    public void createMeeting(@AuthenticationPrincipal Long memberId, @RequestBody @Validated MeetingCreateRequest request) {
-        meetingService.createMeeting(memberId, request);
+    public MeetingCreateResponse createMeeting(@AuthenticationPrincipal Long memberId, @RequestBody @Validated MeetingCreateRequest request) {
+        return meetingService.createMeeting(memberId, request);
     }
 
     @DeleteMapping("/{id}")

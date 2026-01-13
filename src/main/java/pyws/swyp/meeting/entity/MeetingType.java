@@ -1,7 +1,6 @@
-package pyws.swyp.member.entity;
+package pyws.swyp.meeting.entity;
 
-public enum CharacterType {
-
+public enum MeetingType {
     FOODIE,        // 미식형
     DRINKER,       // 음주형
     HEALER,        // 휴식형

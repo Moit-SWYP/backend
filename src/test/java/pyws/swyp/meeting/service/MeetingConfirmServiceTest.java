@@ -11,10 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import pyws.swyp.global.error.CustomException;
 import pyws.swyp.global.error.ErrorCode;
-import pyws.swyp.meeting.entity.Meeting;
-import pyws.swyp.meeting.entity.MeetingParticipant;
-import pyws.swyp.meeting.entity.MeetingStatus;
-import pyws.swyp.meeting.entity.ParticipantRole;
+import pyws.swyp.meeting.entity.*;
 import pyws.swyp.meeting.entity.vote.DateVote;
 import pyws.swyp.meeting.entity.vote.TimeVote;
 import pyws.swyp.meeting.repository.MeetingParticipantRepository;
@@ -59,6 +56,7 @@ class MeetingConfirmServiceTest {
 
         Meeting meeting = Meeting.builder()
                 .title("테스트 모임")
+                .type(MeetingType.DRINKER)
                 .build();
         meeting.updateStatus(MeetingStatus.DATE_VOTING);
         meetingRepository.save(meeting);

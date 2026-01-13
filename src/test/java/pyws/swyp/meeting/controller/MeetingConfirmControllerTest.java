@@ -24,10 +24,7 @@ import pyws.swyp.config.AuthPrincipalTestConfig;
 import pyws.swyp.config.AuthTestPrincipalContext;
 import pyws.swyp.config.TestRedisConfig;
 import pyws.swyp.global.error.ErrorCode;
-import pyws.swyp.meeting.entity.Meeting;
-import pyws.swyp.meeting.entity.MeetingParticipant;
-import pyws.swyp.meeting.entity.MeetingStatus;
-import pyws.swyp.meeting.entity.ParticipantRole;
+import pyws.swyp.meeting.entity.*;
 import pyws.swyp.meeting.repository.MeetingParticipantRepository;
 import pyws.swyp.meeting.repository.MeetingRepository;
 import pyws.swyp.meeting.repository.vote.DateVoteRepository;
@@ -81,6 +78,7 @@ class MeetingConfirmControllerTest {
 
         Meeting meeting = meetingRepository.save(Meeting.builder()
                 .title("확정 테스트 모임")
+                .type(MeetingType.DRINKER)
                 .build());
         this.meetingId = meeting.getId();
 

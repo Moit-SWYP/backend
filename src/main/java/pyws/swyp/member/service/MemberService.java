@@ -15,6 +15,7 @@ import pyws.swyp.member.dto.SocialAccountInfo;
 import pyws.swyp.member.entity.CharacterType;
 import pyws.swyp.member.entity.Member;
 import pyws.swyp.member.entity.MemberWithdrawal;
+import pyws.swyp.member.entity.WithdrawalType;
 import pyws.swyp.member.repository.MemberRepository;
 import pyws.swyp.member.repository.MemberWithdrawalRepository;
 import pyws.swyp.member.repository.SocialAccountRepository;
@@ -78,6 +79,22 @@ public class MemberService {
         jwtService.logout(memberId);
 
         // 회원 삭제
+        memberRepository.delete(member);
+    }
+
+    @Transactional
+    public void withdrawByUnlinkCallback(Long memberId) {
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(MEMBER_NOT_FOUND::toException);
+
+        MemberWithdrawal memberWithdrawal = MemberWithdrawal.builder()
+                .type(WithdrawalType.SOCIAL_UNLINK)
+                .build();
+        memberWithdrawalRepository.save(memberWithdrawal);
+
+        socialAccountRepository.deleteAllByMemberId(memberId);
+        memberWithdrawCleanupService.cleanup(memberId);
+        jwtService.logout(memberId);
         memberRepository.delete(member);
     }
 

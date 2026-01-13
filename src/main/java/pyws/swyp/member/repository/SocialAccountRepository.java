@@ -20,4 +20,6 @@ public interface SocialAccountRepository extends JpaRepository<SocialAccount, Lo
     @Modifying(clearAutomatically = true, flushAutomatically = true)
     @Query("delete from SocialAccount sa where sa.member.id = :memberId")
     int deleteAllByMemberId(Long memberId);
+
+    long countByMemberId(Long memberId);
 }
