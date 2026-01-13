@@ -13,7 +13,7 @@ public interface FriendshipRepository extends JpaRepository<Friendship, Long> {
             SELECT f
             FROM Friendship f
             WHERE f.member.id = :memberId
-                AND f.friend.id IN :meetingIds
+                AND f.friend.id IN :friendIds
     """)
     List<Friendship> findByMemberIdAndFriendIds(Long memberId, List<Long> friendIds);
 
