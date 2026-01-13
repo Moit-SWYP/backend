@@ -1,5 +1,6 @@
 ### Custom ###
 src/main/**/application-local.yml
+src/main/resources/firebase/serviceAccount.json
 
 ### Basic ###
 HELP.md
