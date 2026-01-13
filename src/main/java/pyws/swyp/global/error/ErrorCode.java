@@ -26,6 +26,8 @@ public enum ErrorCode {
 
     // Member
     MEMBER_NOT_FOUND(NOT_FOUND, "MEM0001", "존재하지 않는 회원입니다."),
+    INVALID_INVITE_MEMBER(BAD_REQUEST, "MEM0002", "존재하지 않는 멤버가 포함되어 있습니다"),
+
     SOCIAL_ACCOUNT_FOUND(NOT_FOUND, "SOC0001", "존재하지 않는 소셜 계정입니다."),
     SOCIAL_ACCOUNT_ALREADY_EXISTS(CONFLICT, "SOC0002", "이미 가입된 소셜 계정입니다."),
 
