@@ -189,9 +189,7 @@ public class MeetingControllerTest {
 
         MeetingUpdateRequest request = new MeetingUpdateRequest(
                 "모잇 오프라인",
-                LocalDate.of(2025,12,30),
-                LocalDateTime.of(2025,12,15,23,59),
-                LocalDateTime.of(2025,12,26,23,59)
+                LocalDate.of(2025,12,30)
         );
 
         // when
@@ -218,9 +216,7 @@ public class MeetingControllerTest {
 
         MeetingUpdateRequest request = new MeetingUpdateRequest(
                 "모잇 오프라인",
-                LocalDate.of(2025,12,30),
-                LocalDateTime.of(2025,12,15,23,59),
-                LocalDateTime.of(2025,12,26,23,59)
+                LocalDate.of(2025,12,30)
         );
 
         // when

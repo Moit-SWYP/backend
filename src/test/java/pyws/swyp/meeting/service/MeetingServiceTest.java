@@ -338,9 +338,7 @@ public class MeetingServiceTest {
 
         MeetingUpdateRequest request = new MeetingUpdateRequest(
                 null,
-                LocalDate.of(2026,1,20),
-                null,
-                null
+                LocalDate.of(2026,1,20)
         );
 
         when(meetingRepository.findById(meetingId)).thenReturn(Optional.of(meeting));
@@ -374,9 +372,7 @@ public class MeetingServiceTest {
 
         MeetingUpdateRequest request = new MeetingUpdateRequest(
                 null,
-                LocalDate.of(2026,1,20),
-                null,
-                null
+                LocalDate.of(2026,1,20)
         );
 
         when(meetingRepository.findById(meetingId)).thenReturn(Optional.of(meeting));
@@ -412,9 +408,7 @@ public class MeetingServiceTest {
 
         MeetingUpdateRequest request = new MeetingUpdateRequest(
                 " ",
-                LocalDate.of(2026,1,20),
-                null,
-                null
+                LocalDate.of(2026,1,20)
         );
 
         when(meetingRepository.findById(meetingId)).thenReturn(Optional.of(meeting));
