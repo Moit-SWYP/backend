@@ -27,7 +27,8 @@ spring:
 jwt:
   issuer: swyp
   secret-key: ${JWT_SECRET}
-  access-token-ttl-ms: 900000
+  access-token-ttl-ms: 604800000  # 개발용
+#  access-token-ttl-ms: 900000
   refresh-token-ttl-ms: 604800000
 
 springdoc:
@@ -38,3 +39,11 @@ springdoc:
 firebase:
   credentials:
     location: ${FIREBASE_CREDENTIAL_LOCATION}
+
+oauth:
+  kakao:
+    app-id: ${KAKAO_APP_ID}
+    admin-key: ${KAKAO_ADMIN_KEY}
+  naver:
+    client-id: ${NAVER_CLIENT_ID}
+    client-secret: ${NAVER_CLIENT_SECRET}

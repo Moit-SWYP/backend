@@ -13,7 +13,7 @@ public interface FriendshipRepository extends JpaRepository<Friendship, Long> {
             SELECT f
             FROM Friendship f
             WHERE f.member.id = :memberId
-                AND f.friend.id IN :meetingIds
+                AND f.friend.id IN :friendIds
     """)
     List<Friendship> findByMemberIdAndFriendIds(Long memberId, List<Long> friendIds);
 
@@ -23,6 +23,13 @@ public interface FriendshipRepository extends JpaRepository<Friendship, Long> {
             WHERE f.member.id = :memberId
     """)
     List<Friendship> findByMemberId(Long memberId);
+
+    @Query("""
+            SELECT f
+            FROM Friendship f
+            WHERE f.member.id IN :memberIds
+        """)
+    List<Friendship> findByMemberIds(List<Long> memberIds);
 
     @Modifying(clearAutomatically = true, flushAutomatically = true)
     @Query("""

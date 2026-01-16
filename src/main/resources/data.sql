@@ -13,10 +13,10 @@ SET FOREIGN_KEY_CHECKS = 0;
 ------------------------------------------------------
 
 -- MEETING
-INSERT IGNORE INTO meeting (id, public_id, created_at, is_active, updated_at, date, time, status, title)
+INSERT IGNORE INTO meeting (id, public_id, created_at, is_active, updated_at, date, time, status, type, title)
 VALUES
-    (1, UUID_TO_BIN(UUID()), NOW(), 1, NULL, '2025-12-20', NULL, 'CREATED', '연말 모임'),
-    (2, UUID_TO_BIN(UUID()), NOW(), 1, NULL, '2025-12-25', '19:00:00', 'PLACE_VOTING', '크리스마스 모임');
+    (1, UUID_TO_BIN(UUID()), NOW(), 1, NULL, '2025-12-20', NULL, 'CREATED', 'FOODIE', '연말 모임'),
+    (2, UUID_TO_BIN(UUID()), NOW(), 1, NULL, '2025-12-25', '19:00:00', 'PLACE_VOTING', 'TREND_SETTER','크리스마스 모임');
 
 -- MEMBER
 INSERT IGNORE INTO member (id, created_at, birth_date, email, gender, nickname, character_type, role)

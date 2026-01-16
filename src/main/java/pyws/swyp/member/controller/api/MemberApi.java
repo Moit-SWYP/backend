@@ -136,7 +136,7 @@ public interface MemberApi {
                             - TRAVELER (모험형)
                             - ACTIVE (활동형)
                             - TREND_SETTER (주목형)
-                            - STUDYER (학습형)
+                            - STUDIER (학습형)
                             
                             예) /api/members/me/CULTURE_LOVER
                             """

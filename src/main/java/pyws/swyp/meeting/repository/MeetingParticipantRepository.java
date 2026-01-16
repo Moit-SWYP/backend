@@ -53,7 +53,7 @@ public interface MeetingParticipantRepository extends JpaRepository<MeetingParti
     """)
     List<MeetingBriefResponse> findMeetingsByMemberIdAndStatus(
             @Param("memberId") Long memberId,
-            @Param("statuses")Collection<MeetingStatus> statuses,
+            @Param("statuses") Collection<MeetingStatus> statuses,
             Pageable pageable
     );
 
@@ -98,14 +98,6 @@ public interface MeetingParticipantRepository extends JpaRepository<MeetingParti
     """)
     List<MeetingParticipant> findByMeetingId(Long meetingId);
 
-    @Query("""
-            SELECT mp.member.id
-            FROM MeetingParticipant mp
-            WHERE mp.meeting.id = :meetingId
-                AND mp.member.id <> :memberId
-    """)
-    List<Long> findMemberIdsByMeetingId(Long memberId, Long meetingId);
-
     boolean existsByMemberIdAndMeetingId(Long memberId, Long meetingId);
 
     @Query("""
@@ -132,6 +124,14 @@ public interface MeetingParticipantRepository extends JpaRepository<MeetingParti
         where mp.id in :participantIds
     """)
     int deleteAllByIds(List<Long> participantIds);
+
+    @Query("""
+            SELECT mp.member.id
+            FROM MeetingParticipant mp
+            WHERE mp.meeting.id = :meetingId
+                AND mp.member.id <> :memberId
+    """)
+    List<Long> findOtherMemberIdsByMeetingId(Long memberId, Long meetingId);
 
     @Query("""
             select mp.member.id

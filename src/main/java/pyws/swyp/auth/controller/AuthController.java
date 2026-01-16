@@ -1,11 +1,14 @@
 package pyws.swyp.auth.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import pyws.swyp.auth.controller.api.AuthApi;
 import pyws.swyp.auth.dto.AuthResponse;
@@ -42,5 +45,27 @@ public class AuthController implements AuthApi {
     @PostMapping("/reissue")
     public JwtResponse reissue(@RequestBody @Validated ReissueRequest request) {
         return jwtService.reissue(request.refreshToken());
+    }
+
+    @PostMapping("/oauth/kakao/unlink")
+    public ResponseEntity<Void> handleKakaoUnlinkCallback(
+            @RequestHeader("Authorization") String authorization,
+            @RequestParam("app_id") String appId,
+            @RequestParam("user_id") String userId,
+            @RequestParam("referrer_type") String referrerType
+    ) {
+        authService.handleKakaoUnlinkCallback(authorization, appId, userId, referrerType);
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/oauth/naver/unlink")
+    public ResponseEntity<Void> handleNaverUnlinkCallback(
+            @RequestParam("clientId") String clientId,
+            @RequestParam("encryptUniqueId") String encryptUniqueId,
+            @RequestParam("timestamp") String timestamp,
+            @RequestParam("signature") String signature
+    ) {
+        authService.handleNaverUnlinkCallback(clientId, encryptUniqueId, timestamp, signature);
+        return ResponseEntity.noContent().build();
     }
 }

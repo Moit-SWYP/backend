@@ -2,22 +2,28 @@ package pyws.swyp.meeting.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import pyws.swyp.global.error.CustomException;
 import pyws.swyp.global.error.ErrorCode;
 import pyws.swyp.meeting.dto.InvitationLinkResponse;
+import pyws.swyp.meeting.dto.InviteFriendsRequest;
 import pyws.swyp.meeting.entity.Meeting;
 import pyws.swyp.meeting.entity.MeetingParticipant;
 import pyws.swyp.meeting.repository.MeetingParticipantRepository;
 import pyws.swyp.meeting.repository.MeetingRepository;
 import pyws.swyp.member.entity.Member;
+import pyws.swyp.member.entity.friend.Friendship;
 import pyws.swyp.member.repository.MemberRepository;
+import pyws.swyp.member.repository.friend.FriendshipRepository;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -32,6 +38,11 @@ public class InvitationServiceTest {
     private MeetingParticipantRepository meetingParticipantRepository;
     @Mock
     private MemberRepository memberRepository;
+    @Mock
+    private FriendshipRepository friendshipRepository;
+
+    @Mock
+    private EntityManager entityManager;
 
     @InjectMocks
     private InvitationService invitationService;
@@ -190,6 +201,87 @@ public class InvitationServiceTest {
         verify(meetingParticipantRepository)
                 .existsByMemberIdAndMeetingId(memberId, meetingId);
         verify(meetingParticipantRepository, never()).save(any());
+    }
+
+    @Test
+    @DisplayName("친구 목록에서 memberId들을 통해 모임에 초대 성공")
+    void 친구_목록에서_초대_성공() {
+        // given
+        Long memberId = 1L;
+        Long meetingId = 1L;
+        InviteFriendsRequest request = new InviteFriendsRequest(List.of(2L, 3L));
+
+        Meeting meeting = mock(Meeting.class);
+        Member memberRef = mock(Member.class);
+        Member friendRef2 = mock(Member.class);
+        Member friendRef3 = mock(Member.class);
+
+        when(meeting.isActive()).thenReturn(true);
+        when(meetingRepository.findById(meetingId)).thenReturn(Optional.of(meeting));
+
+        when(memberRepository.findAllById(List.of(2L, 3L)))
+                .thenReturn(List.of(friendRef2, friendRef3));
+
+        when(meetingParticipantRepository.findByMemberIdAndMeetingId(memberId, meetingId))
+                .thenReturn(Optional.of(mock(MeetingParticipant.class)));
+
+        when(meetingParticipantRepository.findOtherMemberIdsByMeetingId(memberId, meetingId))
+                .thenReturn(List.of());
+
+        when(entityManager.getReference(Member.class, 2L)).thenReturn(friendRef2);
+        when(entityManager.getReference(Member.class, 3L)).thenReturn(friendRef3);
+
+        when(meetingParticipantRepository.findMemberIdsByMeetingId(meetingId))
+                .thenReturn(List.of(memberId, 2L, 3L));
+        when(friendshipRepository.findByMemberIds(any()))
+                .thenReturn(List.of());
+
+        // when
+        invitationService.inviteToMeeting(memberId, meetingId, request);
+
+        // then
+        // 모임원 추가 검증
+        ArgumentCaptor<List<MeetingParticipant>> participantCaptor = ArgumentCaptor.forClass(List.class);
+        verify(meetingParticipantRepository).saveAll(participantCaptor.capture());
+        assertThat(participantCaptor.getValue()).hasSize(2);
+
+        // 친구 관계 저장 검증
+        ArgumentCaptor<List<Friendship>> friendshipCaptor = ArgumentCaptor.forClass(List.class);
+        verify(friendshipRepository).saveAll(friendshipCaptor.capture());
+        assertThat(friendshipCaptor.getValue()).hasSize(6);
+    }
+
+    @Test
+    @DisplayName("이미 모임에 참여 중인 멤버들이라면 아무것도 저장하지 않는다.")
+    void 친구_목록에서_초대시_이미_참여중_멤버라면_아무것도_저장하지_않음() {
+        // given
+        Long memberId = 1L;
+        Long meetingId = 1L;
+        InviteFriendsRequest request = new InviteFriendsRequest(List.of(2L, 3L));
+
+        Meeting meeting = mock(Meeting.class);
+        Member friendRef2 = mock(Member.class);
+        Member friendRef3 = mock(Member.class);
+
+        when(meeting.isActive()).thenReturn(true);
+        when(meetingRepository.findById(meetingId)).thenReturn(Optional.of(meeting));
+
+        when(memberRepository.findAllById(List.of(2L, 3L)))
+                .thenReturn(List.of(friendRef2, friendRef3));
+
+        when(meetingParticipantRepository.findByMemberIdAndMeetingId(memberId, meetingId))
+                .thenReturn(Optional.of(mock(MeetingParticipant.class)));
+
+        when(meetingParticipantRepository.findOtherMemberIdsByMeetingId(memberId, meetingId))
+                .thenReturn(List.of(2L, 3L));
+
+        // when
+        invitationService.inviteToMeeting(memberId, meetingId, request);
+
+        // then
+        // 모임원 추가 검증
+        verify(meetingParticipantRepository, never()).saveAll(any());
+        verify(friendshipRepository, never()).saveAll(any());
     }
 
 }

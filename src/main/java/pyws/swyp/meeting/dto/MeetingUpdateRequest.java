@@ -5,8 +5,6 @@ import java.time.LocalDateTime;
 
 public record MeetingUpdateRequest(
         String title,
-        LocalDate date,
-        LocalDateTime dateVoteDeadline,
-        LocalDateTime courseVoteDeadline
+        LocalDate date
 ) {
 }

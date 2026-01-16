@@ -1,12 +1,6 @@
 package pyws.swyp.meeting.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -14,6 +8,13 @@ import lombok.NoArgsConstructor;
 import pyws.swyp.global.entity.BaseEntity;
 import pyws.swyp.member.entity.Member;
 
+@Table(
+        uniqueConstraints = {
+                @UniqueConstraint(
+                        columnNames = {"meeting_id", "member_id"}
+                )
+        }
+)
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
