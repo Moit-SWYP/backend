@@ -89,4 +89,12 @@ public class Meeting extends BaseEntity {
         this.time = null;
         updateStatus(MeetingStatus.VOTING);
     }
+
+    public boolean isDateConfirmed() {
+        return this.date != null;
+    }
+
+    public boolean isTimeConfirmed() {
+        return this.time != null;
+    }
 }

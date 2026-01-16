@@ -81,7 +81,7 @@ public class MeetingConfirmService {
         MeetingParticipant participant = getParticipant(memberId, meetingId);
 
         validateHost(participant);
-        validateNotDone(meeting);
+        validateDateCancelable(meeting);
 
         meeting.cancelConfirmedDate();
     }
@@ -128,7 +128,7 @@ public class MeetingConfirmService {
         MeetingParticipant participant = getParticipant(memberId, meetingId);
 
         validateHost(participant);
-        validateNotDone(meeting);
+        validateTimeCancelable(meeting);
 
         meeting.cancelConfirmedTime();
     }
@@ -152,6 +152,24 @@ public class MeetingConfirmService {
     private void validateNotDone(Meeting meeting) {
         if (meeting.getStatus() == MeetingStatus.DONE) {
             throw MEETING_NOT_CONFIRMABLE.toException();
+        }
+    }
+
+    private void validateDateCancelable(Meeting meeting) {
+        validateNotDone(meeting);
+
+        if (!meeting.isDateConfirmed()) {
+            throw ErrorCode.MEETING_DATE_NOT_CONFIRMED.toException();
+        }
+    }
+
+    private void validateTimeCancelable(Meeting meeting) {
+        if (meeting.getStatus() != MeetingStatus.FIXED) {
+            throw ErrorCode.MEETING_NOT_TIME_CANCELABLE.toException();
+        }
+
+        if (!meeting.isTimeConfirmed()) {
+            throw ErrorCode.MEETING_TIME_NOT_CONFIRMED.toException();
         }
     }
 
