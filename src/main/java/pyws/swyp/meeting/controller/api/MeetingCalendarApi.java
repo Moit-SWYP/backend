@@ -35,7 +35,7 @@ public interface MeetingCalendarApi {
                     array = @ArraySchema(schema = @Schema(implementation = MonthlyMeetingSummary.class)),
                     examples = @ExampleObject(
                             name = "success",
-                            summary = "성공 응답 예시 (공통 응답 래퍼 포함)",
+                            summary = "성공 응답 예시",
                             value = """
                                     {
                                       "code": "SUCCESS",
@@ -47,13 +47,14 @@ public interface MeetingCalendarApi {
                                           "date": "2026-01-10",
                                           "dayOfWeek": "SATURDAY",
                                           "time": "18:30",
-                                          "dateVoteDone": true,
-                                          "timeVoteDone": true,
-                                          "courseVoteDone": false,
+                                          "meetingType": "ACTIVE",
+                                          "courseVoteDone": true,
                                           "courseCount": 3,
-                                          "hasReview": true,
-                                          "reviewContent": "오랜만에 다 같이 만나서 정말 즐거웠어요!",
-                                          "reviewImageUrl": "https://cdn.moit.shop/reviews/meeting-1.jpg"
+                                          "recordImageUrls": [
+                                             "https://kr.object.ncloudstorage.com/moit-images/uploads/meeting-1-1.jpg",
+                                             "https://kr.object.ncloudstorage.com/moit-images/uploads/meeting-1-2.jpg"
+                                           ],
+                                          "recordContent": "오랜만에 다 같이 만나서 정말 즐거웠어요!",
                                         },
                                         {
                                           "meetingId": 2,
@@ -61,13 +62,11 @@ public interface MeetingCalendarApi {
                                           "date": "2026-01-25",
                                           "dayOfWeek": "SUNDAY",
                                           "time": "14:00",
-                                          "dateVoteDone": true,
-                                          "timeVoteDone": false,
+                                          "meetingType": "HEALER",
                                           "courseVoteDone": false,
                                           "courseCount": 0,
-                                          "hasReview": false,
-                                          "reviewContent": null,
-                                          "reviewImageUrl": null
+                                          "recordImageUrls": [],
+                                          "recordContent": null,
                                         }
                                       ]
                                     }
