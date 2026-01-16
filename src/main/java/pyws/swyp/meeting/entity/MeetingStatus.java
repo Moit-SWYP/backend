@@ -7,34 +7,15 @@ import lombok.RequiredArgsConstructor;
 @Getter
 public enum MeetingStatus {
 
-    CREATED(1),
-    DATE_VOTING(2),
-    DATE_VOTED(3),
-    TIME_VOTING(4),
-    TIME_VOTED(5),
-    PLACE_VOTING(6),
-    PLACE_VOTED(7),
-    FIXED(8),
-    DONE(9);
-    private final int level;
+    VOTING,   // 모임 생성됨 (투표 가능)
+    FIXED,     // 일정 확정됨 (투표 종료)
+    DONE;      // 모임 종료됨 (후기 가능)
 
-    public boolean isNotVotable() {
-        return this == FIXED || this == DONE;
+    public boolean isVotable() {
+        return this == VOTING;
     }
 
-    public boolean isDateVotable() {
-        return this == CREATED || this == DATE_VOTING;
-    }
-
-    public boolean isTimeVotable() {
-        return this == DATE_VOTED || this == TIME_VOTING;
-    }
-
-    public boolean isDateVoteVisible() {
-        return this.level >= DATE_VOTING.level;
-    }
-
-    public boolean isTimeVoteVisible() {
-        return this.level >= TIME_VOTING.level;
+    public boolean isEnded() {
+        return this == DONE;
     }
 }

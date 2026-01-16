@@ -20,11 +20,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.util.ReflectionTestUtils;
-import org.springframework.transaction.support.TransactionTemplate;
 import pyws.swyp.auth.service.JwtService;
 import pyws.swyp.global.error.CustomException;
 import pyws.swyp.global.error.ErrorCode;
-import pyws.swyp.meeting.entity.*;
+import pyws.swyp.meeting.entity.Meeting;
+import pyws.swyp.meeting.entity.MeetingParticipant;
+import pyws.swyp.meeting.entity.MeetingStatus;
+import pyws.swyp.meeting.entity.MeetingType;
+import pyws.swyp.meeting.entity.ParticipantRole;
 import pyws.swyp.meeting.entity.vote.DateVote;
 import pyws.swyp.meeting.entity.vote.TimeVote;
 import pyws.swyp.meeting.repository.MeetingParticipantRepository;
@@ -37,8 +40,8 @@ import pyws.swyp.member.dto.SocialAccountInfo;
 import pyws.swyp.member.entity.CharacterType;
 import pyws.swyp.member.entity.Gender;
 import pyws.swyp.member.entity.Member;
-import pyws.swyp.member.entity.MemberWithdrawal;
 import pyws.swyp.member.entity.MemberRole;
+import pyws.swyp.member.entity.MemberWithdrawal;
 import pyws.swyp.member.entity.SocialAccount;
 import pyws.swyp.member.entity.SocialProvider;
 import pyws.swyp.member.entity.WithdrawalType;
@@ -121,7 +124,7 @@ class MemberServiceTest {
                 .title("테스트 모임")
                 .type(MeetingType.CULTURE_LOVER)
                 .build();
-        meeting.updateStatus(MeetingStatus.DATE_VOTING);
+        meeting.updateStatus(MeetingStatus.VOTING);
         meetingRepository.save(meeting);
         this.meetingId = meeting.getId();
 

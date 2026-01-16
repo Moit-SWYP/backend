@@ -96,9 +96,9 @@ public record NotificationCommand(
         );
     }
 
-    public static NotificationCommand reviewReminder(Long meetingId) {
-        String deepLink = "moit://meetings/" + meetingId + "/review";
-        NotificationType type = NotificationType.REVIEW_REMINDER;
+    public static NotificationCommand recordReminder(Long meetingId) {
+        String deepLink = "moit://meetings/" + meetingId + "/record";
+        NotificationType type = NotificationType.RECORD_REMINDER;
         return new NotificationCommand(
                 type,
                 "아직 모임 후기를 남기지 않았어요!",

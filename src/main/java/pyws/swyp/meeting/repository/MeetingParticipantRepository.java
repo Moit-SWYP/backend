@@ -1,5 +1,9 @@
 package pyws.swyp.meeting.repository;
 
+import java.time.LocalDate;
+import java.util.Collection;
+import java.util.List;
+import java.util.Optional;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -9,11 +13,6 @@ import pyws.swyp.meeting.dto.MeetingBriefResponse;
 import pyws.swyp.meeting.dto.ParticipantRow;
 import pyws.swyp.meeting.entity.MeetingParticipant;
 import pyws.swyp.meeting.entity.MeetingStatus;
-
-import java.time.LocalDate;
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
 
 public interface MeetingParticipantRepository extends JpaRepository<MeetingParticipant, Long> {
 
@@ -120,9 +119,9 @@ public interface MeetingParticipantRepository extends JpaRepository<MeetingParti
 
     @Modifying(clearAutomatically = true, flushAutomatically = true)
     @Query("""
-        delete from MeetingParticipant mp
-        where mp.id in :participantIds
-    """)
+            delete from MeetingParticipant mp
+            where mp.id in :participantIds
+            """)
     int deleteAllByIds(List<Long> participantIds);
 
     @Query("""
@@ -165,12 +164,15 @@ public interface MeetingParticipantRepository extends JpaRepository<MeetingParti
     List<Long> findMemberIdsNotVotedTime(Long meetingId);
 
     @Query("""
-        select mp.member.id
-        from MeetingParticipant mp
-        left join MeetingReview r
-               on r.meetingParticipant = mp
-        where mp.meeting.id = :meetingId
-          and r.id is null
-    """)
-    List<Long> findMemberIdsNotWrittenReview(Long meetingId);
+            select mp.member.id
+            from MeetingParticipant mp
+            where mp.meeting.id = :meetingId
+              and not exists (
+                  select 1
+                  from MeetingRecord mr
+                  where mr.meeting = mp.meeting
+                    and mr.member = mp.member
+              )
+            """)
+    List<Long> findMemberIdsNotWrittenRecord(Long meetingId);
 }

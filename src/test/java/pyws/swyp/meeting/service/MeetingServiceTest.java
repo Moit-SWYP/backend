@@ -455,7 +455,7 @@ public class MeetingServiceTest {
     }
 
     @Test
-    @DisplayName("대기 중 모임 조회 성공 - CREATED, DATE_VOTING, PLACE_VOTING 상태만 조회")
+    @DisplayName("대기 중 모임 조회 성공 - VOTING, FIXED 상태만 조회")
     void 대기중_모임_조회_성공() {
         // given
         Long memberId = 1L;
@@ -478,9 +478,8 @@ public class MeetingServiceTest {
                 .findMeetingsByMemberIdAndStatus(
                         eq(memberId),
                         eq(List.of(
-                                MeetingStatus.CREATED,
-                                MeetingStatus.DATE_VOTING,
-                                MeetingStatus.PLACE_VOTING
+                                MeetingStatus.VOTING,
+                                MeetingStatus.FIXED
                         )),
                         eq(pageable)
                 );

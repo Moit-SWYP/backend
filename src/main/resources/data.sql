@@ -15,8 +15,8 @@ SET FOREIGN_KEY_CHECKS = 0;
 -- MEETING
 INSERT IGNORE INTO meeting (id, public_id, created_at, is_active, updated_at, date, time, status, type, title)
 VALUES
-    (1, UUID_TO_BIN(UUID()), NOW(), 1, NULL, '2025-12-20', NULL, 'CREATED', 'FOODIE', '연말 모임'),
-    (2, UUID_TO_BIN(UUID()), NOW(), 1, NULL, '2025-12-25', '19:00:00', 'PLACE_VOTING', 'TREND_SETTER','크리스마스 모임');
+    (1, UUID_TO_BIN(UUID()), NOW(), 1, NULL, '2025-12-20', NULL, 'VOTING', 'FOODIE', '연말 모임'),
+    (2, UUID_TO_BIN(UUID()), NOW(), 1, NULL, '2025-12-25', '19:00:00', 'FIXED', 'TREND_SETTER','크리스마스 모임');
 
 -- MEMBER
 INSERT IGNORE INTO member (id, created_at, birth_date, email, gender, nickname, character_type, role)
@@ -34,7 +34,7 @@ INSERT IGNORE INTO meeting_participant (id, created_at, is_active, updated_at, r
 VALUES (1, NOW(), 1, NULL, 'HOST', 1, 1),
        (2, NOW(), 1, NULL, 'MEMBER', 1, 2),
        (3, NOW(), 1, NULL, 'MEMBER', 1, 3),
-       (4, NOW(), 1, NULL, 'HOST', 2, 2),
+       (4, NOW(), 1, NULL, 'HOST', 1, 4),
        (5, NOW(), 1, NULL, 'MEMBER', 2, 4);
 
 -- COURSE
@@ -55,8 +55,7 @@ VALUES (1, NOW(), 1, 1, '2025-12-20'),
 INSERT IGNORE INTO time_vote (id, created_at, meeting_id, meeting_participant_id, time)
 VALUES (1, NOW(), 2, 1, '15:00:00'), -- host
        (2, NOW(), 2, 2, '15:00:00'), -- member1
-       (3, NOW(), 2, 3, '16:00:00');
--- member2
+       (3, NOW(), 2, 3, '16:00:00'); -- member2
 
 -- PLACE_OPTION
 INSERT IGNORE INTO place_option (id, created_at, is_active, updated_at, status, course_id)
@@ -105,12 +104,12 @@ VALUES
     (3, NOW(), 1, NULL, 2, 3),
     (4, NOW(), 1, NULL, 2, 4);
 
--- MEETING_REVIEW
-INSERT IGNORE INTO meeting_review (id, created_at, is_active, updated_at, meeting_participant_id, content)
+-- MEETING_RECORD
+INSERT IGNORE INTO meeting_record (id, created_at, is_active, updated_at, meeting_id, member_id, content)
 VALUES
-    (1, NOW(), 1, NULL, 5, '분위기도 좋고 시간 조율이 잘 돼서 정말 만족스러운 모임이었어요.'),
-    (2, NOW(), 1, NULL, 1, '처음 만나는 분들이었는데 어색하지 않게 잘 진행됐어요.'),
-    (3, NOW(), 1, NULL, 2, '장소 선정이 특히 마음에 들었고 다음에도 참여하고 싶어요.'),
-    (4, NOW(), 1, NULL, 3, '투표 과정이 편리해서 일정 잡기가 쉬웠습니다.');
+    (1, NOW(), 1, NULL, 1, 4,'분위기도 좋고 시간 조율이 잘 돼서 정말 만족스러운 모임이었어요.'),
+    (2, NOW(), 1, NULL, 2, 4,'처음 만나는 분들이었는데 어색하지 않게 잘 진행됐어요.'),
+    (3, NOW(), 1, NULL, 2, 4,'장소 선정이 특히 마음에 들었고 다음에도 참여하고 싶어요.'),
+    (4, NOW(), 1, NULL, 2, 4,'투표 과정이 편리해서 일정 잡기가 쉬웠습니다.');
 
 SET FOREIGN_KEY_CHECKS = 1;

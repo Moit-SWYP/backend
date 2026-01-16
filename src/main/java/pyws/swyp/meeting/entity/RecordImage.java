@@ -14,11 +14,11 @@ import pyws.swyp.global.entity.BaseEntity;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class ReviewImage extends BaseEntity {
+public class RecordImage extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "meeting_review_id", nullable = false)
-    private MeetingReview meetingReview;
+    private MeetingRecord meetingRecord;
 
     @Column(nullable = false, length = 500)
     private String imageKey;
@@ -27,8 +27,8 @@ public class ReviewImage extends BaseEntity {
     private int sortOrder;
 
     @Builder
-    public ReviewImage(MeetingReview meetingReview, String imageKey, int sortOrder) {
-        this.meetingReview = meetingReview;
+    public RecordImage(MeetingRecord meetingRecord, String imageKey, int sortOrder) {
+        this.meetingRecord = meetingRecord;
         this.imageKey = imageKey;
         this.sortOrder = sortOrder;
     }

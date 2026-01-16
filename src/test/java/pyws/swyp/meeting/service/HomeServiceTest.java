@@ -40,8 +40,8 @@ public class HomeServiceTest {
 
         List<MeetingBriefResponse> meetingInfos = List.of(
                 new MeetingBriefResponse(3L, "데이트", MeetingStatus.FIXED, fixedNow.plusDays(2)),
-                new MeetingBriefResponse(1L, "모잇 오프라인 모임", MeetingStatus.PLACE_VOTING, fixedNow.plusDays(4)),
-                new MeetingBriefResponse(2L, "카공", MeetingStatus.PLACE_VOTING, fixedNow.plusDays(6))
+                new MeetingBriefResponse(1L, "모잇 오프라인 모임", MeetingStatus.FIXED, fixedNow.plusDays(4)),
+                new MeetingBriefResponse(2L, "카공", MeetingStatus.FIXED, fixedNow.plusDays(6))
         );
 
         ParticipantInfo p1 = new ParticipantInfo(memberId, "닉네임1", CharacterType.FOODIE, pyws.swyp.meeting.entity.ParticipantRole.HOST);
@@ -61,10 +61,10 @@ public class HomeServiceTest {
         );
 
         List<MeetingBriefResponse> waitingMeetings = List.of(
-                new MeetingBriefResponse(1L, "모잇 오프라인 모임", MeetingStatus.PLACE_VOTING, fixedNow.plusDays(4)),
-                new MeetingBriefResponse(2L, "카공", MeetingStatus.PLACE_VOTING, fixedNow.plusDays(6)),
-                new MeetingBriefResponse(4L, "보드게임 모임", MeetingStatus.DATE_VOTING, null),
-                new MeetingBriefResponse(5L, "동아리 전체 회식", MeetingStatus.CREATED, null)
+                new MeetingBriefResponse(1L, "모잇 오프라인 모임", MeetingStatus.FIXED, fixedNow.plusDays(4)),
+                new MeetingBriefResponse(2L, "카공", MeetingStatus.FIXED, fixedNow.plusDays(6)),
+                new MeetingBriefResponse(4L, "보드게임 모임", MeetingStatus.VOTING, null),
+                new MeetingBriefResponse(5L, "동아리 전체 회식", MeetingStatus.VOTING, null)
         );
 
         when(meetingParticipantRepository.findMeetingsByMemberIdWithin7Days(memberId, fixedNow, fixedEnd))

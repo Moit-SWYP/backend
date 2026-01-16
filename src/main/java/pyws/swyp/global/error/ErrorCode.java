@@ -36,7 +36,7 @@ public enum ErrorCode {
     MEETING_ACCESS_DENIED(HttpStatus.FORBIDDEN, "MEET0002", "해당 모임에 대한 접근 권한이 없습니다."),
     MEETING_QUIT_DENIED(HttpStatus.FORBIDDEN, "MEET0003", "모임 생성자는 탈퇴할 수 없습니다."),
     MEETING_TITLE_EMPTY(BAD_REQUEST, "MEET0004", "모임 제목은 필수이며, 빈칸일 수 없습니다."),
-    MEETING_NOT_VOTABLE(BAD_REQUEST, "MEET0005", "이미 확정됐거나 완료된 모임입니다."),
+    MEETING_NOT_VOTABLE(BAD_REQUEST, "MEET0005", "이미 완료된 모임입니다."),
     MEETING_PARTICIPANT_NOT_FOUND(NOT_FOUND, "MEET0006", "존재하지 않는 모임원입니다."),
     MEETING_HOST_ONLY(HttpStatus.FORBIDDEN, "MEET0007", "모임장만 투표 확정 및 취소를 할 수 있습니다."),
     MEETING_NOT_CONFIRMABLE(HttpStatus.BAD_REQUEST, "MEET0008", "현재 모임 상태에서는 투표 확정 또는 취소를 할 수 없습니다."),
@@ -57,10 +57,11 @@ public enum ErrorCode {
     NOTIFICATION_NOT_FOUND(HttpStatus.NOT_FOUND, "NOTI0003", "알림을 찾을 수 없습니다."),
     NOTIFICATION_FORBIDDEN(HttpStatus.FORBIDDEN, "NOTI0004", "해당 알림에 대한 권한이 없습니다."),
 
-    // Review
-    REVIEW_ALREADY_EXISTS(HttpStatus.CONFLICT, "REV0001", "이미 해당 모임에 대한 후기가 존재합니다."),
-    REVIEW_NOT_FOUND(NOT_FOUND, "REV0002", "해당 모임에 대한 후기가 존재하지 않습니다."),
+    // Record
+    RECORD_ALREADY_EXISTS(HttpStatus.CONFLICT, "REC0001", "이미 해당 모임에 대한 기록이 존재합니다."),
+    RECORD_NOT_FOUND(HttpStatus.NOT_FOUND, "REC0002", "해당 모임에 대한 기록이 존재하지 않습니다."),
     ;
+
 
     private final HttpStatus status;
     private final String code;

@@ -14,6 +14,6 @@ public class ReviewNotificationListener {
 
     @EventListener
     public void onVoteStarted(ReviewReminderEvent event) {
-        meetingNotificationService.remindReview(event.meetingId());
+        meetingNotificationService.remindRecord(event.meetingId());
     }
 }

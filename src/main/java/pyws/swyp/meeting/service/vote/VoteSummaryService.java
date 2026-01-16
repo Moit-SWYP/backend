@@ -40,15 +40,9 @@ public class VoteSummaryService {
                 .findByMemberIdAndMeetingId(memberId, meetingId)
                 .orElseThrow(ErrorCode.MEETING_PARTICIPANT_NOT_FOUND::toException);
 
-        MeetingStatus status = meeting.getStatus();
         boolean isHost = participant.isHost();
-
-        DateSummary dateSummary = status.isDateVoteVisible()
-                ? getDateSummary(meetingId)
-                : null;
-        TimeSummary timeSummary = status.isTimeVoteVisible()
-                ? getTimeSummary(meetingId)
-                : null;
+        DateSummary dateSummary = getDateSummary(meetingId);
+        TimeSummary timeSummary = getTimeSummary(meetingId);
 
         return new VoteSummary(
                 meeting.getStatus(),

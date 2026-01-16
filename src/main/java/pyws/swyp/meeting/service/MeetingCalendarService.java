@@ -1,18 +1,22 @@
 package pyws.swyp.meeting.service;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import pyws.swyp.global.error.ErrorCode;
 import pyws.swyp.infra.storage.service.ImagePresignService;
 import pyws.swyp.meeting.dto.MonthlyMeetingSummary;
-import pyws.swyp.meeting.dto.ReviewSummary;
+import pyws.swyp.meeting.dto.RecordContentRow;
+import pyws.swyp.meeting.dto.RecordImageRow;
+import pyws.swyp.meeting.dto.RecordSummary;
 import pyws.swyp.meeting.entity.Meeting;
+import pyws.swyp.meeting.repository.MeetingRecordRepository;
 import pyws.swyp.meeting.repository.MeetingRepository;
-import pyws.swyp.meeting.repository.MeetingReviewRepository;
 
 @Service
 @RequiredArgsConstructor
@@ -20,62 +24,78 @@ public class MeetingCalendarService {
 
     private final MeetingRepository meetingRepository;
     private final ImagePresignService imagePresignService;
-    private final MeetingReviewRepository meetingReviewRepository;
+    private final MeetingRecordRepository meetingRecordRepository;
 
     public List<MonthlyMeetingSummary> getMonthlyMeetings(Long memberId, int year, int month) {
         LocalDate start = LocalDate.of(year, month, 1);
         LocalDate end = start.plusMonths(1);
 
-        List<Meeting> meetings = meetingRepository.findByDateBetweenOrderByDateAscTimeAsc(start, end);
+        List<Meeting> meetings = meetingRepository.findMyMeetingsByDateBetween(memberId, start, end);
         if (meetings.isEmpty()) {
-            throw ErrorCode.MEETING_NOT_FOUND_IN_MONTH.toException();
+            return List.of();
         }
 
         List<Long> meetingIds = meetings.stream()
                 .map(Meeting::getId)
                 .toList();
 
-        // todo 코스 개수 집계
+        // todo: 코스 개수 집계
 
-        // meetingId -> ReviewSummary 매핑
-        Map<Long, ReviewSummary> reviewMap = meetingReviewRepository.findMyReviewSummaryByMeetingIds(meetingIds,
-                        memberId)
+        // meetingId -> recordImages
+        Map<Long, List<String>> imageKeyMap = meetingRecordRepository.findMyRecordImagesTop3(meetingIds, memberId)
+                .stream()
+                .collect(Collectors.groupingBy(
+                        RecordImageRow::meetingId,
+                        LinkedHashMap::new,
+                        Collectors.mapping(RecordImageRow::imageKey, Collectors.toList())
+                ));
+
+        // meetingId -> recordContent
+        Map<Long, String> contentMap = meetingRecordRepository.findMyRecordContents(meetingIds, memberId)
                 .stream()
                 .collect(Collectors.toMap(
-                        ReviewSummary::meetingId,
-                        r -> r
+                        RecordContentRow::meetingId,
+                        RecordContentRow::recordContent,
+                        (a, b) -> a
                 ));
+
+        // meetingId -> RecordSummary
+        Map<Long, RecordSummary> recordMap = new HashMap<>();
+        for (Long meetingId : meetingIds) {
+            List<String> imageKeys = imageKeyMap.getOrDefault(meetingId, List.of());
+            String content = contentMap.get(meetingId);
+
+            recordMap.put(meetingId, new RecordSummary(meetingId, imageKeys, content));
+        }
 
         return meetings.stream()
                 .map(meeting -> {
-                    ReviewSummary review = reviewMap.get(meeting.getId());
-                    boolean hasReview = review != null && review.hasReview();
+                    RecordSummary record = recordMap.get(meeting.getId());
 
-                    String imageUrl = null;
-                    if (hasReview && review.reviewImageKey() != null) {
-                        imageUrl = imagePresignService.generatePresignedGetUrl(review.reviewImageKey());
+                    List<String> imageUrls = new ArrayList<>();
+                    if (record != null && !record.recordImageKeys().isEmpty()) {
+                        imageUrls = record.recordImageKeys().stream()
+                                .map(imagePresignService::generatePresignedGetUrl)
+                                .toList();
                     }
 
-                    int courseCount = 3;  // 임시 값
+                    String recordContent = (record == null) ? null : record.recordContent();
 
-                    boolean isDateVoteDone = meeting.getDate() != null;
-                    boolean isTimeVoteDone = meeting.getTime() != null;
-
+                    // todo: 코스 임시 값
+                    int courseCount = 3;
                     boolean isCourseVoteDone = true;
 
                     return new MonthlyMeetingSummary(
                             meeting.getId(),
                             meeting.getTitle(),
                             meeting.getDate(),
-                            meeting.getDate().getDayOfWeek().name(),
+                            meeting.getDate().getDayOfWeek(),
                             meeting.getTime(),
-                            isDateVoteDone,
-                            isTimeVoteDone,
+                            meeting.getType(),
                             isCourseVoteDone,
                             courseCount,
-                            hasReview,
-                            imageUrl,
-                            hasReview ? review.reviewContent() : null
+                            imageUrls,
+                            recordContent
                     );
                 })
                 .toList();

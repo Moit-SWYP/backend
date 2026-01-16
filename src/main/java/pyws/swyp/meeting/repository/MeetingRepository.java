@@ -28,13 +28,34 @@ public interface MeetingRepository extends JpaRepository<Meeting, Long> {
     @Query("""
             select m.id
             from Meeting m
-            where m.status = :meetingStatus
+            where m.status = :status
+              and m.date is null
+              and m.time is null
             """)
-    List<Long> findIdsByStatus(MeetingStatus meetingStatus);
+    List<Long> findIdsNeedingDateVoteReminder(MeetingStatus status);
+
+    @Query("""
+            select m.id
+            from Meeting m
+            where m.status = :status
+              and m.date is not null
+              and m.time is null
+            """)
+    List<Long> findIdsNeedingTimeVoteReminder(MeetingStatus status);
 
     Optional<Meeting> findByPublicId(UUID publicId);
 
-    List<Meeting> findByDateBetweenOrderByDateAscTimeAsc(LocalDate start, LocalDate end);
+    @Query("""
+            select m
+            from Meeting m
+            join MeetingParticipant mp
+              on mp.meeting = m
+             and mp.member.id = :memberId
+            where m.date >= :start
+              and m.date < :end
+            order by m.date asc, m.time asc
+            """)
+    List<Meeting> findMyMeetingsByDateBetween(Long memberId, LocalDate start, LocalDate end);
 
     @Query("""
             select m.id

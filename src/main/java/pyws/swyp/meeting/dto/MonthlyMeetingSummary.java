@@ -1,26 +1,23 @@
 package pyws.swyp.meeting.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.List;
+import pyws.swyp.meeting.entity.MeetingType;
 
 public record MonthlyMeetingSummary(
         Long meetingId,
         String title,
         LocalDate date,
-        String dayOfWeek,
+        DayOfWeek dayOfWeek,
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm")
         LocalTime time,
-
-
-        boolean isDateVoteDone,
-        boolean isTimeVoteDone,
-        boolean isCourseVoteDone,
-
+        MeetingType meetingType,
+        boolean courseVoteDone,
         int courseCount,
-
-        boolean hasReview,
-        String reviewImageUrl,
-        String reviewContent
+        List<String> recordImageUrls,
+        String recordContent
 ) {
 }

@@ -55,9 +55,9 @@ public class MeetingNotificationService {
     /**
      * 모임 후기 미기록자에게 알림을 발송한다.
      */
-    public void remindReview(Long meetingId) {
-        List<Long> memberIds = meetingParticipantRepository.findMemberIdsNotWrittenReview(meetingId);
-        notifyMemberIds(meetingId, memberIds, NotificationCommand.reviewReminder(meetingId));
+    public void remindRecord(Long meetingId) {
+        List<Long> memberIds = meetingParticipantRepository.findMemberIdsNotWrittenRecord(meetingId);
+        notifyMemberIds(meetingId, memberIds, NotificationCommand.recordReminder(meetingId));
     }
 
     /**

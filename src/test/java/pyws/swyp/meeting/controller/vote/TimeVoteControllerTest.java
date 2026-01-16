@@ -3,7 +3,6 @@ package pyws.swyp.meeting.controller.vote;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -32,7 +31,11 @@ import pyws.swyp.config.AuthTestPrincipalContext;
 import pyws.swyp.config.TestRedisConfig;
 import pyws.swyp.global.error.ErrorCode;
 import pyws.swyp.meeting.dto.vote.time.TimeVoteRequest;
-import pyws.swyp.meeting.entity.*;
+import pyws.swyp.meeting.entity.Meeting;
+import pyws.swyp.meeting.entity.MeetingParticipant;
+import pyws.swyp.meeting.entity.MeetingStatus;
+import pyws.swyp.meeting.entity.MeetingType;
+import pyws.swyp.meeting.entity.ParticipantRole;
 import pyws.swyp.meeting.entity.vote.TimeVote;
 import pyws.swyp.meeting.repository.MeetingParticipantRepository;
 import pyws.swyp.meeting.repository.MeetingRepository;
@@ -103,7 +106,7 @@ class TimeVoteControllerTest {
                 .title("테스트 모임")
                 .type(MeetingType.DRINKER)
                 .build());
-        meeting.updateStatus(MeetingStatus.TIME_VOTING);
+        meeting.updateStatus(MeetingStatus.VOTING);
         meetingRepository.save(meeting);
         this.meetingId = meeting.getId();
 

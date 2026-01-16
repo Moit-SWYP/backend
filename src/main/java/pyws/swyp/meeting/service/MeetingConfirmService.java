@@ -45,10 +45,7 @@ public class MeetingConfirmService {
         MeetingParticipant participant = getParticipant(memberId, meetingId);
 
         validateHost(participant);
-
-        if (meeting.getStatus() != MeetingStatus.DATE_VOTING) {
-            throw MEETING_NOT_CONFIRMABLE.toException();
-        }
+        validateNotDone(meeting);
 
         List<LocalDate> topDates = dateVoteRepository.findTopDatesByMeetingId(meetingId,
                 PageRequest.of(0, 1));
@@ -70,43 +67,34 @@ public class MeetingConfirmService {
         MeetingParticipant participant = getParticipant(memberId, meetingId);
 
         validateHost(participant);
-
-        if (meeting.getStatus() != MeetingStatus.DATE_VOTING) {
-            throw MEETING_NOT_CONFIRMABLE.toException();
-        }
+        validateNotDone(meeting);
 
         meeting.confirmDate(date);
         eventPublisher.publishEvent(new DateVoteConfirmedEvent(meetingId));
     }
 
     /**
-     * 날짜 확정을 취소하고, 모임을 DATE_VOTING 상태로 되돌린다.
+     * 날짜 확정을 취소한다.
      */
     public void cancelConfirmDateVote(Long memberId, Long meetingId) {
         Meeting meeting = getMeeting(meetingId);
         MeetingParticipant participant = getParticipant(memberId, meetingId);
 
         validateHost(participant);
-
-        if (meeting.getStatus() != MeetingStatus.DATE_VOTED) {
-            throw MEETING_NOT_CONFIRMABLE.toException();
-        }
+        validateNotDone(meeting);
 
         meeting.cancelConfirmedDate();
     }
 
     /**
-     * 모임장이 시간 투표 결과를 기준으로 모임 시간을 확정한다.
+     * 모임장이 시간 투표 결과를 기준으로 모임 시간을 확정하고, 모임을 FIXED 상태로 변경한다.
      */
     public void confirmTimeVote(Long memberId, Long meetingId) {
         Meeting meeting = getMeeting(meetingId);
         MeetingParticipant participant = getParticipant(memberId, meetingId);
 
         validateHost(participant);
-
-        if (meeting.getStatus() != MeetingStatus.TIME_VOTING) {
-            throw MEETING_NOT_CONFIRMABLE.toException();
-        }
+        validateNotDone(meeting);
 
         List<LocalTime> topTimes = timeVoteRepository.findTopTimesByMeetingId(meetingId, PageRequest.of(0, 1));
         if (topTimes.isEmpty()) {
@@ -118,18 +106,14 @@ public class MeetingConfirmService {
     }
 
     /**
-     * 모임장이 지정한 시간으로 모임 시간을 임의 확정한다.
+     * 모임장이 지정한 시간으로 모임 시간을 임의 확정하고, 모임을 FIXED 상태로 변경한다.
      */
     public void confirmTime(Long memberId, Long meetingId, LocalTime time) {
         Meeting meeting = getMeeting(meetingId);
         MeetingParticipant participant = getParticipant(memberId, meetingId);
 
         validateHost(participant);
-
-        if (meeting.getStatus() != MeetingStatus.TIME_VOTING) {
-            throw MEETING_NOT_CONFIRMABLE.toException();
-        }
-
+        validateNotDone(meeting);
         validateTimeUnit(time);
 
         meeting.confirmTime(time);
@@ -137,17 +121,14 @@ public class MeetingConfirmService {
     }
 
     /**
-     * 시간 확정을 취소하고, 모임을 TIME_VOTING 상태로 되돌린다.
+     * 시간 확정을 취소하고, 모임을 VOTING 상태로 되돌린다.
      */
     public void cancelConfirmTimeVote(Long memberId, Long meetingId) {
         Meeting meeting = getMeeting(meetingId);
         MeetingParticipant participant = getParticipant(memberId, meetingId);
 
         validateHost(participant);
-
-        if (meeting.getStatus() != MeetingStatus.TIME_VOTED) {
-            throw MEETING_NOT_CONFIRMABLE.toException();
-        }
+        validateNotDone(meeting);
 
         meeting.cancelConfirmedTime();
     }
@@ -165,6 +146,12 @@ public class MeetingConfirmService {
     private void validateHost(MeetingParticipant participant) {
         if (!participant.isHost()) {
             throw MEETING_HOST_ONLY.toException();
+        }
+    }
+
+    private void validateNotDone(Meeting meeting) {
+        if (meeting.getStatus() == MeetingStatus.DONE) {
+            throw MEETING_NOT_CONFIRMABLE.toException();
         }
     }
 

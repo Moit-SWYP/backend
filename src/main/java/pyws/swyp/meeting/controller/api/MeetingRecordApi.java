@@ -13,13 +13,15 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import pyws.swyp.meeting.dto.MeetingReviewCreate;
-import pyws.swyp.meeting.dto.MeetingReviewResponse;
+import org.springframework.web.bind.annotation.RequestMapping;
+import pyws.swyp.meeting.dto.MeetingRecordCreate;
+import pyws.swyp.meeting.dto.MeetingRecordResponse;
 
 
+@RequestMapping("/api/meetings/{meetingId}/records")
 @SecurityRequirement(name = "auth")
 @Tag(name = "Meeting Review API", description = "모임 후기 작성 및 조회 API")
-public interface MeetingReviewApi {
+public interface MeetingRecordApi {
 
     @Operation(
             summary = "모임 후기 작성",
@@ -38,7 +40,7 @@ public interface MeetingReviewApi {
             description = "종료되지 않은 모임",
             content = @Content(examples = @ExampleObject(value = """
                     {
-                      "code": "MEET0010",
+                      "code": "MEET0011",
                       "message": "종료된 모임에만 후기를 작성할 수 있습니다."
                     }
                     """))
@@ -58,20 +60,20 @@ public interface MeetingReviewApi {
             description = "이미 후기 존재",
             content = @Content(examples = @ExampleObject(value = """
                     {
-                      "code": "REV0001",
+                      "code": "REC0001",
                       "message": "이미 해당 모임에 대한 후기가 존재합니다."
                     }
                     """))
     )
-    @PostMapping("/api/meetings/{meetingId}/review")
-    void create(
+    @PostMapping
+    void createMeetingRecord(
             @Parameter(hidden = true)
             @AuthenticationPrincipal Long memberId,
 
             @Parameter(description = "모임 ID", example = "1")
             @PathVariable Long meetingId,
 
-            @RequestBody @Validated MeetingReviewCreate request
+            @RequestBody @Validated MeetingRecordCreate request
     );
 
     @Operation(
@@ -103,7 +105,7 @@ public interface MeetingReviewApi {
                                     name = "후기 없음",
                                     value = """
                                             {
-                                                "code":"REV0002",
+                                                "code":"REC0002",
                                                 "message":"해당 모임에 대한 후기가 존재하지 않습니다."
                                             }
                                             """
@@ -111,8 +113,8 @@ public interface MeetingReviewApi {
                     }
             )
     )
-    @GetMapping("/api/meetings/{meetingId}/review")
-    MeetingReviewResponse get(
+    @GetMapping
+    MeetingRecordResponse get(
             @Parameter(hidden = true)
             @AuthenticationPrincipal Long memberId,
 

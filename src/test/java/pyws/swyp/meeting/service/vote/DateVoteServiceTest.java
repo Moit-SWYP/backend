@@ -12,16 +12,20 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import pyws.swyp.meeting.dto.vote.date.DateVoteRequest;
 import pyws.swyp.meeting.dto.vote.VoterResponse;
 import pyws.swyp.meeting.dto.vote.VotersResponse;
+import pyws.swyp.meeting.dto.vote.date.DateVoteRequest;
 import pyws.swyp.meeting.dto.vote.date.VotedDatesResponse;
-import pyws.swyp.meeting.entity.*;
+import pyws.swyp.meeting.entity.Meeting;
+import pyws.swyp.meeting.entity.MeetingParticipant;
+import pyws.swyp.meeting.entity.MeetingStatus;
+import pyws.swyp.meeting.entity.MeetingType;
+import pyws.swyp.meeting.entity.ParticipantRole;
 import pyws.swyp.meeting.entity.vote.DateVote;
 import pyws.swyp.meeting.repository.MeetingParticipantRepository;
+import pyws.swyp.meeting.repository.MeetingRecordRepository;
 import pyws.swyp.meeting.repository.MeetingRepository;
-import pyws.swyp.meeting.repository.MeetingReviewRepository;
-import pyws.swyp.meeting.repository.ReviewImageRepository;
+import pyws.swyp.meeting.repository.RecordImageRepository;
 import pyws.swyp.meeting.repository.vote.DateVoteRepository;
 import pyws.swyp.meeting.repository.vote.TimeVoteRepository;
 import pyws.swyp.member.entity.CharacterType;
@@ -46,17 +50,17 @@ class DateVoteServiceTest {
     @Autowired
     TimeVoteRepository timeVoteRepository;
     @Autowired
-    MeetingReviewRepository meetingReviewRepository;
+    MeetingRecordRepository meetingRecordRepository;
     @Autowired
-    ReviewImageRepository reviewImageRepository;
+    RecordImageRepository recordImageRepository;
 
     private Meeting meeting;
     private MeetingParticipant p1, p2, p3;
 
     @BeforeEach
     void setUp() {
-        reviewImageRepository.deleteAll();
-        meetingReviewRepository.deleteAll();
+        recordImageRepository.deleteAll();
+        meetingRecordRepository.deleteAll();
         dateVoteRepository.deleteAll();
         timeVoteRepository.deleteAll();
         meetingParticipantRepository.deleteAll();
@@ -67,7 +71,7 @@ class DateVoteServiceTest {
                 .title("테스트 모임")
                 .type(MeetingType.DRINKER)
                 .build();
-        meeting.updateStatus(MeetingStatus.DATE_VOTING);
+        meeting.updateStatus(MeetingStatus.VOTING);
         this.meeting = meetingRepository.save(meeting);
 
         List<Member> members = new ArrayList<>();

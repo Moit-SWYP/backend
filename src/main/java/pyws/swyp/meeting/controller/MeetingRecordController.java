@@ -9,32 +9,32 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import pyws.swyp.meeting.controller.api.MeetingReviewApi;
-import pyws.swyp.meeting.dto.MeetingReviewCreate;
-import pyws.swyp.meeting.dto.MeetingReviewResponse;
-import pyws.swyp.meeting.service.MeetingReviewService;
+import pyws.swyp.meeting.controller.api.MeetingRecordApi;
+import pyws.swyp.meeting.dto.MeetingRecordCreate;
+import pyws.swyp.meeting.dto.MeetingRecordResponse;
+import pyws.swyp.meeting.service.MeetingRecordService;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/meetings/{meetingId}/review")
-public class MeetingReviewController implements MeetingReviewApi {
+@RequestMapping("/api/meetings/{meetingId}/records")
+public class MeetingRecordController implements MeetingRecordApi {
 
-    private final MeetingReviewService meetingReviewService;
+    private final MeetingRecordService meetingRecordService;
 
     @PostMapping
-    public void create(
+    public void createMeetingRecord(
             @AuthenticationPrincipal Long memberId,
             @PathVariable Long meetingId,
-            @RequestBody @Validated MeetingReviewCreate request
+            @RequestBody @Validated MeetingRecordCreate request
     ) {
-        meetingReviewService.create(memberId, meetingId, request);
+        meetingRecordService.createMeetingRecord(memberId, meetingId, request);
     }
 
     @GetMapping
-    public MeetingReviewResponse get(
+    public MeetingRecordResponse get(
             @AuthenticationPrincipal Long memberId,
             @PathVariable Long meetingId
     ) {
-        return meetingReviewService.getMeetingReview(memberId, meetingId);
+        return meetingRecordService.getMeetingRecord(memberId, meetingId);
     }
 }
