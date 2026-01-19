@@ -114,7 +114,7 @@ public interface MeetingRecordApi {
             )
     )
     @GetMapping
-    MeetingRecordResponse get(
+    MeetingRecordResponse getMeetingRecord(
             @Parameter(hidden = true)
             @AuthenticationPrincipal Long memberId,
 

@@ -31,7 +31,7 @@ public class MeetingRecordController implements MeetingRecordApi {
     }
 
     @GetMapping
-    public MeetingRecordResponse get(
+    public MeetingRecordResponse getMeetingRecord(
             @AuthenticationPrincipal Long memberId,
             @PathVariable Long meetingId
     ) {
