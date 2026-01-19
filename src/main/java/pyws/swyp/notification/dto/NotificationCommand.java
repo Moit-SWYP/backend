@@ -95,5 +95,22 @@ public record NotificationCommand(
                 )
         );
     }
+
+    public static NotificationCommand recordReminder(Long meetingId) {
+        String deepLink = "moit://meetings/" + meetingId + "/record";
+        NotificationType type = NotificationType.RECORD_REMINDER;
+        return new NotificationCommand(
+                type,
+                "아직 모임 후기를 남기지 않았어요!",
+                "모임 후기를 작성해 주세요.",
+                deepLink,
+                meetingId,
+                Map.of(
+                        "type", type.name(),
+                        "meetingId", meetingId.toString(),
+                        "deepLink", deepLink
+                )
+        );
+    }
 }
 

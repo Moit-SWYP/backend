@@ -18,16 +18,22 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import pyws.swyp.global.error.CustomException;
 import pyws.swyp.global.error.ErrorCode;
+import pyws.swyp.meeting.dto.vote.VoterResponse;
+import pyws.swyp.meeting.dto.vote.VotersResponse;
 import pyws.swyp.meeting.dto.vote.time.TimeVoteRequest;
 import pyws.swyp.meeting.dto.vote.time.TopVotedTimeResponse;
 import pyws.swyp.meeting.dto.vote.time.VotedTimeResponse;
 import pyws.swyp.meeting.dto.vote.time.VotedTimesResponse;
-import pyws.swyp.meeting.dto.vote.VoterResponse;
-import pyws.swyp.meeting.dto.vote.VotersResponse;
-import pyws.swyp.meeting.entity.*;
+import pyws.swyp.meeting.entity.Meeting;
+import pyws.swyp.meeting.entity.MeetingParticipant;
+import pyws.swyp.meeting.entity.MeetingStatus;
+import pyws.swyp.meeting.entity.MeetingType;
+import pyws.swyp.meeting.entity.ParticipantRole;
 import pyws.swyp.meeting.entity.vote.TimeVote;
 import pyws.swyp.meeting.repository.MeetingParticipantRepository;
+import pyws.swyp.meeting.repository.MeetingRecordRepository;
 import pyws.swyp.meeting.repository.MeetingRepository;
+import pyws.swyp.meeting.repository.RecordImageRepository;
 import pyws.swyp.meeting.repository.vote.DateVoteRepository;
 import pyws.swyp.meeting.repository.vote.TimeVoteRepository;
 import pyws.swyp.member.entity.CharacterType;
@@ -51,12 +57,18 @@ class TimeVoteServiceTest {
     DateVoteRepository dateVoteRepository;
     @Autowired
     TimeVoteRepository timeVoteRepository;
+    @Autowired
+    MeetingRecordRepository meetingRecordRepository;
+    @Autowired
+    RecordImageRepository recordImageRepository;
 
     private Meeting meeting;
     private MeetingParticipant p1, p2, p3;
 
     @BeforeEach
     void setUp() {
+        recordImageRepository.deleteAll();
+        meetingRecordRepository.deleteAll();
         dateVoteRepository.deleteAll();
         timeVoteRepository.deleteAll();
         meetingParticipantRepository.deleteAll();
@@ -67,7 +79,7 @@ class TimeVoteServiceTest {
                 .title("테스트 모임")
                 .type(MeetingType.DRINKER)
                 .build();
-        meeting.updateStatus(MeetingStatus.TIME_VOTING);
+        meeting.updateStatus(MeetingStatus.VOTING);
         this.meeting = meetingRepository.save(meeting);
 
         List<Member> members = new ArrayList<>();

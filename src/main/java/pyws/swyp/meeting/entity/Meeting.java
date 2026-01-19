@@ -5,7 +5,6 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.UUID;
 import lombok.AccessLevel;
@@ -39,11 +38,14 @@ public class Meeting extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 50)
-    private MeetingStatus status = MeetingStatus.CREATED;
+    private MeetingStatus status = MeetingStatus.VOTING;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 50)
     private MeetingType type;
+
+    @Column(nullable = false)
+    private boolean courseFixed = false;
 
     @Builder
     public Meeting(
@@ -72,21 +74,27 @@ public class Meeting extends BaseEntity {
 
     public void confirmDate(LocalDate date) {
         this.date = date;
-        updateStatus(MeetingStatus.DATE_VOTED);
     }
 
     public void cancelConfirmedDate() {
         this.date = null;
-        updateStatus(MeetingStatus.DATE_VOTING);
     }
 
     public void confirmTime(LocalTime time) {
         this.time = time;
-        updateStatus(MeetingStatus.TIME_VOTED);
+        updateStatus(MeetingStatus.FIXED);
     }
 
     public void cancelConfirmedTime() {
         this.time = null;
-        updateStatus(MeetingStatus.TIME_VOTING);
+        updateStatus(MeetingStatus.VOTING);
+    }
+
+    public boolean isDateConfirmed() {
+        return this.date != null;
+    }
+
+    public boolean isTimeConfirmed() {
+        return this.time != null;
     }
 }

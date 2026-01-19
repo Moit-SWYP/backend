@@ -7,5 +7,7 @@ public enum NotificationType {
     DATE_VOTE_REMINDER,
 
     TIME_VOTE_RESULT_CONFIRMED,
-    TIME_VOTE_REMINDER
+    TIME_VOTE_REMINDER,
+
+    RECORD_REMINDER
 }

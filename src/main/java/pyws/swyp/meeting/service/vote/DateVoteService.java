@@ -1,5 +1,7 @@
 package pyws.swyp.meeting.service.vote;
 
+import static pyws.swyp.global.error.ErrorCode.MEETING_NOT_VOTABLE;
+
 import java.time.LocalDate;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -37,11 +39,7 @@ public class DateVoteService {
         Meeting meeting = meetingRepository.findById(meetingId)
                 .orElseThrow(ErrorCode.MEETING_NOT_FOUND::toException);
 
-        if (!meeting.getStatus().isDateVotable()) {
-            throw ErrorCode.MEETING_NOT_VOTABLE.toException();
-        }
-
-        meeting.updateStatus(MeetingStatus.DATE_VOTING);
+        validateNotDone(meeting);
 
         MeetingParticipant participant = meetingParticipantRepository.findByMemberIdAndMeetingId(memberId, meetingId)
                 .orElseThrow(ErrorCode.MEETING_PARTICIPANT_NOT_FOUND::toException);
@@ -112,6 +110,12 @@ public class DateVoteService {
 
         if (!meetingParticipantRepository.existsByMemberIdAndMeetingId(memberId, meetingId)) {
             throw ErrorCode.MEETING_PARTICIPANT_NOT_FOUND.toException();
+        }
+    }
+
+    private void validateNotDone(Meeting meeting) {
+        if (meeting.getStatus() == MeetingStatus.DONE) {
+            throw ErrorCode.MEETING_NOT_VOTABLE.toException();
         }
     }
 }

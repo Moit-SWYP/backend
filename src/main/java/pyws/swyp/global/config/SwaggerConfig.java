@@ -78,4 +78,12 @@ public class SwaggerConfig {
                 .pathsToMatch("/api/notifications/**")
                 .build();
     }
+
+    @Bean
+    public GroupedOpenApi presignApi() {
+        return GroupedOpenApi.builder()
+                .group("presign")
+                .pathsToMatch("/api/presign/**")
+                .build();
+    }
 }

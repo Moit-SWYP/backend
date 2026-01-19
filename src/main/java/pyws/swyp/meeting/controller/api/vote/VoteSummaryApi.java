@@ -25,7 +25,7 @@ public interface VoteSummaryApi {
                     특정 모임의 전체 투표 현황을 요약 조회합니다.
                     
                     조회 정보:
-                    - 모임 상태 (meetingStatus)
+                    - 모임 상태 (meetingStatus: VOTING / FIXED(일자 확정) / DONE(지난 모임))
                     - 호스트 여부 (isHost)
                     - 확정된 날짜 / 시간
                     - 날짜 투표 요약
@@ -52,7 +52,7 @@ public interface VoteSummaryApi {
                                               "code": "SUCCESS",
                                               "message": "요청이 성공적으로 처리되었습니다.",
                                               "data": {
-                                                "meetingStatus": "DATE_VOTING",
+                                                "meetingStatus": "VOTING",
                                                 "isHost": true,
                                                 "confirmedDate": null,
                                                 "confirmedTime": null,
@@ -64,10 +64,34 @@ public interface VoteSummaryApi {
                                                   "votedDates": [
                                                     "2025-12-20",
                                                     "2025-12-21",
+                                                    "2025-12-22",
                                                     "2025-12-22"
                                                   ]
                                                 },
-                                                "timeSummary": null
+                                                "timeSummary": {
+                                                  "topTimes": [
+                                                    "15:00",
+                                                    "15:30"
+                                                  ],
+                                                  "votedTimes": [
+                                                    {
+                                                      "time": "15:00",
+                                                      "count": 2
+                                                    },
+                                                    {
+                                                      "time": "15:30",
+                                                      "count": 2
+                                                    },
+                                                    {
+                                                      "time": "16:00",
+                                                      "count": 1
+                                                    },
+                                                    {
+                                                      "time": "16:30",
+                                                      "count": 1
+                                                    }
+                                                  ]
+                                                }
                                               }
                                             }
                                             """

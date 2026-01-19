@@ -80,6 +80,7 @@ class MeetingConfirmControllerTest {
                 .title("확정 테스트 모임")
                 .type(MeetingType.DRINKER)
                 .build());
+        meeting.updateStatus(MeetingStatus.VOTING);
         this.meetingId = meeting.getId();
 
         meetingParticipantRepository.save(MeetingParticipant.builder()
@@ -95,10 +96,6 @@ class MeetingConfirmControllerTest {
     @DisplayName("모임장이 지정한 날짜로 투표를 확정한다.")
     void confirmDateManual_success() throws Exception {
         // given
-        Meeting meeting = meetingRepository.findById(meetingId).orElseThrow();
-        meeting.updateStatus(MeetingStatus.DATE_VOTING);
-        meetingRepository.save(meeting);
-
         LocalDate chosen = LocalDate.of(2025, 12, 20);
 
         // when
@@ -109,7 +106,7 @@ class MeetingConfirmControllerTest {
 
         // then
         Meeting updated = meetingRepository.findById(meetingId).orElseThrow();
-        assertEquals(MeetingStatus.DATE_VOTED, updated.getStatus());
+        assertEquals(MeetingStatus.VOTING, updated.getStatus());
         assertEquals(chosen, updated.getDate());
     }
 
@@ -117,10 +114,6 @@ class MeetingConfirmControllerTest {
     @DisplayName("모임장이 지정한 시간으로 투표를 확정한다.")
     void confirmTimeManual_success() throws Exception {
         // given
-        Meeting meeting = meetingRepository.findById(meetingId).orElseThrow();
-        meeting.updateStatus(MeetingStatus.TIME_VOTING);
-        meetingRepository.save(meeting);
-
         LocalTime chosen = LocalTime.of(15, 0);
 
         // when
@@ -131,7 +124,7 @@ class MeetingConfirmControllerTest {
 
         // then
         Meeting updated = meetingRepository.findById(meetingId).orElseThrow();
-        assertEquals(MeetingStatus.TIME_VOTED, updated.getStatus());
+        assertEquals(MeetingStatus.FIXED, updated.getStatus());
         assertEquals(chosen, updated.getTime());
     }
 
@@ -139,10 +132,6 @@ class MeetingConfirmControllerTest {
     @DisplayName("날짜 확정을 취소한다.")
     void cancelConfirmDate_success() throws Exception {
         // given
-        Meeting meeting = meetingRepository.findById(meetingId).orElseThrow();
-        meeting.updateStatus(MeetingStatus.DATE_VOTING);
-        meetingRepository.save(meeting);
-
         LocalDate date = LocalDate.of(2025, 12, 20);
         mockMvc.perform(post("/api/meetings/{meetingId}/votes/date/confirm/manual", meetingId)
                         .param("date", date.toString()))
@@ -155,7 +144,7 @@ class MeetingConfirmControllerTest {
 
         // then
         Meeting updated = meetingRepository.findById(meetingId).orElseThrow();
-        assertEquals(MeetingStatus.DATE_VOTING, updated.getStatus());
+        assertEquals(MeetingStatus.VOTING, updated.getStatus());
         assertNull(updated.getDate());
     }
 

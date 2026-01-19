@@ -39,11 +39,7 @@ public class TimeVoteService {
         Meeting meeting = meetingRepository.findById(meetingId)
                 .orElseThrow(ErrorCode.MEETING_NOT_FOUND::toException);
 
-        if (!meeting.getStatus().isTimeVotable()) {
-            throw ErrorCode.MEETING_NOT_VOTABLE.toException();
-        }
-
-        meeting.updateStatus(MeetingStatus.TIME_VOTING);
+        validateNotDone(meeting);
 
         MeetingParticipant participant = meetingParticipantRepository.findByMemberIdAndMeetingId(memberId, meetingId)
                 .orElseThrow(ErrorCode.MEETING_PARTICIPANT_NOT_FOUND::toException);
@@ -141,6 +137,12 @@ public class TimeVoteService {
 
         if (!meetingParticipantRepository.existsByMemberIdAndMeetingId(memberId, meetingId)) {
             throw ErrorCode.MEETING_PARTICIPANT_NOT_FOUND.toException();
+        }
+    }
+
+    private void validateNotDone(Meeting meeting) {
+        if (meeting.getStatus() == MeetingStatus.DONE) {
+            throw ErrorCode.MEETING_NOT_VOTABLE.toException();
         }
     }
 }

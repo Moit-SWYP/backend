@@ -26,6 +26,8 @@ import pyws.swyp.config.AuthTestPrincipalContext;
 import pyws.swyp.config.TestRedisConfig;
 import pyws.swyp.global.error.ErrorCode;
 import pyws.swyp.meeting.repository.MeetingParticipantRepository;
+import pyws.swyp.meeting.repository.MeetingRecordRepository;
+import pyws.swyp.meeting.repository.RecordImageRepository;
 import pyws.swyp.meeting.repository.vote.DateVoteRepository;
 import pyws.swyp.meeting.repository.vote.TimeVoteRepository;
 import pyws.swyp.member.dto.MemberWithdrawRequest;
@@ -54,27 +56,28 @@ class MemberControllerTest {
 
     @Autowired
     MemberRepository memberRepository;
-
     @Autowired
     SocialAccountRepository socialAccountRepository;
-
     @Autowired
     MemberWithdrawalRepository memberWithdrawalRepository;
-
     @Autowired
     DateVoteRepository dateVoteRepository;
-
     @Autowired
     TimeVoteRepository timeVoteRepository;
-
     @Autowired
     MeetingParticipantRepository meetingParticipantRepository;
+    @Autowired
+    MeetingRecordRepository meetingRecordRepository;
+    @Autowired
+    RecordImageRepository recordImageRepository;
 
     private Long memberId;
     private SocialProvider provider;
 
     @BeforeEach
     void setUp() {
+        recordImageRepository.deleteAll();
+        meetingRecordRepository.deleteAll();
         socialAccountRepository.deleteAll();
         memberWithdrawalRepository.deleteAll();
         dateVoteRepository.deleteAll();

@@ -53,6 +53,14 @@ public class MeetingNotificationService {
     }
 
     /**
+     * 모임 후기 미기록자에게 알림을 발송한다.
+     */
+    public void remindRecord(Long meetingId) {
+        List<Long> memberIds = meetingParticipantRepository.findMemberIdsNotWrittenRecord(meetingId);
+        notifyMemberIds(meetingId, memberIds, NotificationCommand.recordReminder(meetingId));
+    }
+
+    /**
      * 모임에 속한 모든 참여자를 조회하여 알림 발송을 트리거한다.<br>
      * 알림 대상이 없을 경우 로그만 남기고 종료한다.
      */

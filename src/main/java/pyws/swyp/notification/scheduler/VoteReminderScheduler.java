@@ -19,11 +19,11 @@ public class VoteReminderScheduler {
     public void remindVote() {
 
         // 날짜 투표 진행 중인 모임
-        List<Long> dateVotingMeetingIds = meetingRepository.findIdsByStatus(MeetingStatus.DATE_VOTING);
+        List<Long> dateVotingMeetingIds = meetingRepository.findIdsNeedingDateVoteReminder(MeetingStatus.VOTING);
         dateVotingMeetingIds.forEach(meetingNotificationService::remindDateVote);
 
         // 시간 투표 진행 중인 모임
-        List<Long> timeVotingMeetingIds = meetingRepository.findIdsByStatus(MeetingStatus.TIME_VOTING);
+        List<Long> timeVotingMeetingIds = meetingRepository.findIdsNeedingTimeVoteReminder(MeetingStatus.VOTING);
         timeVotingMeetingIds.forEach(meetingNotificationService::remindTimeVote);
     }
 }
