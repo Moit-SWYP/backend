@@ -47,3 +47,11 @@ oauth:
   naver:
     client-id: ${NAVER_CLIENT_ID}
     client-secret: ${NAVER_CLIENT_SECRET}
+
+ncp:
+  object-storage:
+    end-point: https://kr.object.ncloudstorage.com
+    region: kr-standard
+    bucket: ${STORAGE_BUCKET}
+    access-key: ${NCP_ACCESS_KEY}
+    secret-key: ${NCP_SECRET_KEY}
