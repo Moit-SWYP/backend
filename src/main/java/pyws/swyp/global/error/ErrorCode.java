@@ -46,7 +46,7 @@ public enum ErrorCode {
     MEETING_NOT_FOUND_IN_MONTH(NOT_FOUND, "MEET0012", "해당 월에 모임이 존재하지 않습니다."),
     MEETING_DATE_NOT_CONFIRMED(BAD_REQUEST, "MEET0013", "확정된 모임 날짜가 없습니다."),
     MEETING_TIME_NOT_CONFIRMED(BAD_REQUEST, "MEET0014", "확정된 모임 시간이 없습니다."),
-    MEETING_NOT_TIME_CANCELABLE(BAD_REQUEST, "MEET0015", "날짜가 확정된 모임만 시간 확정을 취소할 수 있습니다."),
+    MEETING_NOT_TIME_CANCELABLE(BAD_REQUEST, "MEET0015", "이미 완료된 모임은 시간 확정을 취소할 수 있습니다."),
 
     // Vote
     DATE_VOTE_NOT_FOUND(NOT_FOUND, "VOTE0001", "아직 시간 투표가 존재하지 않습니다."),

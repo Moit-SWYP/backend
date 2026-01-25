@@ -66,7 +66,6 @@ class MeetingConfirmServiceTest {
                 .title("테스트 모임")
                 .type(MeetingType.DRINKER)
                 .build();
-        meeting.updateStatus(MeetingStatus.VOTING);
         meetingRepository.save(meeting);
         this.meetingId = meeting.getId();
         this.meeting = meeting;
@@ -132,7 +131,6 @@ class MeetingConfirmServiceTest {
 
         // then
         Meeting meeting = meetingRepository.findById(meetingId).orElseThrow();
-        assertEquals(MeetingStatus.VOTING, meeting.getStatus());
         assertEquals(LocalDate.of(2025, 1, 1), meeting.getDate());
     }
 
@@ -147,7 +145,6 @@ class MeetingConfirmServiceTest {
 
         // then
         Meeting meeting = meetingRepository.findById(meetingId).orElseThrow();
-        assertEquals(MeetingStatus.VOTING, meeting.getStatus());
         assertEquals(chosen, meeting.getDate());
     }
 
@@ -162,24 +159,22 @@ class MeetingConfirmServiceTest {
 
         // then
         Meeting meeting = meetingRepository.findById(meetingId).orElseThrow();
-        assertEquals(MeetingStatus.VOTING, meeting.getStatus());
         assertNull(meeting.getDate());
     }
 
     @Test
-    @DisplayName("모임장이 최다 득표 시간으로 확정하면 모임 상태가 FIXED가 된다.")
+    @DisplayName("모임장이 최다 득표 시간으로 확정한다.")
     void confirmTimeVote_success() {
         // when
         meetingConfirmService.confirmTimeVote(hostMemberId, meetingId);
 
         // then
         Meeting updated = meetingRepository.findById(meetingId).orElseThrow();
-        assertEquals(MeetingStatus.FIXED, updated.getStatus());
         assertEquals(LocalTime.of(15, 30), updated.getTime());
     }
 
     @Test
-    @DisplayName("모임장이 지정한 시간으로 확정하면 모임 상태가 FIXED가 된다.")
+    @DisplayName("모임장이 지정한 시간으로 확정한다.")
     void confirmTime_manual_success() {
         // given
         LocalTime chosen = LocalTime.of(20, 0);
@@ -189,12 +184,11 @@ class MeetingConfirmServiceTest {
 
         // then
         Meeting updated = meetingRepository.findById(meetingId).orElseThrow();
-        assertEquals(MeetingStatus.FIXED, updated.getStatus());
         assertEquals(chosen, updated.getTime());
     }
 
     @Test
-    @DisplayName("모임장이 모임 시간 확정을 취소하면 VOTING으로 바뀌고 확정 시간은 null이 된다.")
+    @DisplayName("모임장이 모임 시간 확정을 취소하면 확정 시간은 null이 된다.")
     void cancelConfirmTimeVote_success() {
         // given
         meetingConfirmService.confirmTime(hostMemberId, meetingId, LocalTime.of(20, 0));
@@ -204,7 +198,6 @@ class MeetingConfirmServiceTest {
 
         // then
         Meeting updated = meetingRepository.findById(meetingId).orElseThrow();
-        assertEquals(MeetingStatus.VOTING, updated.getStatus());
         assertNull(updated.getTime());
     }
 

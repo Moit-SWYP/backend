@@ -7,6 +7,8 @@ import java.util.List;
 public record TimeSummary(
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm")
         List<LocalTime> topTimes,
-        List<VotedTimeResponse> votedTimes
+        List<VotedTimeResponse> votedTimes,
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm")
+        List<LocalTime> myVotedTimes
 ) {
 }

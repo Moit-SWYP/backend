@@ -53,7 +53,7 @@ public class HomeService {
                         .toList();
 
         // 홈 하단 기다리고 있는 일정 카드
-        List<MeetingStatus> statuses = List.of(MeetingStatus.VOTING, MeetingStatus.FIXED);
+        List<MeetingStatus> statuses = List.of(MeetingStatus.IN_PROGRESS);
         List<MeetingBriefResponse> waitingMeetings
                 = meetingParticipantRepository.findMeetingsByMemberIdAndStatus(
                         memberId, statuses, PageRequest.of(0, DEFAULT_TOP));

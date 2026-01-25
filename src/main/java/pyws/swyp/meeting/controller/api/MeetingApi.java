@@ -164,7 +164,7 @@ public interface MeetingApi {
             description =
                     """
                             "친구들이 기다려요" -> 더보기 클릭 시 요청한 모임 리스트 조회를 처리합니다.
-                            Meeting.Status의 값이 CREATED, DATE_VOTING, PLACE_VOTING인 경우만 반환합니다.
+                            Meeting.Status의 값이 IN_PROGRESS인 경우만 반환합니다.
                     """
     )
     @ApiResponse(

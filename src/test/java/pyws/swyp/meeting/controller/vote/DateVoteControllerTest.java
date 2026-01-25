@@ -102,7 +102,6 @@ class DateVoteControllerTest {
                 .title("테스트 모임")
                 .type(MeetingType.DRINKER)
                 .build());
-        meeting.updateStatus(MeetingStatus.VOTING);
         this.meetingId = meeting.getId();
 
         // participants

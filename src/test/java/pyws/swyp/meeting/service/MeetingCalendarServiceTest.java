@@ -78,7 +78,6 @@ class MeetingCalendarServiceTest {
                     .title("테스트 모임 " + i)
                     .type(MeetingType.ACTIVE)
                     .build();
-            meeting.updateStatus(MeetingStatus.FIXED);
             meeting.confirmDate(LocalDate.of(2026, 1, 1 + i));
             meeting.confirmTime(LocalTime.of(11 + i, 0));
             meetings.add(meeting);

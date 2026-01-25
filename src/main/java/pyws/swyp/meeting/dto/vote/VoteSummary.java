@@ -8,7 +8,6 @@ import pyws.swyp.meeting.dto.vote.time.TimeSummary;
 import pyws.swyp.meeting.entity.MeetingStatus;
 
 public record VoteSummary(
-        MeetingStatus meetingStatus,
         boolean isHost,
         LocalDate confirmedDate,
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm")

@@ -159,7 +159,6 @@ class VoteSummaryServiceTest {
         );
 
         // then
-        assertEquals(MeetingStatus.VOTING, response.meetingStatus());
         assertFalse(response.isHost());
 
         DateSummary dateSummary = response.dateSummary();
@@ -178,5 +177,8 @@ class VoteSummaryServiceTest {
                 new VotedTimeResponse(t4, 1)
         );
         assertEquals(expected, timeSummary.votedTimes());
+
+        List<LocalTime> myVotedTimes = timeSummary.myVotedTimes();
+        assertEquals(List.of(t1, t2), myVotedTimes);
     }
 }

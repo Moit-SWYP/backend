@@ -80,7 +80,6 @@ class MeetingConfirmControllerTest {
                 .title("확정 테스트 모임")
                 .type(MeetingType.DRINKER)
                 .build());
-        meeting.updateStatus(MeetingStatus.VOTING);
         this.meetingId = meeting.getId();
 
         meetingParticipantRepository.save(MeetingParticipant.builder()
@@ -106,7 +105,6 @@ class MeetingConfirmControllerTest {
 
         // then
         Meeting updated = meetingRepository.findById(meetingId).orElseThrow();
-        assertEquals(MeetingStatus.VOTING, updated.getStatus());
         assertEquals(chosen, updated.getDate());
     }
 
@@ -124,7 +122,6 @@ class MeetingConfirmControllerTest {
 
         // then
         Meeting updated = meetingRepository.findById(meetingId).orElseThrow();
-        assertEquals(MeetingStatus.FIXED, updated.getStatus());
         assertEquals(chosen, updated.getTime());
     }
 
@@ -144,7 +141,6 @@ class MeetingConfirmControllerTest {
 
         // then
         Meeting updated = meetingRepository.findById(meetingId).orElseThrow();
-        assertEquals(MeetingStatus.VOTING, updated.getStatus());
         assertNull(updated.getDate());
     }
 

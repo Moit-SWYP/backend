@@ -14,7 +14,6 @@ import pyws.swyp.meeting.dto.vote.time.TimeSummary;
 import pyws.swyp.meeting.dto.vote.time.VotedTimeResponse;
 import pyws.swyp.meeting.entity.Meeting;
 import pyws.swyp.meeting.entity.MeetingParticipant;
-import pyws.swyp.meeting.entity.MeetingStatus;
 import pyws.swyp.meeting.repository.MeetingParticipantRepository;
 import pyws.swyp.meeting.repository.MeetingRepository;
 import pyws.swyp.meeting.repository.vote.DateVoteRepository;
@@ -42,10 +41,9 @@ public class VoteSummaryService {
 
         boolean isHost = participant.isHost();
         DateSummary dateSummary = getDateSummary(meetingId);
-        TimeSummary timeSummary = getTimeSummary(meetingId);
+        TimeSummary timeSummary = getTimeSummary(meetingId, memberId);
 
         return new VoteSummary(
-                meeting.getStatus(),
                 isHost,
                 meeting.getDate(),
                 meeting.getTime(),
@@ -63,12 +61,12 @@ public class VoteSummaryService {
         return new DateSummary(topDates, votedDates);
     }
 
-    private TimeSummary getTimeSummary(Long meetingId) {
+    private TimeSummary getTimeSummary(Long meetingId, Long memberId) {
         List<LocalTime> topTimes = timeVoteRepository.findTopTimesByMeetingId(
                 meetingId, PageRequest.of(0, TOP_N)
         );
         List<VotedTimeResponse> votedTimes = timeVoteRepository.findVotedTimesWithCounts(meetingId);
-
-        return new TimeSummary(topTimes, votedTimes);
+        List<LocalTime> myVotedTimes = timeVoteRepository.findMyVotedTimes(meetingId, memberId);
+        return new TimeSummary(topTimes, votedTimes, myVotedTimes);
     }
 }

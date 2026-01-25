@@ -31,7 +31,6 @@ public class HomeServiceTest {
     private HomeService homeService;
 
     @Test
-    @DisplayName("")
     void 홈화면_조회_성공() {
         // given
         Long memberId = 1L;
@@ -39,9 +38,9 @@ public class HomeServiceTest {
         LocalDate fixedEnd = fixedNow.plusDays(7);
 
         List<MeetingBriefResponse> meetingInfos = List.of(
-                new MeetingBriefResponse(3L, "데이트", MeetingStatus.FIXED, fixedNow.plusDays(2)),
-                new MeetingBriefResponse(1L, "모잇 오프라인 모임", MeetingStatus.FIXED, fixedNow.plusDays(4)),
-                new MeetingBriefResponse(2L, "카공", MeetingStatus.FIXED, fixedNow.plusDays(6))
+                new MeetingBriefResponse(3L, "데이트", MeetingStatus.IN_PROGRESS, fixedNow.plusDays(2)),
+                new MeetingBriefResponse(1L, "모잇 오프라인 모임", MeetingStatus.IN_PROGRESS, fixedNow.plusDays(4)),
+                new MeetingBriefResponse(2L, "카공", MeetingStatus.IN_PROGRESS, fixedNow.plusDays(6))
         );
 
         ParticipantInfo p1 = new ParticipantInfo(memberId, "닉네임1", CharacterType.FOODIE, pyws.swyp.meeting.entity.ParticipantRole.HOST);
@@ -61,10 +60,10 @@ public class HomeServiceTest {
         );
 
         List<MeetingBriefResponse> waitingMeetings = List.of(
-                new MeetingBriefResponse(1L, "모잇 오프라인 모임", MeetingStatus.FIXED, fixedNow.plusDays(4)),
-                new MeetingBriefResponse(2L, "카공", MeetingStatus.FIXED, fixedNow.plusDays(6)),
-                new MeetingBriefResponse(4L, "보드게임 모임", MeetingStatus.VOTING, null),
-                new MeetingBriefResponse(5L, "동아리 전체 회식", MeetingStatus.VOTING, null)
+                new MeetingBriefResponse(1L, "모잇 오프라인 모임", MeetingStatus.IN_PROGRESS, fixedNow.plusDays(4)),
+                new MeetingBriefResponse(2L, "카공", MeetingStatus.IN_PROGRESS, fixedNow.plusDays(6)),
+                new MeetingBriefResponse(4L, "보드게임 모임", MeetingStatus.IN_PROGRESS, null),
+                new MeetingBriefResponse(5L, "동아리 전체 회식", MeetingStatus.IN_PROGRESS, null)
         );
 
         when(meetingParticipantRepository.findMeetingsByMemberIdWithin7Days(memberId, fixedNow, fixedEnd))

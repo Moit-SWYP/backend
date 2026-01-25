@@ -38,7 +38,7 @@ public class Meeting extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 50)
-    private MeetingStatus status = MeetingStatus.VOTING;
+    private MeetingStatus status = MeetingStatus.IN_PROGRESS;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 50)
@@ -82,12 +82,10 @@ public class Meeting extends BaseEntity {
 
     public void confirmTime(LocalTime time) {
         this.time = time;
-        updateStatus(MeetingStatus.FIXED);
     }
 
     public void cancelConfirmedTime() {
         this.time = null;
-        updateStatus(MeetingStatus.VOTING);
     }
 
     public boolean isDateConfirmed() {
