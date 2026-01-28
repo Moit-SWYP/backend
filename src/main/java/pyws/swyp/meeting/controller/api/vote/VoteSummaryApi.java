@@ -25,7 +25,6 @@ public interface VoteSummaryApi {
                     특정 모임의 전체 투표 현황을 요약 조회합니다.
                     
                     조회 정보:
-                    - 모임 상태 (meetingStatus: VOTING / FIXED(일자 확정) / DONE(지난 모임))
                     - 호스트 여부 (isHost)
                     - 확정된 날짜 / 시간
                     - 날짜 투표 요약
@@ -34,6 +33,7 @@ public interface VoteSummaryApi {
                     - 시간 투표 요약
                       - Top N 시간
                       - 시간별 투표 수 목록
+                      - 나의 투표 목록
                     
                     Authorization 헤더에 Access Token이 필요합니다.
                     """
@@ -52,7 +52,6 @@ public interface VoteSummaryApi {
                                               "code": "SUCCESS",
                                               "message": "요청이 성공적으로 처리되었습니다.",
                                               "data": {
-                                                "meetingStatus": "VOTING",
                                                 "isHost": true,
                                                 "confirmedDate": null,
                                                 "confirmedTime": null,
@@ -90,6 +89,9 @@ public interface VoteSummaryApi {
                                                       "time": "16:30",
                                                       "count": 1
                                                     }
+                                                  ],
+                                                  "myVotedTimes": [
+                                                    "15:00", "16:00"
                                                   ]
                                                 }
                                               }

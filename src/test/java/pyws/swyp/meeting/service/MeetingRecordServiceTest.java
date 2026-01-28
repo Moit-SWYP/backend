@@ -85,7 +85,6 @@ class MeetingRecordServiceTest {
                 .build();
         meetingNotDone.confirmDate(LocalDate.of(2026, 1, 2));
         meetingNotDone.confirmTime(LocalTime.of(19, 0));
-        meetingNotDone.updateStatus(MeetingStatus.FIXED);
         meetingRepository.save(meetingNotDone);
 
         member = memberRepository.save(Member.builder()

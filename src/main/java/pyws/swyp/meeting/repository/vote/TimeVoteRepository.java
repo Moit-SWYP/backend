@@ -75,4 +75,13 @@ public interface TimeVoteRepository extends JpaRepository<TimeVote, Long> {
             where tv.meetingParticipant.id in :participantIds
             """)
     void deleteAllByParticipantIds(List<Long> participantIds);
+
+    @Query("""
+            select tv.time
+            from TimeVote tv
+            join tv.meetingParticipant mp
+            where mp.meeting.id = :meetingId
+              and mp.member.id = :memberId
+            """)
+    List<LocalTime> findMyVotedTimes(Long meetingId, Long memberId);
 }

@@ -20,7 +20,7 @@ import pyws.swyp.meeting.dto.MeetingRecordResponse;
 
 @RequestMapping("/api/meetings/{meetingId}/records")
 @SecurityRequirement(name = "auth")
-@Tag(name = "Meeting Review API", description = "모임 후기 작성 및 조회 API")
+@Tag(name = "Meeting Record API", description = "모임 후기 작성 및 조회 API")
 public interface MeetingRecordApi {
 
     @Operation(

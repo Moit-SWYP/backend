@@ -86,7 +86,7 @@ public class MeetingService {
 
     @Transactional(readOnly = true)
     public List<MeetingBriefResponse> getWaitingMeetings(Long memberId, Pageable pageable) {
-        List<MeetingStatus> statuses = List.of(MeetingStatus.VOTING, MeetingStatus.FIXED);
+        List<MeetingStatus> statuses = List.of(MeetingStatus.IN_PROGRESS);
         return meetingParticipantRepository.findMeetingsByMemberIdAndStatus(memberId, statuses, pageable);
     }
 

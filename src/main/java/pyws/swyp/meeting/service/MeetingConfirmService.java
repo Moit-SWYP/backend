@@ -37,9 +37,6 @@ public class MeetingConfirmService {
     private final TimeVoteRepository timeVoteRepository;
     private final ApplicationEventPublisher eventPublisher;
 
-    /**
-     * 모임장이 날짜 투표 결과를 기준으로 모임 날짜를 확정한다.
-     */
     public void confirmDateVote(Long memberId, Long meetingId) {
         Meeting meeting = getMeeting(meetingId);
         MeetingParticipant participant = getParticipant(memberId, meetingId);
@@ -59,9 +56,6 @@ public class MeetingConfirmService {
         eventPublisher.publishEvent(new DateVoteConfirmedEvent(meetingId));
     }
 
-    /**
-     * 모임장이 지정한 날짜로 모임 날짜를 임의 확정한다.
-     */
     public void confirmDate(Long memberId, Long meetingId, LocalDate date) {
         Meeting meeting = getMeeting(meetingId);
         MeetingParticipant participant = getParticipant(memberId, meetingId);
@@ -73,9 +67,6 @@ public class MeetingConfirmService {
         eventPublisher.publishEvent(new DateVoteConfirmedEvent(meetingId));
     }
 
-    /**
-     * 날짜 확정을 취소한다.
-     */
     public void cancelConfirmDateVote(Long memberId, Long meetingId) {
         Meeting meeting = getMeeting(meetingId);
         MeetingParticipant participant = getParticipant(memberId, meetingId);
@@ -86,9 +77,6 @@ public class MeetingConfirmService {
         meeting.cancelConfirmedDate();
     }
 
-    /**
-     * 모임장이 시간 투표 결과를 기준으로 모임 시간을 확정하고, 모임을 FIXED 상태로 변경한다.
-     */
     public void confirmTimeVote(Long memberId, Long meetingId) {
         Meeting meeting = getMeeting(meetingId);
         MeetingParticipant participant = getParticipant(memberId, meetingId);
@@ -105,9 +93,6 @@ public class MeetingConfirmService {
         eventPublisher.publishEvent(new TimeVoteConfirmedEvent(meetingId));
     }
 
-    /**
-     * 모임장이 지정한 시간으로 모임 시간을 임의 확정하고, 모임을 FIXED 상태로 변경한다.
-     */
     public void confirmTime(Long memberId, Long meetingId, LocalTime time) {
         Meeting meeting = getMeeting(meetingId);
         MeetingParticipant participant = getParticipant(memberId, meetingId);
@@ -120,9 +105,6 @@ public class MeetingConfirmService {
         eventPublisher.publishEvent(new TimeVoteConfirmedEvent(meetingId));
     }
 
-    /**
-     * 시간 확정을 취소하고, 모임을 VOTING 상태로 되돌린다.
-     */
     public void cancelConfirmTimeVote(Long memberId, Long meetingId) {
         Meeting meeting = getMeeting(meetingId);
         MeetingParticipant participant = getParticipant(memberId, meetingId);
@@ -164,7 +146,7 @@ public class MeetingConfirmService {
     }
 
     private void validateTimeCancelable(Meeting meeting) {
-        if (meeting.getStatus() != MeetingStatus.FIXED) {
+        if (meeting.getStatus() == MeetingStatus.DONE) {
             throw ErrorCode.MEETING_NOT_TIME_CANCELABLE.toException();
         }
 

@@ -31,7 +31,6 @@ public interface DateVoteApi {
                             
                             - 요청으로 전달된 날짜 목록으로 투표가 저장됩니다. (중복 날짜는 제거됩니다.)
                             - 기존에 내가 투표했던 날짜는 모두 삭제되고, 새 목록으로 다시 저장됩니다. (replace 방식)
-                            - 모임 상태가 CREATED인 경우 DATE_VOTING으로 변경될 수 있습니다.
                             
                             Authorization 헤더에 Access Token이 필요합니다.
                             """

@@ -13,10 +13,12 @@ SET FOREIGN_KEY_CHECKS = 0;
 ------------------------------------------------------
 
 -- MEETING
-INSERT IGNORE INTO meeting (id, public_id, created_at, is_active, updated_at, date, time, status, type, title)
+INSERT IGNORE INTO meeting (id, public_id, created_at, is_active, updated_at, date, time, status, type, title, course_fixed)
 VALUES
-    (1, UUID_TO_BIN(UUID()), NOW(), 1, NULL, '2025-12-20', NULL, 'VOTING', 'FOODIE', '연말 모임'),
-    (2, UUID_TO_BIN(UUID()), NOW(), 1, NULL, '2025-12-25', '19:00:00', 'FIXED', 'TREND_SETTER','크리스마스 모임');
+    (1, UUID_TO_BIN(UUID()), NOW(), 1, NULL, '2025-12-20', '12:00', 'DONE', 'FOODIE', '연말 모임', true),
+    (2, UUID_TO_BIN(UUID()), NOW(), 1, NULL, '2025-12-25', '15:00', 'DONE', 'TREND_SETTER','크리스마스 모임', true),
+    (3, UUID_TO_BIN(UUID()), NOW(), 1, NULL, '2026-02-15', '19:00', 'IN_PROGRESS', 'TREND_SETTER','크리스마스 모임', true),
+    (4, UUID_TO_BIN(UUID()), NOW(), 1, NULL, '2025-02-25', NULL, 'IN_PROGRESS', 'TREND_SETTER','크리스마스 모임', false);
 
 -- MEMBER
 INSERT IGNORE INTO member (id, created_at, birth_date, email, gender, nickname, character_type, role)
@@ -37,11 +39,11 @@ VALUES (1, NOW(), 1, NULL, 'HOST', 1, 1),
        (4, NOW(), 1, NULL, 'HOST', 1, 4),
        (5, NOW(), 1, NULL, 'MEMBER', 2, 4);
 
--- COURSE
-INSERT IGNORE INTO course (id, created_at, is_active, updated_at, step, meeting_id)
-VALUES (1, NOW(), 1, NULL, 1, 1),
-       (2, NOW(), 1, NULL, 2, 1),
-       (3, NOW(), 1, NULL, 1, 2);
+# -- COURSE
+# INSERT IGNORE INTO course (id, created_at, is_active, updated_at, step, meeting_id)
+# VALUES (1, NOW(), 1, NULL, 1, 1),
+#        (2, NOW(), 1, NULL, 2, 1),
+#        (3, NOW(), 1, NULL, 1, 2);
 
 -- DATE_VOTE
 INSERT IGNORE INTO date_vote (id, created_at, meeting_participant_id, meeting_id, date)
@@ -53,24 +55,26 @@ VALUES (1, NOW(), 1, 1, '2025-12-20'),
 
 -- TIME_VOTE
 INSERT IGNORE INTO time_vote (id, created_at, meeting_id, meeting_participant_id, time)
-VALUES (1, NOW(), 2, 1, '15:00:00'), -- host
-       (2, NOW(), 2, 2, '15:00:00'), -- member1
-       (3, NOW(), 2, 3, '16:00:00'); -- member2
+VALUES (1, NOW(), 2, 1, '15:00'), -- host
+       (2, NOW(), 2, 2, '15:00'), -- member1
+       (3, NOW(), 2, 3, '16:00'), -- member2
+       (4, NOW(), 2, 4, '16:30'), -- member2
+       (5, NOW(), 2, 5, '17:00'); -- member2
 
--- PLACE_OPTION
-INSERT IGNORE INTO place_option (id, created_at, is_active, updated_at, status, course_id)
-VALUES (1, NOW(), 1, NULL, 'OPTION', 1),
-       (2, NOW(), 1, NULL, 'OPTION', 1),
-       (3, NOW(), 1, NULL, 'OPTION', 2),
-       (4, NOW(), 1, NULL, 'FIXED', 3);
-
--- PLACE_VOTE
-INSERT IGNORE INTO place_vote (id, created_at, is_active, updated_at, course_id, meeting_participant_id,
-                               place_option_id)
-VALUES (1, NOW(), 1, NULL, 1, 1, 1),
-       (2, NOW(), 1, NULL, 1, 2, 2),
-       (3, NOW(), 1, NULL, 2, 3, 3),
-       (4, NOW(), 1, NULL, 3, 4, 4);
+# -- PLACE_OPTION
+# INSERT IGNORE INTO place_option (id, created_at, is_active, updated_at, status, course_id)
+# VALUES (1, NOW(), 1, NULL, 'OPTION', 1),
+#        (2, NOW(), 1, NULL, 'OPTION', 1),
+#        (3, NOW(), 1, NULL, 'OPTION', 2),
+#        (4, NOW(), 1, NULL, 'FIXED', 3);
+#
+# -- PLACE_VOTE
+# INSERT IGNORE INTO place_vote (id, created_at, is_active, updated_at, course_id, meeting_participant_id,
+#                                place_option_id)
+# VALUES (1, NOW(), 1, NULL, 1, 1, 1),
+#        (2, NOW(), 1, NULL, 1, 2, 2),
+#        (3, NOW(), 1, NULL, 2, 3, 3),
+#        (4, NOW(), 1, NULL, 3, 4, 4);
 
 -- NOTIFICATION
 INSERT IGNORE INTO notification (id, created_at, is_active, updated_at, member_id, type, status, title, body, deep_link,
@@ -109,7 +113,14 @@ INSERT IGNORE INTO meeting_record (id, created_at, is_active, updated_at, meetin
 VALUES
     (1, NOW(), 1, NULL, 1, 4,'분위기도 좋고 시간 조율이 잘 돼서 정말 만족스러운 모임이었어요.'),
     (2, NOW(), 1, NULL, 2, 4,'처음 만나는 분들이었는데 어색하지 않게 잘 진행됐어요.'),
-    (3, NOW(), 1, NULL, 2, 4,'장소 선정이 특히 마음에 들었고 다음에도 참여하고 싶어요.'),
-    (4, NOW(), 1, NULL, 2, 4,'투표 과정이 편리해서 일정 잡기가 쉬웠습니다.');
+    (3, NOW(), 1, NULL, 3, 4,'장소 선정이 특히 마음에 들었고 다음에도 참여하고 싶어요.'),
+    (4, NOW(), 1, NULL, 4, 4,'투표 과정이 편리해서 일정 잡기가 쉬웠습니다.');
 
+-- RECORD_IMAGE
+INSERT IGNORE INTO record_image (id, created_at, is_active, updated_at, image_key, sort_order, meeting_review_id)
+VALUES
+    (1, NOW(), 1, NULL, 'image1.png', 1, 1),
+    (2, NOW(), 1, NULL, 'image2.png', 2, 1),
+    (3, NOW(), 1, NULL, 'image3.png', 1, 2),
+    (4, NOW(), 1, NULL, 'image4.png', 2, 2);
 SET FOREIGN_KEY_CHECKS = 1;

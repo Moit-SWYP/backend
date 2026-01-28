@@ -106,7 +106,6 @@ class TimeVoteControllerTest {
                 .title("테스트 모임")
                 .type(MeetingType.DRINKER)
                 .build());
-        meeting.updateStatus(MeetingStatus.VOTING);
         meetingRepository.save(meeting);
         this.meetingId = meeting.getId();
 

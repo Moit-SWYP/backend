@@ -79,7 +79,6 @@ class TimeVoteServiceTest {
                 .title("테스트 모임")
                 .type(MeetingType.DRINKER)
                 .build();
-        meeting.updateStatus(MeetingStatus.VOTING);
         this.meeting = meetingRepository.save(meeting);
 
         List<Member> members = new ArrayList<>();
