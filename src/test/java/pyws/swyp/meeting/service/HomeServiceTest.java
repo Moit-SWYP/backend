@@ -8,12 +8,14 @@ import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
 import pyws.swyp.meeting.dto.*;
+import pyws.swyp.meeting.entity.MeetingType;
 import pyws.swyp.meeting.entity.ParticipantRole;
 import pyws.swyp.meeting.entity.MeetingStatus;
 import pyws.swyp.meeting.repository.MeetingParticipantRepository;
 import pyws.swyp.member.entity.CharacterType;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.time.ZoneId;
 import java.util.List;
 
@@ -38,9 +40,9 @@ public class HomeServiceTest {
         LocalDate fixedEnd = fixedNow.plusDays(7);
 
         List<MeetingBriefResponse> meetingInfos = List.of(
-                new MeetingBriefResponse(3L, "데이트", MeetingStatus.IN_PROGRESS, fixedNow.plusDays(2)),
-                new MeetingBriefResponse(1L, "모잇 오프라인 모임", MeetingStatus.IN_PROGRESS, fixedNow.plusDays(4)),
-                new MeetingBriefResponse(2L, "카공", MeetingStatus.IN_PROGRESS, fixedNow.plusDays(6))
+                new MeetingBriefResponse(1L, "모잇 오프라인 모임", MeetingType.TRAVELER, MeetingStatus.IN_PROGRESS, fixedNow.plusDays(4), null, false),
+                new MeetingBriefResponse(2L, "카공", MeetingType.TRAVELER, MeetingStatus.IN_PROGRESS, fixedNow.plusDays(6), LocalTime.of(14,30),true),
+                new MeetingBriefResponse(3L, "데이트", MeetingType.TRAVELER, MeetingStatus.IN_PROGRESS, fixedNow.plusDays(2), LocalTime.of(18,0), true)
         );
 
         ParticipantInfo p1 = new ParticipantInfo(memberId, "닉네임1", CharacterType.FOODIE, pyws.swyp.meeting.entity.ParticipantRole.HOST);
@@ -60,10 +62,10 @@ public class HomeServiceTest {
         );
 
         List<MeetingBriefResponse> waitingMeetings = List.of(
-                new MeetingBriefResponse(1L, "모잇 오프라인 모임", MeetingStatus.IN_PROGRESS, fixedNow.plusDays(4)),
-                new MeetingBriefResponse(2L, "카공", MeetingStatus.IN_PROGRESS, fixedNow.plusDays(6)),
-                new MeetingBriefResponse(4L, "보드게임 모임", MeetingStatus.IN_PROGRESS, null),
-                new MeetingBriefResponse(5L, "동아리 전체 회식", MeetingStatus.IN_PROGRESS, null)
+                new MeetingBriefResponse(1L, "모잇 오프라인 모임", MeetingType.TRAVELER, MeetingStatus.IN_PROGRESS, fixedNow.plusDays(4), null, false),
+                new MeetingBriefResponse(2L, "카공", MeetingType.TRAVELER, MeetingStatus.IN_PROGRESS, fixedNow.plusDays(6), LocalTime.of(14,30),false),
+                new MeetingBriefResponse(4L, "보드게임 모임", MeetingType.TRAVELER, MeetingStatus.IN_PROGRESS, null, null, true),
+                new MeetingBriefResponse(5L, "동아리 전체 회식", MeetingType.TRAVELER, MeetingStatus.IN_PROGRESS, null, null, false)
         );
 
         when(meetingParticipantRepository.findMeetingsByMemberIdWithin7Days(memberId, fixedNow, fixedEnd))
@@ -88,15 +90,15 @@ public class HomeServiceTest {
             assertThat(result.homeMeetings()).hasSize(3);
 
             MeetingBriefWithParticipantsResponse first = result.homeMeetings().get(0);
-            assertThat(first.meetingId()).isEqualTo(3L);
-            assertThat(first.participants()).hasSize(2);
+            assertThat(first.meetingId()).isEqualTo(1L);
+            assertThat(first.participants()).hasSize(3);
 
             MeetingBriefWithParticipantsResponse second = result.homeMeetings().get(1);
-            assertThat(second.meetingId()).isEqualTo(1L);
-            assertThat(second.participants()).hasSize(3);
+            assertThat(second.meetingId()).isEqualTo(2L);
+            assertThat(second.participants()).hasSize(2);
 
             MeetingBriefWithParticipantsResponse third = result.homeMeetings().get(2);
-            assertThat(third.meetingId()).isEqualTo(2L);
+            assertThat(third.meetingId()).isEqualTo(3L);
             assertThat(third.participants()).hasSize(2);
 
             assertThat(result.waitingMeetings()).isEqualTo(waitingMeetings);

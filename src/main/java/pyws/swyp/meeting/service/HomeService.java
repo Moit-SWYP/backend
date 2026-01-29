@@ -46,8 +46,11 @@ public class HomeService {
                         .map(info -> new MeetingBriefWithParticipantsResponse(
                                 info.meetingId(),
                                 info.title(),
+                                info.type(),
                                 info.status(),
                                 info.date(),
+                                info.time(),
+                                info.courseFixed(),
                                 participants.getOrDefault(info.meetingId(), List.of())
                         ))
                         .toList();

@@ -26,23 +26,13 @@ public interface MeetingParticipantRepository extends JpaRepository<MeetingParti
 
     @Query("""
             SELECT new pyws.swyp.meeting.dto.MeetingBriefResponse(
-                        mp.meeting.id,
-                        mp.meeting.title,
-                        mp.meeting.status,
-                        mp.meeting.date
-            )
-            FROM MeetingParticipant mp
-            WHERE mp.member.id = :memberId
-            ORDER BY CASE WHEN mp.meeting.date IS NULL THEN 1 ELSE 0 END, mp.meeting.date ASC
-    """)
-    List<MeetingBriefResponse> findMeetingsByMemberId(@Param("memberId") Long memberId);
-
-    @Query("""
-            SELECT new pyws.swyp.meeting.dto.MeetingBriefResponse(
                         m.id,
                         m.title,
+                        m.type,
                         m.status,
-                        m.date
+                        m.date,
+                        m.time,
+                        m.courseFixed
             )
             FROM MeetingParticipant mp
             JOIN mp.meeting m
@@ -60,8 +50,11 @@ public interface MeetingParticipantRepository extends JpaRepository<MeetingParti
             SELECT new pyws.swyp.meeting.dto.MeetingBriefResponse(
                         m.id,
                         m.title,
+                        m.type,
                         m.status,
-                        m.date
+                        m.date,
+                        m.time,
+                        m.courseFixed
             )
             FROM MeetingParticipant mp
             JOIN mp.meeting m
