@@ -338,7 +338,7 @@ public class MeetingServiceTest {
 
         MeetingUpdateRequest request = new MeetingUpdateRequest(
                 null,
-                LocalDate.of(2026,1,20)
+                MeetingType.DRINKER
         );
 
         when(meetingRepository.findById(meetingId)).thenReturn(Optional.of(meeting));
@@ -355,7 +355,7 @@ public class MeetingServiceTest {
         verify(meetingParticipantRepository).findByMemberIdAndMeetingId(memberId, meetingId);
 
         assertThat(meeting.getTitle()).isEqualTo("모잇 오프라인 모임");
-        assertThat(meeting.getDate()).isEqualTo(LocalDate.of(2026,1,20));
+        assertThat(meeting.getType()).isEqualTo(MeetingType.DRINKER);
     }
 
     @Test
@@ -372,7 +372,7 @@ public class MeetingServiceTest {
 
         MeetingUpdateRequest request = new MeetingUpdateRequest(
                 null,
-                LocalDate.of(2026,1,20)
+                MeetingType.DRINKER
         );
 
         when(meetingRepository.findById(meetingId)).thenReturn(Optional.of(meeting));
@@ -408,7 +408,7 @@ public class MeetingServiceTest {
 
         MeetingUpdateRequest request = new MeetingUpdateRequest(
                 " ",
-                LocalDate.of(2026,1,20)
+                MeetingType.DRINKER
         );
 
         when(meetingRepository.findById(meetingId)).thenReturn(Optional.of(meeting));

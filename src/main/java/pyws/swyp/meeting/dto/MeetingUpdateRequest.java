@@ -1,10 +1,9 @@
 package pyws.swyp.meeting.dto;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
+import pyws.swyp.meeting.entity.MeetingType;
 
 public record MeetingUpdateRequest(
         String title,
-        LocalDate date
+        MeetingType type
 ) {
 }

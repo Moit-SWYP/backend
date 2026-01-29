@@ -189,7 +189,7 @@ public class MeetingControllerTest {
 
         MeetingUpdateRequest request = new MeetingUpdateRequest(
                 "모잇 오프라인",
-                LocalDate.of(2025,12,30)
+                MeetingType.CULTURE_LOVER
         );
 
         // when
@@ -216,7 +216,7 @@ public class MeetingControllerTest {
 
         MeetingUpdateRequest request = new MeetingUpdateRequest(
                 "모잇 오프라인",
-                LocalDate.of(2025,12,30)
+                MeetingType.DRINKER
         );
 
         // when
