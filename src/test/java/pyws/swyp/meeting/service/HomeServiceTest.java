@@ -1,6 +1,5 @@
 package pyws.swyp.meeting.service;
 
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -74,7 +73,7 @@ public class HomeServiceTest {
         when(meetingParticipantRepository.findByMeetingIds(anyList()))
                 .thenReturn(participantRows);
 
-        when(meetingParticipantRepository.findMeetingsByMemberIdAndStatus(
+        when(meetingParticipantRepository.findWaitingMeetingsByMemberId(
                 eq(memberId),
                 anyList(),
                 any()

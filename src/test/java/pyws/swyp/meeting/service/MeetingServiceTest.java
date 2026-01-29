@@ -446,7 +446,7 @@ public class MeetingServiceTest {
 
         List<MeetingBriefResponse> response = List.of(mock(MeetingBriefResponse.class));
 
-        when(meetingParticipantRepository.findMeetingsByMemberIdAndStatus(
+        when(meetingParticipantRepository.findWaitingMeetingsByMemberId(
                 eq(memberId),
                 anyList(),
                 eq(pageable)
@@ -458,7 +458,7 @@ public class MeetingServiceTest {
         // then
         assertThat(result).isEqualTo(response);
         verify(meetingParticipantRepository, times(1))
-                .findMeetingsByMemberIdAndStatus(
+                .findWaitingMeetingsByMemberId(
                         eq(memberId),
                         eq(List.of(
                                 MeetingStatus.IN_PROGRESS

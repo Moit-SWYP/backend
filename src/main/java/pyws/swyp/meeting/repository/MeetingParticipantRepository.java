@@ -38,9 +38,14 @@ public interface MeetingParticipantRepository extends JpaRepository<MeetingParti
             JOIN mp.meeting m
             WHERE mp.member.id = :memberId
                 AND m.status IN :statuses
+                AND (
+                    m.courseFixed = false
+                        OR m.date IS NULL
+                        OR m.time IS NULL
+                    )
             ORDER BY CASE WHEN m.date IS NULL THEN 1 ELSE 0 END, m.date ASC
     """)
-    List<MeetingBriefResponse> findMeetingsByMemberIdAndStatus(
+    List<MeetingBriefResponse> findWaitingMeetingsByMemberId(
             @Param("memberId") Long memberId,
             @Param("statuses") Collection<MeetingStatus> statuses,
             Pageable pageable
