@@ -46,11 +46,6 @@ public class MeetingController implements MeetingApi {
         meetingService.updateMeeting(memberId, id, request);
     }
 
-    @GetMapping("/all")
-    public List<MeetingBriefResponse> getAllMeetings(@AuthenticationPrincipal Long memberId) {
-        return meetingService.getAllMeetings(memberId);
-    }
-
     @GetMapping("/waiting")
     public List<MeetingBriefResponse> getWaitingMeetings(@AuthenticationPrincipal Long memberId, @PageableDefault Pageable pageable) {
         return meetingService.getWaitingMeetings(memberId, pageable);

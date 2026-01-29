@@ -438,23 +438,6 @@ public class MeetingServiceTest {
     */
 
     @Test
-    @DisplayName("모임 전체 조회 성공")
-    void 모임_전체_조회_성공() {
-        // given
-        Long memberId = 1L;
-
-        List<MeetingBriefResponse> response = List.of(mock(MeetingBriefResponse.class));
-        when(meetingParticipantRepository.findMeetingsByMemberId(memberId)).thenReturn(response);
-
-        // when
-        List<MeetingBriefResponse> result = meetingService.getAllMeetings(memberId);
-
-        // then
-        assertThat(result).isEqualTo(response);
-        verify(meetingParticipantRepository, times(1)).findMeetingsByMemberId(memberId);
-    }
-
-    @Test
     @DisplayName("대기 중 모임 조회 성공 - IN_PROGRESS 상태만 조회")
     void 대기중_모임_조회_성공() {
         // given
