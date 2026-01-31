@@ -67,8 +67,8 @@ public class Meeting extends BaseEntity {
             }
             this.title = request.title();
         }
-        if (request.date() != null) {
-            this.date = request.date();
+        if (request.type() != null) {
+            this.type = request.type();
         }
     }
 

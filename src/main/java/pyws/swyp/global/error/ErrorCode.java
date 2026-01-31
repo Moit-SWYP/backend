@@ -49,7 +49,7 @@ public enum ErrorCode {
     MEETING_NOT_TIME_CANCELABLE(BAD_REQUEST, "MEET0015", "이미 완료된 모임은 시간 확정을 취소할 수 있습니다."),
 
     // Vote
-    DATE_VOTE_NOT_FOUND(NOT_FOUND, "VOTE0001", "아직 시간 투표가 존재하지 않습니다."),
+    DATE_VOTE_NOT_FOUND(NOT_FOUND, "VOTE0001", "아직 날짜 투표가 존재하지 않습니다."),
     TIME_VOTE_NOT_FOUND(NOT_FOUND, "VOTE0002", "아직 시간 투표가 존재하지 않습니다."),
     INVALID_TIME_VOTE_REQUEST(BAD_REQUEST, "VOTE0003", "시간 투표 요청이 올바르지 않습니다."),
     TIME_NOT_IN_30_MIN_UNIT(BAD_REQUEST, "VOTE0004", "시간은 30분 단위로만 투표할 수 있습니다."),

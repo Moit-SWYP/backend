@@ -26,31 +26,26 @@ public interface MeetingParticipantRepository extends JpaRepository<MeetingParti
 
     @Query("""
             SELECT new pyws.swyp.meeting.dto.MeetingBriefResponse(
-                        mp.meeting.id,
-                        mp.meeting.title,
-                        mp.meeting.status,
-                        mp.meeting.date
-            )
-            FROM MeetingParticipant mp
-            WHERE mp.member.id = :memberId
-            ORDER BY CASE WHEN mp.meeting.date IS NULL THEN 1 ELSE 0 END, mp.meeting.date ASC
-    """)
-    List<MeetingBriefResponse> findMeetingsByMemberId(@Param("memberId") Long memberId);
-
-    @Query("""
-            SELECT new pyws.swyp.meeting.dto.MeetingBriefResponse(
                         m.id,
                         m.title,
+                        m.type,
                         m.status,
-                        m.date
+                        m.date,
+                        m.time,
+                        m.courseFixed
             )
             FROM MeetingParticipant mp
             JOIN mp.meeting m
             WHERE mp.member.id = :memberId
                 AND m.status IN :statuses
+                AND (
+                    m.courseFixed = false
+                        OR m.date IS NULL
+                        OR m.time IS NULL
+                    )
             ORDER BY CASE WHEN m.date IS NULL THEN 1 ELSE 0 END, m.date ASC
     """)
-    List<MeetingBriefResponse> findMeetingsByMemberIdAndStatus(
+    List<MeetingBriefResponse> findWaitingMeetingsByMemberId(
             @Param("memberId") Long memberId,
             @Param("statuses") Collection<MeetingStatus> statuses,
             Pageable pageable
@@ -60,8 +55,11 @@ public interface MeetingParticipantRepository extends JpaRepository<MeetingParti
             SELECT new pyws.swyp.meeting.dto.MeetingBriefResponse(
                         m.id,
                         m.title,
+                        m.type,
                         m.status,
-                        m.date
+                        m.date,
+                        m.time,
+                        m.courseFixed
             )
             FROM MeetingParticipant mp
             JOIN mp.meeting m

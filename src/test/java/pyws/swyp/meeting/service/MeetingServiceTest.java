@@ -338,7 +338,7 @@ public class MeetingServiceTest {
 
         MeetingUpdateRequest request = new MeetingUpdateRequest(
                 null,
-                LocalDate.of(2026,1,20)
+                MeetingType.DRINKER
         );
 
         when(meetingRepository.findById(meetingId)).thenReturn(Optional.of(meeting));
@@ -355,7 +355,7 @@ public class MeetingServiceTest {
         verify(meetingParticipantRepository).findByMemberIdAndMeetingId(memberId, meetingId);
 
         assertThat(meeting.getTitle()).isEqualTo("모잇 오프라인 모임");
-        assertThat(meeting.getDate()).isEqualTo(LocalDate.of(2026,1,20));
+        assertThat(meeting.getType()).isEqualTo(MeetingType.DRINKER);
     }
 
     @Test
@@ -372,7 +372,7 @@ public class MeetingServiceTest {
 
         MeetingUpdateRequest request = new MeetingUpdateRequest(
                 null,
-                LocalDate.of(2026,1,20)
+                MeetingType.DRINKER
         );
 
         when(meetingRepository.findById(meetingId)).thenReturn(Optional.of(meeting));
@@ -408,7 +408,7 @@ public class MeetingServiceTest {
 
         MeetingUpdateRequest request = new MeetingUpdateRequest(
                 " ",
-                LocalDate.of(2026,1,20)
+                MeetingType.DRINKER
         );
 
         when(meetingRepository.findById(meetingId)).thenReturn(Optional.of(meeting));
@@ -438,23 +438,6 @@ public class MeetingServiceTest {
     */
 
     @Test
-    @DisplayName("모임 전체 조회 성공")
-    void 모임_전체_조회_성공() {
-        // given
-        Long memberId = 1L;
-
-        List<MeetingBriefResponse> response = List.of(mock(MeetingBriefResponse.class));
-        when(meetingParticipantRepository.findMeetingsByMemberId(memberId)).thenReturn(response);
-
-        // when
-        List<MeetingBriefResponse> result = meetingService.getAllMeetings(memberId);
-
-        // then
-        assertThat(result).isEqualTo(response);
-        verify(meetingParticipantRepository, times(1)).findMeetingsByMemberId(memberId);
-    }
-
-    @Test
     @DisplayName("대기 중 모임 조회 성공 - IN_PROGRESS 상태만 조회")
     void 대기중_모임_조회_성공() {
         // given
@@ -463,7 +446,7 @@ public class MeetingServiceTest {
 
         List<MeetingBriefResponse> response = List.of(mock(MeetingBriefResponse.class));
 
-        when(meetingParticipantRepository.findMeetingsByMemberIdAndStatus(
+        when(meetingParticipantRepository.findWaitingMeetingsByMemberId(
                 eq(memberId),
                 anyList(),
                 eq(pageable)
@@ -475,7 +458,7 @@ public class MeetingServiceTest {
         // then
         assertThat(result).isEqualTo(response);
         verify(meetingParticipantRepository, times(1))
-                .findMeetingsByMemberIdAndStatus(
+                .findWaitingMeetingsByMemberId(
                         eq(memberId),
                         eq(List.of(
                                 MeetingStatus.IN_PROGRESS

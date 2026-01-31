@@ -189,7 +189,7 @@ public class MeetingControllerTest {
 
         MeetingUpdateRequest request = new MeetingUpdateRequest(
                 "모잇 오프라인",
-                LocalDate.of(2025,12,30)
+                MeetingType.CULTURE_LOVER
         );
 
         // when
@@ -216,7 +216,7 @@ public class MeetingControllerTest {
 
         MeetingUpdateRequest request = new MeetingUpdateRequest(
                 "모잇 오프라인",
-                LocalDate.of(2025,12,30)
+                MeetingType.DRINKER
         );
 
         // when
@@ -232,25 +232,6 @@ public class MeetingControllerTest {
         verifyNoInteractions(meetingService);
         Integer status = mvcResult.getResponse().getStatus();
         assertThat(status).isEqualTo(HttpStatus.BAD_REQUEST.value());
-    }
-
-    @Test
-    @DisplayName("정상 요청 시 전체 모임 조회 성공")
-    void 전체_모임_조회_성공() throws Exception {
-        // given
-        Long memberId = 1L;
-        AuthTestPrincipalContext.setMemberId(memberId);
-
-        // when
-        MvcResult mvcResult = mockMvc.perform(get("/api/meetings/all"))
-                .andExpect(status().isOk())
-                .andDo(print())
-                .andReturn();
-
-        // then
-        verify(meetingService, times(1)).getAllMeetings(memberId);
-        Integer status = mvcResult.getResponse().getStatus();
-        assertThat(status).isEqualTo(HttpStatus.OK.value());
     }
 
     @Test

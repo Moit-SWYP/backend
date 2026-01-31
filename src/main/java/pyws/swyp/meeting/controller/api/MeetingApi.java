@@ -146,20 +146,6 @@ public interface MeetingApi {
     );
 
     @Operation(
-            summary = "전체 모임 리스트 조회",
-            description =
-                    """
-                            캘린더뷰에서 필요한 전체 모임 리스트 조회 요청을 처리합니다.
-                            본인이 속한 모임들에 대한 brief 모임 정보를 가져옵니다.
-                    """
-    )
-    @ApiResponse(
-            responseCode = "200",
-            description = "전체 모임 리스트 조회 성공"
-    )
-    List<MeetingBriefResponse> getAllMeetings(@AuthenticationPrincipal Long memberId);
-
-    @Operation(
             summary = "기다리고 있는 모임 리스트 조회",
             description =
                     """

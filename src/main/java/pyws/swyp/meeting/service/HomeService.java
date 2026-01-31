@@ -46,8 +46,11 @@ public class HomeService {
                         .map(info -> new MeetingBriefWithParticipantsResponse(
                                 info.meetingId(),
                                 info.title(),
+                                info.type(),
                                 info.status(),
                                 info.date(),
+                                info.time(),
+                                info.courseFixed(),
                                 participants.getOrDefault(info.meetingId(), List.of())
                         ))
                         .toList();
@@ -55,7 +58,7 @@ public class HomeService {
         // 홈 하단 기다리고 있는 일정 카드
         List<MeetingStatus> statuses = List.of(MeetingStatus.IN_PROGRESS);
         List<MeetingBriefResponse> waitingMeetings
-                = meetingParticipantRepository.findMeetingsByMemberIdAndStatus(
+                = meetingParticipantRepository.findWaitingMeetingsByMemberId(
                         memberId, statuses, PageRequest.of(0, DEFAULT_TOP));
 
         return new HomeResponse(upcomingMeetings, waitingMeetings);

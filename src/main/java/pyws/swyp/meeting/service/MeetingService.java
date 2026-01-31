@@ -80,14 +80,9 @@ public class MeetingService {
     }
 
     @Transactional(readOnly = true)
-    public List<MeetingBriefResponse> getAllMeetings(Long memberId) {
-        return meetingParticipantRepository.findMeetingsByMemberId(memberId);
-    }
-
-    @Transactional(readOnly = true)
     public List<MeetingBriefResponse> getWaitingMeetings(Long memberId, Pageable pageable) {
         List<MeetingStatus> statuses = List.of(MeetingStatus.IN_PROGRESS);
-        return meetingParticipantRepository.findMeetingsByMemberIdAndStatus(memberId, statuses, pageable);
+        return meetingParticipantRepository.findWaitingMeetingsByMemberId(memberId, statuses, pageable);
     }
 
     private Meeting validActiveMeeting(Long meetingId) {
